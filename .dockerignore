@@ -1,0 +1,9 @@
+# folders
+.git
+.husky
+.idea
+.next
+node_modules
+
+# files
+.npmrc

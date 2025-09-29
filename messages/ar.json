@@ -1,0 +1,15 @@
+{
+  "Index": {
+    "headerName": "قالب i18n لـ Next 15",
+    "title": "قالب Next.js مع i18n و Shadcn UI",
+    "description": "نقطة انطلاق قوية لتطبيق الويب متعدد اللغات وسهل الوصول."
+  },
+  "Footer": {
+    "copyright": "© 2025 قالب i18n لـ Next.js. مفتوح المصدر تحت رخصة MIT."
+  },
+  "Metadata": {
+    "title": "قالب Next.js للتدويل - نقطة بدء متعددة اللغات",
+    "description": "قالب Next.js للتدويل (i18n) مع دعم العربية، الصينية والإنجليزية. يتضمن واجهة shadcn، تبديل السمات ودعم RTL.",
+    "keywords": "Next.js, i18n, تدويل, عربي, صيني, متعدد اللغات, قالب, واجهة shadcn, دعم RTL"
+  }
+}

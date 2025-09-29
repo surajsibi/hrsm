@@ -1,0 +1,16 @@
+{
+  "Index": {
+    "headerName": "Next.js 多语言模板",
+    "title": "Next 15 模板 (集成i18n与Shadcn UI)",
+    "description": "一个强大的起点，助您开发多语言、无障碍的Web应用程序。"
+  },
+
+  "Footer": {
+    "copyright": "© 2025 Next.js 多语言模板。基于MIT协议开源。"
+  },
+  "Metadata": {
+    "title": "Next.js 国际化模板 - 多语言启动套件",
+    "description": "支持中文、英文、阿拉伯语的Next.js国际化(i18n)入门套件，包含shadcn UI、主题切换和RTL支持",
+    "keywords": "Next.js, i18n, 国际化, 中文, 阿拉伯语, 多语言, 模板, shadcn UI, RTL支持"
+  }
+}
