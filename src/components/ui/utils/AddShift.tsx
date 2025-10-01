@@ -41,16 +41,19 @@ export const AddShift = memo(function AddShift({
   days = ['Sunday', 'Monday'],
   handleAddShift,
 }: AddShiftProps) {
-  const hours = endingTime - startingTime;
+  const hours = (endingTime - startingTime + 24) % 24;
   const timeRange = `${formatTime(startingTime)} - ${formatTime(endingTime)} (${hours}h)`;
+
   const daysText = days.join(', ');
 
   return (
-    <div className="shadow-sm cursor-pointer border border-border bg-white rounded-lg hover:bg-bg-mute transition-all duration-300 w-[500px]">
+    <div className="shadow-sm cursor-pointer border border-border bg-white rounded-lg hover:bg-bg-mute transition-all duration-300 w-full">
       <div className="p-4 flex flex-col justify-center gap-3">
         {/* Title and Work Type */}
         <div className="flex justify-between items-center">
-          <Title variant="h3">{title}</Title>
+          <Title variant="h3" className="text-md font-medium">
+            {title}
+          </Title>
           <div className="text-xs font-semibold text-heading py-0.5 px-2.5 rounded-full flex items-center justify-center border border-[#dfe2e7]">
             {workType}
           </div>
@@ -67,7 +70,13 @@ export const AddShift = memo(function AddShift({
         </div>
 
         {/* Action Button */}
-        <Buttons variant="default" onClick={handleAddShift}>
+        <Buttons
+          type="button"
+          variant="default"
+          size="sm"
+          className="w-full "
+          onClick={handleAddShift}
+        >
           Add Shift
         </Buttons>
       </div>

@@ -63,7 +63,7 @@ export const AddedSection = memo(function AddedSection({
   onDelete,
 }: AddedSectionProps) {
   return (
-    <div className="addSection flex justify-between items-center">
+    <div className="p-3 bg-[#f0f2f44d]  border border-[#dfe2e74d] rounded-lg flex justify-between items-center ">
       <div className="flex gap-3 items-center">
         <div className="flex py-1 px-1 rounded-full items-center justify-center bg-[#3c83f61a]">
           {icon}

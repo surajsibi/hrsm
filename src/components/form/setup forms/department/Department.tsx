@@ -2,56 +2,95 @@ import { type JSX, useState } from 'react';
 
 import { useFormContext } from 'react-hook-form';
 
+import { Icon } from '@/components/Icons/Icon';
+import { AddedSection } from '@/components/ui/utils/AddSections';
+import { Buttons } from '@/components/ui/utils/Buttons';
 import { Description } from '@/components/ui/utils/Descriptions';
+import { InputComponent } from '@/components/ui/utils/InputComponent';
+import { LineBreak } from '@/components/ui/utils/LineBreak';
+import { Note } from '@/components/ui/utils/Note';
 import { Tab } from '@/components/ui/utils/Tabs';
 import { Title } from '@/components/ui/utils/Titles';
 
-import type { DepartmentType } from '@/types/form-types';
-import { InputComponent } from '@/components/ui/utils/InputComponent';
-import { Icon } from '@/components/Icons/Icon';
-import { Buttons } from '@/components/ui/utils/Buttons';
-import { Primary } from '@/stories/AddShift.stories';
+import type { FormType } from '@/types/form-types';
 
-export default function Department(): JSX.Element {
-  const {
-    handleSubmit,
-    register,
-    reset,
-    formState: { errors, isSubmitting, isValid },
-  } = useFormContext<DepartmentType>();
-  const onSubmit = async (data: DepartmentType) => {
-    try {
-      await new Promise(resolve => setTimeout(resolve, 5000));
+export default function Department({
+  onNext,
+  onPrev,
+}: {
+  onNext: () => void;
+  onPrev: () => void;
+}): JSX.Element {
+  const { setValue, getValues } = useFormContext<FormType>();
 
-      reset();
+  const [tabs, setTabs] = useState(
+    [
+      'Human Resources',
+      'Information Technology',
+      'Sales & Marketing',
+      'Finance & Accounting',
+      'Operations',
+      'Customer Service',
+      'Research & Development',
+      'Legal & Compliance',
+      'Administration',
+      'Quality Assurance',
+    ].map(name => ({ name, active: false }))
+  );
 
-      return data;
-    } catch (error) {
-      console.error('Form submission error:', error);
+  const [selectedTab, setSelectedTab] = useState<string[]>(
+    getValues('department.departmentNames') || []
+  );
+  const [inputValue, setInputValue] = useState('');
 
-      return null;
-    }
+  // Toggle a quick-add tab
+  const toggleTab = (index: number) => {
+    const clickedTab = tabs[index].name;
+
+    setTabs(prev => prev.map((tab, i) => (i === index ? { ...tab, active: !tab.active } : tab)));
+
+    setSelectedTab(prev => {
+      if (prev.includes(clickedTab)) return prev;
+
+      const updated = [...prev, clickedTab];
+
+      setValue('department.departmentNames', updated);
+
+      return updated;
+    });
   };
 
-  const [tabs, setTabs] = useState([
-    { name: 'Human Resources', active: false },
-    { name: 'Information Technology', active: false },
-    { name: 'Sales & Marketing', active: false },
-    { name: 'Finance & Accounting', active: false },
-    { name: 'Operations', active: false },
-    { name: 'Customer Service', active: false },
-    { name: 'Research & Development', active: false },
-    { name: 'Legal & Compliance', active: false },
-    { name: 'Administration', active: false },
-    { name: 'Quality Assurance', active: false },
-  ]);
+  // Delete a selected tab
+  const onDelete = (tabName: string) => {
+    const updated = selectedTab.filter(name => name !== tabName);
 
-  const toggleTab = (index: number) => {
-    setTabs(prev => prev.map((tab, i) => (i === index ? { ...tab, active: !tab.active } : tab)));
+    setSelectedTab(updated);
+
+    setValue('department.departmentNames', updated);
+
+    setTabs(prev => prev.map(tab => (tab.name === tabName ? { ...tab, active: false } : tab)));
+  };
+
+  // Add custom department(s)
+  const addCustomDepartment = () => {
+    const entries = inputValue
+      .split(',')
+      .map(name => name.trim())
+      .filter(Boolean);
+
+    if (entries.length === 0) return;
+
+    const updated = [...new Set([...selectedTab, ...entries])];
+
+    setSelectedTab(updated);
+
+    setValue('department.departmentNames', updated);
+    setInputValue('');
   };
 
   return (
-    <div className="flex flex-col p-6 gap-6">
+    <div className="flex flex-col p-6 pt-8 gap-6">
+      {/* Header */}
       <div className="flex flex-col gap-1 items-start">
         <Title variant="h3">Departments</Title>
         <Description>Create organizational departments</Description>
@@ -60,35 +99,117 @@ export default function Department(): JSX.Element {
         <Title variant="h3">Quick Add Departments</Title>
         <Description>Click on common departments to add them quickly</Description>
       </div>
-      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6 w-full">
-        <div className="flex flex-wrap gap-2 space-y-4">
-          {tabs.map(tab => (
-            <Tab active={tab.active} key={tab.name} onClick={() => toggleTab(tabs.indexOf(tab))}>
-              {tab.name}
-            </Tab>
-          ))}
-        </div>
-        <Title variant="h3" className="text-start">
-          Add Custom Departments
-        </Title>
-        <div className="flex gap-5">
-          <InputComponent
-            type="text"
-            placeholder="Enter department names"
-            icon={
-              <Icon
-                name="Briefcase"
-                size={16}
-                color="#7a8799"
-                className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none"
+
+      {/* Quick Add Tabs */}
+      <div className="flex flex-wrap gap-2 space-y-2">
+        {tabs.map((tab, i) => (
+          <Tab key={tab.name} active={tab.active} onClick={() => toggleTab(i)}>
+            {tab.name}
+          </Tab>
+        ))}
+      </div>
+
+      {/* Custom Departments Input */}
+      <Title variant="h3" className="text-start">
+        Add Custom Departments
+      </Title>
+      <div className="flex gap-5 items-end">
+        <InputComponent
+          type="text"
+          placeholder="Enter department names"
+          value={inputValue}
+          onChange={e => setInputValue(e.target.value)}
+          icon={
+            <Icon
+              name="Briefcase"
+              size={16}
+              color="#7a8799"
+              className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none"
+            />
+          }
+        />
+        <Buttons
+          disabled={inputValue === ''}
+          onClick={addCustomDepartment}
+          variant="primary"
+          className="h-12"
+        >
+          <Icon name="Plus" size={20} color="white" />
+        </Buttons>
+      </div>
+
+      {/* Selected Departments */}
+      {selectedTab.length > 0 && (
+        <div className="flex flex-col gap-4">
+          <div className="flex justify-between">
+            <Title variant="h3" className="text-start">
+              Added Departments
+            </Title>
+            <div className="bg-[#edeff2] px-2.5 py-0.5 rounded-full items-center justify-center">
+              <Description size="sm" className="font-semibold">
+                {selectedTab.length} {selectedTab.length === 1 ? 'department' : 'departments'}
+              </Description>
+            </div>
+          </div>
+          <div className="shadow-md space-y-4 bg-white border-border border rounded-lg p-4">
+            {selectedTab.map((tab, index) => (
+              <AddedSection
+                key={index}
+                title={tab}
+                description="Status: ACTIVE"
+                onDelete={() => onDelete(tab)}
               />
-            }
-          />
-          <Buttons variant="primary">
-            <Icon name="Plus" size={16} color="#7a8799" />
-          </Buttons>
+            ))}
+          </div>
         </div>
-      </form>
+      )}
+
+      {/* Notes & Actions */}
+      <Note>
+        &nbsp; Departments help organize your workforce into functional groups. You can add more
+        departments later or modify existing ones from the dashboard
+      </Note>
+      <LineBreak />
+
+      <div className="flex justify-between gap-4">
+        <Buttons
+          variant="secondary"
+          type="button"
+          size="sm"
+          className="w-1/2 text-[#344256] font-medium"
+          onClick={onNext}
+        >
+          Skip This Step
+        </Buttons>
+        <Buttons
+          type="button"
+          variant="primary"
+          size="sm"
+          className="w-1/2 font-medium"
+          onClick={onNext}
+        >
+          <p className="flex items-center justify-center gap-4">
+            <span className="font-semibold text-center">Continue</span>
+            <Icon name="ArrowRight" size={16} color="white" />
+          </p>
+        </Buttons>
+      </div>
+
+      <LineBreak />
+      <div className="flex justify-start items-center gap-4 w-fit px-2">
+        <Buttons
+          onClick={onPrev}
+          variant="secondary"
+          type="button"
+          size="sm"
+          className="text-black font-medium"
+        >
+          <p className="flex items-center justify-center gap-4">
+            <Icon name="ArrowLeft" size={16} />
+            <span className="font-medium text-center">Previous Step</span>
+          </p>
+        </Buttons>
+      </div>
     </div>
   );
 }

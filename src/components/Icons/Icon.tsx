@@ -1,11 +1,14 @@
 import {
   ArrowLeft,
+  ArrowRight,
   Briefcase,
+  Building,
   Building2,
   Calendar,
   Check,
   ChevronDown,
   Clock,
+  Crown,
   Globe,
   Lock,
   type LucideProps,
@@ -26,7 +29,9 @@ import type { JSX } from 'react/jsx-runtime';
  * Extend this object to add more icons.
  */
 const ICONS = {
+  ArrowRight,
   Check,
+  Building,
   Building2,
   Briefcase,
   User,
@@ -34,6 +39,7 @@ const ICONS = {
   Mail,
   Shield,
   ChevronDown,
+  Crown,
   X,
   Plus,
   Trash2,

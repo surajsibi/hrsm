@@ -1,4 +1,4 @@
-import { HTMLAttributes, ReactNode } from 'react';
+import { HTMLAttributes, InputHTMLAttributes, ReactNode } from 'react';
 import { Label } from './Label';
 import { Input } from './Input';
 import { cn } from '@/utils';
@@ -6,7 +6,7 @@ import { Description } from './Descriptions';
 
 import type { FieldError } from 'react-hook-form';
 
-interface InputComponentProps extends HTMLAttributes<HTMLInputElement> {
+interface InputComponentProps extends InputHTMLAttributes<HTMLInputElement> {
   /**
    * Optional label text displayed above the input field.
    * When provided, it will be linked to the input via `id`.
@@ -40,7 +40,9 @@ interface InputComponentProps extends HTMLAttributes<HTMLInputElement> {
    */
   error?: FieldError;
 
-  type?:string
+  type?: string;
+
+  value?: string;
 }
 
 /**
@@ -78,6 +80,7 @@ export function InputComponent({
   className,
   icon,
   error,
+  value,
   type,
   ...props
 }: InputComponentProps) {
@@ -94,7 +97,8 @@ export function InputComponent({
       >
         {icon && <span>{icon}</span>}
         <Input
-        type={type}
+          type={type}
+          value={value}
           placeholder={placeholder}
           id={id}
           className={cn(icon ? 'pl-9' : '', className)}

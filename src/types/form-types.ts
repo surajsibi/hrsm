@@ -51,3 +51,35 @@ export interface OrganizationType {
 export interface DepartmentType {
   departmentNames: string[];
 }
+
+export interface DesignationType {
+  designationNames: string[];
+}
+
+export interface FormType {
+  organization: {
+    companyName: string;
+    companyType: string;
+    companyEmail: string;
+    CompanyPhoneNumber: string;
+    companyWebsite?: string;
+    companySize?: string;
+    companyAddress: string;
+    companyDescription?: string;
+  };
+  department: {
+    departmentNames: string[];
+  };
+  designation: Record<string, string[]>;
+  Shift: {
+    title: string;
+    workType: string;
+    startingTime: string;
+    endingTime: string;
+    days: string[];
+    workingHours: number;
+    shiftTracking: boolean;
+    rotationalShifts: boolean;
+  };
+  ShiftList: FormType['Shift'][];
+}

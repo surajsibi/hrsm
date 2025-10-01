@@ -34,8 +34,8 @@ export function Tab({
   inactiveIcon = <Icon name="Plus" size={16} />,
 }: TabProps) {
   const baseClasses =
-    'text-[#344256] text-sm flex font-medium items-center justify-center gap-2 py-2 px-3 border border-gray-700/20 rounded-md transition-colors duration-300 bg-[#fcfcfc] h-9';
-  const activeClasses = 'opacity-50 pointer-events-none border-0 text-gray-500';
+    'text-[#344256] text-sm flex font-medium items-center justify-center gap-2 py-2 px-3 border border-gray-700/20 rounded-md hover:bg-[#3c83f61a] hover:text-[#3c83f6] transition-colors duration-300 bg-[#fcfcfc] h-9';
+  const activeClasses = 'opacity-50 bg-[#edeff2] pointer-events-none border-0 text-gray-500';
 
   return (
     <button

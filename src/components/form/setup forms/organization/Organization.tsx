@@ -13,49 +13,36 @@ import { Selector } from '@/components/ui/utils/Selector';
 import { Spinner } from '@/components/ui/utils/Spinner';
 import { Title } from '@/components/ui/utils/Titles';
 
-import type { OrganizationType } from '@/types/form-types';
+import type { FormType } from '@/types/form-types';
 
-export default function Organization(): JSX.Element {
+export default function Organization({ onNext }: { onNext: () => void }): JSX.Element {
   const {
     register,
     control,
-    handleSubmit,
-    reset,
     formState: { errors, isSubmitting, isValid },
-  } = useFormContext<OrganizationType>();
-
-  const onSubmit = async (data: OrganizationType) => {
-    try {
-      await new Promise(resolve => setTimeout(resolve, 5000));
-
-      reset();
-
-      return data;
-    } catch (error) {
-      console.error('Form submission error:', error);
-
-      return null;
-    }
-  };
+  } = useFormContext<FormType>();
 
   return (
     <div className="flex flex-col p-6 gap-6">
+      {/* Header */}
       <div className="flex flex-col gap-2">
         <Title variant="h3">Organization</Title>
         <Description>Company details and information</Description>
       </div>
-      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6 w-full">
-        <div className="flex  gap-9 mb-1 w-full">
-          <div className="  w-1/2">
+
+      {/* Fields */}
+      <div className="flex flex-col gap-6 w-full">
+        <div className="flex gap-9 w-full">
+          <div className="w-1/2">
             <InputComponent
               label="Company Name *"
               placeholder="Enter company name"
               id="companyName"
               type="text"
-              {...register('companyName', {
+              {...register('organization.companyName', {
                 required: 'Company name is required',
               })}
-              error={errors.companyName}
+              error={errors?.organization?.companyName}
               icon={
                 <Icon
                   name="Shield"
@@ -68,12 +55,12 @@ export default function Organization(): JSX.Element {
           </div>
           <div className="w-1/2">
             <Controller
-              name="companyType"
+              name="organization.companyType"
               control={control}
               rules={{ required: 'Company type is required' }}
               render={({ field }) => (
                 <Selector
-                  {...field} // gives `value` and `onChange` automatically
+                  {...field}
                   placeholder="Select Company Type"
                   options={[
                     'Private Limited',
@@ -87,7 +74,7 @@ export default function Organization(): JSX.Element {
                   ]}
                   id="companyType"
                   label="Company Type *"
-                  error={errors.companyType}
+                  error={errors?.organization?.companyType}
                   icon={
                     <Icon
                       name="Shield"
@@ -101,18 +88,19 @@ export default function Organization(): JSX.Element {
             />
           </div>
         </div>
-        <div className="flex gap-9 mb-1 w-full">
-          <div className=" w-1/2">
+
+        <div className="flex gap-9 w-full">
+          <div className="w-1/2">
             <InputComponent
               label="Company Email *"
               placeholder="company@example.com"
               id="companyEmail"
               type="email"
-              {...register('companyEmail', {
+              {...register('organization.companyEmail', {
                 required: 'Company email is required',
                 pattern: { value: /^\S+@\S+$/i, message: 'Invalid email address' },
               })}
-              error={errors.companyEmail}
+              error={errors?.organization?.companyEmail}
               icon={
                 <Icon
                   name="Mail"
@@ -123,16 +111,16 @@ export default function Organization(): JSX.Element {
               }
             />
           </div>
-          <div className=" w-1/2">
+          <div className="w-1/2">
             <InputComponent
               label="Phone Number *"
               placeholder="+1 (234) 567 8901"
               id="CompanyPhoneNumber"
               type="text"
-              {...register('CompanyPhoneNumber', {
+              {...register('organization.CompanyPhoneNumber', {
                 required: 'Company phone number is required',
               })}
-              error={errors.CompanyPhoneNumber}
+              error={errors?.organization?.CompanyPhoneNumber}
               icon={
                 <Icon
                   name="Phone"
@@ -144,20 +132,21 @@ export default function Organization(): JSX.Element {
             />
           </div>
         </div>
-        <div className="flex gap-9 mb-1 w-full">
-          <div className=" w-1/2">
+
+        <div className="flex gap-9 w-full">
+          <div className="w-1/2">
             <InputComponent
               label="Website"
               placeholder="https://www.company.com"
               id="companyWebsite"
               type="text"
-              {...register('companyWebsite', {
+              {...register('organization.companyWebsite', {
                 pattern: {
                   value: /^(https?:\/\/)?([\w-]+(\.[\w-]+)+)(\/[\w-]*)*\/?$/,
                   message: 'Invalid URL',
                 },
               })}
-              error={errors.companyWebsite}
+              error={errors?.organization?.companyWebsite}
               icon={
                 <Icon
                   name="Globe"
@@ -168,13 +157,13 @@ export default function Organization(): JSX.Element {
               }
             />
           </div>
-          <div className=" w-1/2">
+          <div className="w-1/2">
             <Controller
-              name="companySize"
+              name="organization.companySize"
               control={control}
               render={({ field }) => (
                 <Selector
-                  {...field} // gives `value` and `onChange` automatically
+                  {...field}
                   placeholder="Select Company size"
                   options={[
                     '1-10 employees',
@@ -184,7 +173,7 @@ export default function Organization(): JSX.Element {
                     '1000+ employees',
                   ]}
                   id="companySize"
-                  label="Company Size "
+                  label="Company Size"
                   icon={
                     <Icon
                       name="Users"
@@ -198,11 +187,16 @@ export default function Organization(): JSX.Element {
             />
           </div>
         </div>
-        <div className="w-full ">
+
+        <div className="w-full">
           <Textarea
             label="Company Address *"
             placeholder="Enter company address"
             id="companyAddress"
+            {...register('organization.companyAddress', {
+              required: 'Company address is required',
+            })}
+            error={errors?.organization?.companyAddress}
             icon={
               <Icon
                 name="MapPin"
@@ -211,38 +205,42 @@ export default function Organization(): JSX.Element {
                 className="absolute left-3 top-[24%] -translate-y-1/2 w-4 h-4 pointer-events-none"
               />
             }
-            {...register('companyAddress', { required: 'Company address is required' })}
-            error={errors.companyAddress}
           />
         </div>
-        <div className="w-full ">
+
+        <div className="w-full">
           <Textarea
-            label="Company Description "
+            label="Company Description"
             placeholder="Brief description about your company"
             id="companyDescription"
-            {...register('companyDescription')}
+            {...register('organization.companyDescription')}
           />
         </div>
+
         <LineBreak />
+
+        {/* Buttons */}
         <div className="flex gap-4">
-          <Buttons className="w-1/2" variant={'secondary'}>
+          <Buttons className="w-1/2" variant="secondary" type="button" onClick={onNext}>
             Skip This Step
           </Buttons>
           <Buttons
-            loading={isSubmitting}
+            className="w-1/2"
+            onClick={() => onNext()}
+            variant="primary"
+            type="button"
             disabled={isSubmitting || !isValid}
+            loading={isSubmitting}
             loadingChildren={
               <span className="flex items-center gap-2">
                 <Spinner /> Creating...
               </span>
             }
-            className="w-1/2"
-            variant={'primary'}
           >
-            Skip This Step
+            Create Organization
           </Buttons>
         </div>
-      </form>
+      </div>
     </div>
   );
 }
