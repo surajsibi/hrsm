@@ -1,7 +1,7 @@
 'use client';
 import { type JSX } from 'react';
 
-import { Controller, useFormContext } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 
 import { Icon } from '@/components/Icons/Icon';
 import { Textarea } from '@/components/ui/textarea';
@@ -13,21 +13,29 @@ import { Selector } from '@/components/ui/utils/Selector';
 import { Spinner } from '@/components/ui/utils/Spinner';
 import { Title } from '@/components/ui/utils/Titles';
 
-import type { FormType } from '@/types/form-types';
+import type { OrganizationType } from '@/types/form-types';
 
 export default function Organization({ onNext }: { onNext: () => void }): JSX.Element {
   const {
     register,
     control,
+    handleSubmit,
     formState: { errors, isSubmitting, isValid },
-  } = useFormContext<FormType>();
+  } = useForm<OrganizationType>();
+
+  const onSubmit = (data: OrganizationType) => {
+    console.log(data);
+    onNext();
+  };
 
   return (
-    <div className="flex flex-col p-6 gap-6">
+    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col p-6 gap-6">
       {/* Header */}
       <div className="flex flex-col gap-2">
-        <Title variant="h3">Organization</Title>
-        <Description>Company details and information</Description>
+        <Title className="text-start" variant="h3">
+          Organization
+        </Title>
+        <Description className="text-start">Company details and information</Description>
       </div>
 
       {/* Fields */}
@@ -39,13 +47,13 @@ export default function Organization({ onNext }: { onNext: () => void }): JSX.El
               placeholder="Enter company name"
               id="companyName"
               type="text"
-              {...register('organization.companyName', {
+              {...register('companyName', {
                 required: 'Company name is required',
               })}
-              error={errors?.organization?.companyName}
+              error={errors?.companyName}
               icon={
                 <Icon
-                  name="Shield"
+                  name="Building"
                   size={16}
                   color="#7a8799"
                   className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none"
@@ -55,7 +63,7 @@ export default function Organization({ onNext }: { onNext: () => void }): JSX.El
           </div>
           <div className="w-1/2">
             <Controller
-              name="organization.companyType"
+              name="companyType"
               control={control}
               rules={{ required: 'Company type is required' }}
               render={({ field }) => (
@@ -74,15 +82,7 @@ export default function Organization({ onNext }: { onNext: () => void }): JSX.El
                   ]}
                   id="companyType"
                   label="Company Type *"
-                  error={errors?.organization?.companyType}
-                  icon={
-                    <Icon
-                      name="Shield"
-                      size={16}
-                      color="#7a8799"
-                      className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none"
-                    />
-                  }
+                  error={errors?.companyType}
                 />
               )}
             />
@@ -96,11 +96,11 @@ export default function Organization({ onNext }: { onNext: () => void }): JSX.El
               placeholder="company@example.com"
               id="companyEmail"
               type="email"
-              {...register('organization.companyEmail', {
+              {...register('companyEmail', {
                 required: 'Company email is required',
                 pattern: { value: /^\S+@\S+$/i, message: 'Invalid email address' },
               })}
-              error={errors?.organization?.companyEmail}
+              error={errors?.companyEmail}
               icon={
                 <Icon
                   name="Mail"
@@ -117,10 +117,10 @@ export default function Organization({ onNext }: { onNext: () => void }): JSX.El
               placeholder="+1 (234) 567 8901"
               id="CompanyPhoneNumber"
               type="text"
-              {...register('organization.CompanyPhoneNumber', {
+              {...register('CompanyPhoneNumber', {
                 required: 'Company phone number is required',
               })}
-              error={errors?.organization?.CompanyPhoneNumber}
+              error={errors?.CompanyPhoneNumber}
               icon={
                 <Icon
                   name="Phone"
@@ -140,13 +140,13 @@ export default function Organization({ onNext }: { onNext: () => void }): JSX.El
               placeholder="https://www.company.com"
               id="companyWebsite"
               type="text"
-              {...register('organization.companyWebsite', {
+              {...register('companyWebsite', {
                 pattern: {
                   value: /^(https?:\/\/)?([\w-]+(\.[\w-]+)+)(\/[\w-]*)*\/?$/,
                   message: 'Invalid URL',
                 },
               })}
-              error={errors?.organization?.companyWebsite}
+              error={errors?.companyWebsite}
               icon={
                 <Icon
                   name="Globe"
@@ -159,7 +159,7 @@ export default function Organization({ onNext }: { onNext: () => void }): JSX.El
           </div>
           <div className="w-1/2">
             <Controller
-              name="organization.companySize"
+              name="companySize"
               control={control}
               render={({ field }) => (
                 <Selector
@@ -193,10 +193,10 @@ export default function Organization({ onNext }: { onNext: () => void }): JSX.El
             label="Company Address *"
             placeholder="Enter company address"
             id="companyAddress"
-            {...register('organization.companyAddress', {
+            {...register('companyAddress', {
               required: 'Company address is required',
             })}
-            error={errors?.organization?.companyAddress}
+            error={errors?.companyAddress}
             icon={
               <Icon
                 name="MapPin"
@@ -213,7 +213,7 @@ export default function Organization({ onNext }: { onNext: () => void }): JSX.El
             label="Company Description"
             placeholder="Brief description about your company"
             id="companyDescription"
-            {...register('organization.companyDescription')}
+            {...register('companyDescription')}
           />
         </div>
 
@@ -221,14 +221,20 @@ export default function Organization({ onNext }: { onNext: () => void }): JSX.El
 
         {/* Buttons */}
         <div className="flex gap-4">
-          <Buttons className="w-1/2" variant="secondary" type="button" onClick={onNext}>
+          <Buttons
+            size="sm"
+            className="w-1/2 font-medium "
+            variant="secondary"
+            type="button"
+            onClick={onNext}
+          >
             Skip This Step
           </Buttons>
           <Buttons
-            className="w-1/2"
-            onClick={() => onNext()}
+            size="sm"
+            className="w-1/2 font-medium "
             variant="primary"
-            type="button"
+            type="submit"
             disabled={isSubmitting || !isValid}
             loading={isSubmitting}
             loadingChildren={
@@ -241,6 +247,6 @@ export default function Organization({ onNext }: { onNext: () => void }): JSX.El
           </Buttons>
         </div>
       </div>
-    </div>
+    </form>
   );
 }

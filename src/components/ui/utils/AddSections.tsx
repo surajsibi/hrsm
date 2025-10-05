@@ -1,4 +1,4 @@
-import React, { memo } from 'react';
+import React, { memo, ReactNode } from 'react';
 import { Description } from './Descriptions';
 import { Title } from './Titles';
 import { Icon } from '@/components/Icons/Icon';
@@ -14,7 +14,7 @@ interface AddedSectionProps {
    * Description text shown below the title.
    * Defaults to `"Status: ACTIVE"`.
    */
-  description?: string;
+  description?: string | ReactNode;
 
   /**
    * Custom icon element to display (e.g., SVG or `Icon` component).

@@ -47,7 +47,21 @@
   input:-webkit-autofill {
     box-shadow: 0 0 0px 1000px theme('colors.white') inset !important;
     -webkit-text-fill-color: theme('colors.black') !important;
+  }
+}
 
+@layer base {
+  /* Remove default date/time picker icons */
+  input[type='date']::-webkit-calendar-picker-indicator,
+  input[type='time']::-webkit-calendar-picker-indicator {
+    display: none;
+    -webkit-appearance: none;
+  }
+
+  input[type='date'],
+  input[type='time'] {
+    -moz-appearance: textfield; /* Firefox */
+    appearance: none;
   }
 }
 

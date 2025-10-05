@@ -1,6 +1,6 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
-import { useFormContext } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 
 import { Icon } from '@/components/Icons/Icon';
 import { AddedSection } from '@/components/ui/utils/AddSections';
@@ -13,13 +13,17 @@ import { Selector } from '@/components/ui/utils/Selector';
 import { Tab } from '@/components/ui/utils/Tabs';
 import { Title } from '@/components/ui/utils/Titles';
 
-import type { FormType } from '@/types/form-types';
+import type { DesignationType } from '@/types/form-types';
 // eslint-disable-next-line no-duplicate-imports
 import type { JSX } from 'react';
 
-type ICommonDesignations = Record<string, string[]>;
+interface DesignationProps {
+  onNext: () => void;
+  onPrev: () => void;
+  apiDepartments?: string[]; // departments from API
+}
 
-const commonDesignations: ICommonDesignations = {
+const commonDesignations: Record<string, string[]> = {
   'Human Resources': ['HR Manager', 'HR Executive', 'Recruiter', 'HR Business Partner'],
   'Information Technology': [
     'Software Engineer',
@@ -65,24 +69,29 @@ const commonDesignations: ICommonDesignations = {
 export default function Designation({
   onNext,
   onPrev,
-}: {
-  onNext: () => void;
-  onPrev: () => void;
-}): JSX.Element {
-  const { watch, setValue, getValues } = useFormContext<FormType>();
-  const selectedDepartments = watch('department.departmentNames');
+  apiDepartments = [],
+}: DesignationProps): JSX.Element {
+  const { setValue, getValues } = useForm<DesignationType>({
+    defaultValues: { designation: {} },
+  });
 
+  const [departments] = useState<string[]>(apiDepartments);
   const [selectedDepartment, setSelectedDepartment] = useState<string>('');
   const [inputValue, setInputValue] = useState<string>('');
 
-  // Keep track of active designations
-  const [activeDesignations, setActiveDesignations] = useState(() => {
-    return Object.fromEntries(
-      selectedDepartments.map(dep => [dep, getValues(`designation.${dep}`) || []])
-    );
-  });
+  // Active designations (for quick UI toggling)
+  const [activeDesignations, setActiveDesignations] = useState<Record<string, string[]>>({});
 
-  /** Update helper for add/remove/toggle */
+  // Keep activeDesignations in sync with RHF form
+  useEffect(() => {
+    const initial: Record<string, string[]> = {};
+
+    for (const dep of departments) {
+      initial[dep] = getValues(`designation.${dep}`) || [];
+    }
+    setActiveDesignations(initial);
+  }, [departments]);
+
   const updateDesignations = (
     department: string,
     designation: string,
@@ -109,32 +118,29 @@ export default function Designation({
         }
       }
 
-      setValue(`designation.${department}`, updated);
+      setValue(`designation.${department}`, updated); // update RHF form
 
       return { ...prev, [department]: updated };
     });
   };
 
-  /** Add a custom designation */
   const handleAddCustom = () => {
-    if (inputValue.trim() && selectedDepartment) {
-      updateDesignations(selectedDepartment, inputValue.trim(), 'add');
-      setInputValue('');
-      setSelectedDepartment('');
-    }
+    if (!inputValue.trim() || !selectedDepartment) return;
+
+    updateDesignations(selectedDepartment, inputValue.trim(), 'add');
+    setInputValue('');
+    setSelectedDepartment('');
   };
 
-  /** Derived values */
   const designationCount = useMemo(
     () => Object.values(activeDesignations).reduce((acc, curr) => acc + curr.length, 0),
     [activeDesignations]
   );
 
-  /** Components */
   const DepartmentCard = ({ department }: { department: string }) => (
     <div className="shadow-md bg-white border border-border rounded-lg p-4 flex flex-col gap-3">
       <div className="flex gap-2 text-primary items-center justify-start">
-        <Icon name="Building" size="16" />
+        <Icon name="Building" size={16} />
         <Title variant="h4" className="text-md">
           {department}
         </Title>
@@ -166,14 +172,14 @@ export default function Designation({
         </div>
       </div>
       <div className="shadow-md space-y-4 bg-white border border-border rounded-lg p-4 text-primary">
-        {Object.entries(activeDesignations).map(([department, designations]) =>
-          designations.map((designation, i) => (
+        {Object.entries(activeDesignations).map(([department, desigs]) =>
+          desigs.map((des, i) => (
             <AddedSection
               key={`${department}-${i}`}
-              title={designation}
+              title={des}
               description={department}
               icon={<Icon name="Crown" size={16} />}
-              onDelete={() => updateDesignations(department, designation, 'remove')}
+              onDelete={() => updateDesignations(department, des, 'remove')}
             />
           ))
         )}
@@ -181,8 +187,14 @@ export default function Designation({
     </div>
   );
 
+  const { handleSubmit } = useForm();
+
+  function onSubmit() {
+    onNext();
+  }
+
   return (
-    <div className="flex flex-col p-6 pt-8 gap-6">
+    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col p-6 pt-8 gap-6">
       {/* Header */}
       <div className="flex flex-col gap-1 items-start">
         <Title variant="h3">Designations</Title>
@@ -192,15 +204,13 @@ export default function Designation({
       {/* Quick Add */}
       <div className="flex flex-col gap-1 items-start">
         <Title variant="h3">Quick Add by Department</Title>
-        <Description>
-          Click on common designations to add them quickly to each department
-        </Description>
+        <Description>Click on common designations to add them quickly</Description>
       </div>
-      {selectedDepartments
-        .filter(dep => commonDesignations[dep])
-        .map(dep => (
-          <DepartmentCard key={dep} department={dep} />
-        ))}
+      {departments.length > 0
+        ? departments.map(dep =>
+            commonDesignations[dep] ? <DepartmentCard key={dep} department={dep} /> : null
+          )
+        : null}
 
       {/* Add Custom */}
       <Title variant="h3" className="text-start">
@@ -211,8 +221,6 @@ export default function Designation({
           <InputComponent
             label="Designation Name *"
             placeholder="Enter designation name"
-            id="designationName"
-            type="text"
             value={inputValue}
             onChange={e => setInputValue(e.target.value)}
             icon={
@@ -228,25 +236,24 @@ export default function Designation({
         <div className="w-1/2">
           <Selector
             placeholder="Select department"
-            options={selectedDepartments}
-            value={selectedDepartment}
-            id="selectedDepartments"
             label="Department *"
+            options={departments || []}
+            value={selectedDepartment}
             onChange={setSelectedDepartment}
+            disabled={departments.length === 0}
           />
         </div>
       </div>
       <Buttons
-        variant="primary"
-        className="w-1/4"
         type="button"
-        size="sm"
         onClick={handleAddCustom}
-        disabled={!inputValue || !selectedDepartment}
+        variant="primary"
+        size="sm"
+        className="w-1/4"
+        disabled={!inputValue || !selectedDepartment || departments.length === 0}
       >
         <div className="flex gap-2 items-center justify-center">
-          <Icon name="Plus" size={16} />
-          Add Designation
+          <Icon name="Plus" size={16} /> Add Designation
         </div>
       </Buttons>
 
@@ -254,10 +261,11 @@ export default function Designation({
 
       <Note>
         Designations define job roles within departments. You can create hierarchical structures by
-        setting reporting relationships. Management nodes can have subordinates
+        setting reporting relationships.
       </Note>
 
       <LineBreak />
+
       <div className="w-full flex justify-between gap-4 items-center">
         <Buttons
           type="button"
@@ -272,21 +280,23 @@ export default function Designation({
           onClick={onNext}
           variant="primary"
           size="sm"
-          className="w-1/2 font-medium "
+          className="w-1/2 font-medium"
         >
-          <div className="flex items-center justify-center gap-3 font-medium ">
+          <div className="flex items-center justify-center gap-3 font-medium">
             Continue <Icon name="ArrowRight" size={16} />
           </div>
         </Buttons>
       </div>
+
       <LineBreak />
+
       <div className="flex justify-start items-center gap-4 w-fit px-2">
         <Buttons
           type="button"
           onClick={onPrev}
           variant="secondary"
           size="sm"
-          className="text-black font-medium "
+          className="text-black font-medium"
         >
           <div className="flex items-center justify-center gap-3 font-medium">
             <Icon name="ArrowLeft" size={16} />
@@ -294,6 +304,6 @@ export default function Designation({
           </div>
         </Buttons>
       </div>
-    </div>
+    </form>
   );
 }

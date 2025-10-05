@@ -1,6 +1,6 @@
 import { type JSX, useState } from 'react';
 
-import { useFormContext } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 
 import { Icon } from '@/components/Icons/Icon';
 import { AddedSection } from '@/components/ui/utils/AddSections';
@@ -12,7 +12,7 @@ import { Note } from '@/components/ui/utils/Note';
 import { Tab } from '@/components/ui/utils/Tabs';
 import { Title } from '@/components/ui/utils/Titles';
 
-import type { FormType } from '@/types/form-types';
+import type { DepartmentType } from '@/types/form-types';
 
 export default function Department({
   onNext,
@@ -21,7 +21,7 @@ export default function Department({
   onNext: () => void;
   onPrev: () => void;
 }): JSX.Element {
-  const { setValue, getValues } = useFormContext<FormType>();
+  const { setValue, getValues, handleSubmit } = useForm<DepartmentType>();
 
   const [tabs, setTabs] = useState(
     [
@@ -38,9 +38,7 @@ export default function Department({
     ].map(name => ({ name, active: false }))
   );
 
-  const [selectedTab, setSelectedTab] = useState<string[]>(
-    getValues('department.departmentNames') || []
-  );
+  const [selectedTab, setSelectedTab] = useState<string[]>(getValues('departmentNames') || []);
   const [inputValue, setInputValue] = useState('');
 
   // Toggle a quick-add tab
@@ -54,7 +52,7 @@ export default function Department({
 
       const updated = [...prev, clickedTab];
 
-      setValue('department.departmentNames', updated);
+      setValue('departmentNames', updated);
 
       return updated;
     });
@@ -66,7 +64,7 @@ export default function Department({
 
     setSelectedTab(updated);
 
-    setValue('department.departmentNames', updated);
+    setValue('departmentNames', updated);
 
     setTabs(prev => prev.map(tab => (tab.name === tabName ? { ...tab, active: false } : tab)));
   };
@@ -84,12 +82,17 @@ export default function Department({
 
     setSelectedTab(updated);
 
-    setValue('department.departmentNames', updated);
+    setValue('departmentNames', updated);
     setInputValue('');
   };
 
+  const onSubmit = (data: DepartmentType) => {
+    console.log(data);
+    onNext();
+  };
+
   return (
-    <div className="flex flex-col p-6 pt-8 gap-6">
+    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col p-6 pt-8 gap-6">
       {/* Header */}
       <div className="flex flex-col gap-1 items-start">
         <Title variant="h3">Departments</Title>
@@ -181,13 +184,7 @@ export default function Department({
         >
           Skip This Step
         </Buttons>
-        <Buttons
-          type="button"
-          variant="primary"
-          size="sm"
-          className="w-1/2 font-medium"
-          onClick={onNext}
-        >
+        <Buttons type="submit" variant="primary" size="sm" className="w-1/2 font-medium">
           <p className="flex items-center justify-center gap-4">
             <span className="font-semibold text-center">Continue</span>
             <Icon name="ArrowRight" size={16} color="white" />
@@ -210,6 +207,6 @@ export default function Department({
           </p>
         </Buttons>
       </div>
-    </div>
+    </form>
   );
 }

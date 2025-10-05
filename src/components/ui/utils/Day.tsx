@@ -42,6 +42,7 @@ export function Day({ children, isActive = false, onClick, className }: DayProps
   return (
     <button
       onClick={onClick}
+      type="button"
       className={cn(
         'ring-offset-[#fcfcfc] font-[400] text-sm px-3 py-2 bg-[#fcfcfc] text-black border border-[#dfe2e7] rounded-md gap-2 flex items-center justify-center hover:text-[#3c83f6] hover:bg-[#bedbfe] cursor-pointer transition-all duration-300',
         { 'bg-[#3c83f6] hover:bg-[#3c83f6e6] text-white hover:text-white': isActive },

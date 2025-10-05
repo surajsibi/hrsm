@@ -1,6 +1,6 @@
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
-import { Controller, useFieldArray, useFormContext } from 'react-hook-form';
+import { useFieldArray, useForm } from 'react-hook-form';
 
 import { Icon } from '@/components/Icons/Icon';
 import { AddedSection } from '@/components/ui/utils/AddSections';
@@ -16,9 +16,23 @@ import { Selector } from '@/components/ui/utils/Selector';
 import { TickLabel } from '@/components/ui/utils/TickLabel';
 import { Title } from '@/components/ui/utils/Titles';
 
-import type { FormType } from '@/types/form-types';
 // eslint-disable-next-line no-duplicate-imports
 import type { JSX } from 'react';
+
+interface ShiftType {
+  title?: string;
+  workType: string;
+  startingTime: string;
+  endingTime: string;
+  days: string[];
+  workingHours: string;
+  shiftTracking: boolean;
+  rotationalShifts: boolean;
+}
+
+interface FormType {
+  ShiftList: ShiftType[];
+}
 
 export default function Shifts({
   onNext,
@@ -33,21 +47,91 @@ export default function Shifts({
     []
   );
 
-  const { control, watch, setValue } = useFormContext<FormType>();
+  const [currentShift, setCurrentShift] = useState<ShiftType>({
+    title: '',
+    workType: 'Work From Office',
+    startingTime: '09:00',
+    endingTime: '18:00',
+    days: ['Monday'],
+    workingHours: '9',
+    shiftTracking: false,
+    rotationalShifts: false,
+  });
 
-  // For managing dynamic shifts list
+  const ShiftTemplates = useMemo(
+    () => [
+      {
+        title: 'Day Shift',
+        workType: 'Work From Office',
+        startingTime: '09:00',
+        endingTime: '18:00',
+        days: ['Monday'],
+      },
+      {
+        title: 'Night Shift',
+        workType: 'Work From Office',
+        startingTime: '22:00',
+        endingTime: '06:00',
+        days: ['Monday'],
+      },
+      {
+        title: 'Remote Shift',
+        workType: 'Work From Home',
+        startingTime: '10:00',
+        endingTime: '19:00',
+        days: ['Monday'],
+      },
+      {
+        title: 'Flexible Hours',
+        workType: 'Hybrid Work',
+        startingTime: '08:00',
+        endingTime: '17:00',
+        days: ['Monday'],
+      },
+    ],
+    []
+  );
+
+  const { control, handleSubmit } = useForm<FormType>({
+    defaultValues: {
+      ShiftList: [],
+    },
+  });
+
   const {
     fields: shifts,
     append,
     remove,
-  } = useFieldArray<FormType, 'ShiftList'>({
-    name: 'ShiftList',
+  } = useFieldArray({
     control,
+    name: 'ShiftList',
   });
 
-  const shiftValues = watch('Shift');
+  function onSubmit(data: FormType) {
+    console.log(data);
+    onNext();
+  }
 
-  // Calculate work hours
+  const handleAddShift = () => {
+    append({
+      ...currentShift,
+      workingHours: currentShift.workingHours, // already calculated
+    });
+
+    // Optional: reset currentShift form
+    setCurrentShift({
+      title: '',
+      workType: 'Work From Office',
+      startingTime: '09:00',
+      endingTime: '18:00',
+      days: ['Monday'],
+      workingHours: '9',
+      shiftTracking: false,
+      rotationalShifts: false,
+    });
+  };
+
+  // Function to calculate working hours
   const calculateWorkHours = (start: string, end: string) => {
     const [startH, startM] = start.split(':').map(Number);
     const [endH, endM] = end.split(':').map(Number);
@@ -55,77 +139,31 @@ export default function Shifts({
     const startMinutes = startH * 60 + startM;
     let endMinutes = endH * 60 + endM;
 
+    // If end is smaller than start, assume overnight shift
     if (endMinutes <= startMinutes) endMinutes += 24 * 60;
 
     return (endMinutes - startMinutes) / 60;
   };
 
+  // Update working hours whenever start or end time changes
   useEffect(() => {
-    if (shiftValues.startingTime && shiftValues.endingTime) {
-      const hours = calculateWorkHours(shiftValues.startingTime, shiftValues.endingTime);
+    const hours = calculateWorkHours(currentShift.startingTime, currentShift.endingTime);
 
-      setValue('Shift.workingHours', hours);
-    }
-  }, [shiftValues.startingTime, shiftValues.endingTime, setValue]);
+    setCurrentShift(prev => ({ ...prev, workingHours: hours.toString() }));
+  }, [currentShift.startingTime, currentShift.endingTime]);
 
   const handleDayClick = (day: string) => {
-    const days = shiftValues.days ?? [];
-    const updatedDays = days.includes(day) ? days.filter(d => d !== day) : [...days, day];
+    setCurrentShift(prev => {
+      const days = prev.days.includes(day)
+        ? prev.days.filter(d => d !== day) // remove if already selected
+        : [...prev.days, day]; // add if not selected
 
-    setValue('Shift.days', updatedDays);
-  };
-
-  const handleAddShift = () => {
-    append({ ...shiftValues });
-    setValue('Shift', {
-      title: '',
-      workType: 'Work From Office',
-      startingTime: '09:00',
-      endingTime: '18:00',
-      days: ['Monday'],
-      workingHours: 9,
-      shiftTracking: false,
-      rotationalShifts: false,
+      return { ...prev, days };
     });
   };
 
-  // Shift templates
-  const ShiftTemplates = useMemo(
-    () => [
-      {
-        title: 'Day Shift',
-        workType: 'Work From Office',
-        startingTime: 9,
-        endingTime: 18,
-        days: ['Monday'],
-      },
-      {
-        title: 'Night Shift',
-        workType: 'Work From Office',
-        startingTime: 22,
-        endingTime: 6,
-        days: ['Monday'],
-      },
-      {
-        title: 'Remote Shift',
-        workType: 'Work From Home',
-        startingTime: 10,
-        endingTime: 19,
-        days: ['Monday'],
-      },
-      {
-        title: 'Flexible Hours',
-        workType: 'Hybrid Work',
-        startingTime: 8,
-        endingTime: 17,
-        days: ['Monday'],
-      },
-    ],
-    []
-  );
-
   return (
-    <div className="flex flex-col p-6 pt-8 gap-6">
+    <form className="flex flex-col p-6 pt-8 gap-6" onSubmit={handleSubmit(onSubmit)}>
       <div className="flex flex-col gap-1 items-start">
         <Title variant="h3">Shifts</Title>
         <Description>Configure work schedules</Description>
@@ -142,15 +180,15 @@ export default function Shifts({
         {ShiftTemplates.map(shift => (
           <AddShift
             key={shift.title}
-            {...shift}
+            title={shift.title}
+            workType={shift.workType}
+            startingTime={Number.parseInt(shift.startingTime.split(':')[0], 10)} // "09:00" → 9
+            endingTime={Number.parseInt(shift.endingTime.split(':')[0], 10)} // "18:00" → 18
+            days={shift.days}
             handleAddShift={() =>
               append({
-                title: shift.title,
-                workType: shift.workType,
-                startingTime: `${shift.startingTime.toString().padStart(2, '0')}:00`,
-                endingTime: `${shift.endingTime.toString().padStart(2, '0')}:00`,
-                days: shift.days,
-                workingHours: (shift.endingTime - shift.startingTime + 24) % 24 || 0,
+                ...shift,
+                workingHours: calculateWorkHours(shift.startingTime, shift.endingTime).toString(),
                 shiftTracking: false,
                 rotationalShifts: false,
               })
@@ -164,100 +202,64 @@ export default function Shifts({
         Create Custom Shift
       </Title>
 
-      <div className="flex flex-col gap-4">
-        <div className="flex gap-4 w-full">
-          <div className="w-1/2">
-            <Controller
-              name="Shift.title"
-              control={control}
-              render={({ field }) => (
-                <InputComponent
-                  label="Shift Name *"
-                  placeholder="Enter shift name"
-                  {...field}
-                  icon={
-                    <Icon
-                      name="Clock"
-                      size={16}
-                      color="#7a8799"
-                      className="absolute left-3 top-1/2 -translate-y-1/2"
-                    />
-                  }
-                />
-              )}
-            />
-          </div>
-          <div className="w-1/2">
-            <Controller
-              name="Shift.workType"
-              control={control}
-              render={({ field }) => (
-                <Selector options={workTypes} id="workType" label="Work Type *" {...field} />
-              )}
-            />
-          </div>
+      {/* name, work type */}
+      <div className="flex gap-4 w-full">
+        <div className="w-1/2">
+          <InputComponent
+            label="Shift Name *"
+            placeholder="Enter shift name"
+            value={currentShift.title}
+            onChange={e => setCurrentShift({ ...currentShift, title: e.target.value })}
+            icon={
+              <Icon
+                name="Clock"
+                size={16}
+                color="#7a8799"
+                className="absolute left-3 top-1/2 -translate-y-1/2"
+              />
+            }
+          />
         </div>
-
-        <div className="flex gap-4 w-full">
-          <div className="w-1/3">
-            <Controller
-              name="Shift.startingTime"
-              control={control}
-              render={({ field }) => (
-                <InputComponent
-                  label="Check-in Time *"
-                  type="time"
-                  {...field}
-                  icon={
-                    <Icon
-                      name="Clock"
-                      size={16}
-                      color="#7a8799"
-                      className="absolute left-3 top-1/2 -translate-y-1/2"
-                    />
-                  }
-                />
-              )}
-            />
-          </div>
-          <div className="w-1/3">
-            <Controller
-              name="Shift.endingTime"
-              control={control}
-              render={({ field }) => (
-                <InputComponent
-                  label="Check-out Time *"
-                  type="time"
-                  {...field}
-                  icon={
-                    <Icon
-                      name="Clock"
-                      size={16}
-                      color="#7a8799"
-                      className="absolute left-3 top-1/2 -translate-y-1/2"
-                    />
-                  }
-                />
-              )}
-            />
-          </div>
-          <div className="w-1/3">
-            <Controller
-              name="Shift.workingHours"
-              control={control}
-              render={({ field }) => (
-                <InputComponent
-                  label="Working Hours"
-                  type="number"
-                  value={field.value.toString()}
-                  readOnly
-                />
-              )}
-            />
-          </div>
+        <div className="w-1/2">
+          <Selector
+            onChange={val => setCurrentShift({ ...currentShift, workType: val })}
+            value={currentShift.workType}
+            options={workTypes}
+            id="workType"
+            label="Work Type *"
+          />
         </div>
       </div>
 
+      {/* times + hours */}
+      <div className="flex gap-4 w-full">
+        <div className="w-1/3">
+          <InputComponent
+            label="Check-in Time *"
+            type="time"
+            value={currentShift.startingTime}
+            onChange={e => setCurrentShift({ ...currentShift, startingTime: e.target.value })}
+          />
+        </div>
+        <div className="w-1/3">
+          <InputComponent
+            label="Check-out Time *"
+            type="time"
+            value={currentShift.endingTime}
+            onChange={e => setCurrentShift({ ...currentShift, endingTime: e.target.value })}
+          />
+        </div>
+        <div className="w-1/3">
+          <InputComponent
+            label="Working Hours"
+            type="test"
+            value={currentShift.workingHours}
+            readOnly
+          />
+        </div>
+      </div>
+
+      {/* Days */}
       <div className="flex flex-col gap-1 items-start">
         <Label className="mb-2">Weekend Days</Label>
         <div className="flex gap-2 flex-wrap">
@@ -265,7 +267,7 @@ export default function Shifts({
             <Day
               key={day}
               onClick={() => handleDayClick(day)}
-              isActive={shiftValues.days.includes(day)}
+              isActive={currentShift.days?.includes(day) ?? false}
             >
               {day}
             </Day>
@@ -273,35 +275,36 @@ export default function Shifts({
         </div>
       </div>
 
-      <div className="flex flex-col justify-center gap-3">
-        <Controller
-          name="Shift.shiftTracking"
-          control={control}
-          render={({ field }) => (
-            <TickLabel checked={field.value} onChange={field.onChange} className="justify-start">
-              Enable shift tracking
-            </TickLabel>
-          )}
-        />
-        <Controller
-          name="Shift.rotationalShifts"
-          control={control}
-          render={({ field }) => (
-            <TickLabel checked={field.value} onChange={field.onChange} className="justify-start">
-              Rotational shift
-            </TickLabel>
-          )}
-        />
+      {/* flags */}
+      <div className="flex flex-col justify-center gap-3 items-start">
+        <TickLabel
+          checked={currentShift.shiftTracking}
+          onChange={() =>
+            setCurrentShift(prev => ({ ...prev, shiftTracking: !prev.shiftTracking }))
+          }
+        >
+          Enable shift tracking
+        </TickLabel>
+
+        <TickLabel
+          checked={currentShift.rotationalShifts}
+          onChange={() =>
+            setCurrentShift(prev => ({ ...prev, rotationalShifts: !prev.rotationalShifts }))
+          }
+        >
+          Rotational shift
+        </TickLabel>
       </div>
 
       <Buttons
+        type="button"
         disabled={
-          shiftValues.workingHours === 0 ||
-          !shiftValues?.days?.length ||
-          !shiftValues.title ||
-          !shiftValues.workType ||
-          !shiftValues.startingTime ||
-          !shiftValues.endingTime
+          currentShift.workingHours === '0' ||
+          !currentShift?.days?.length ||
+          !currentShift.title ||
+          !currentShift.workType ||
+          !currentShift.startingTime ||
+          !currentShift.endingTime
         }
         onClick={handleAddShift}
         className="w-fit"
@@ -314,6 +317,7 @@ export default function Shifts({
         </div>
       </Buttons>
 
+      {/* Added shifts list */}
       {shifts.length > 0 && (
         <div>
           <Title variant="h3" className="font-medium text-start">
@@ -332,12 +336,15 @@ export default function Shifts({
           </div>
         </div>
       )}
+
       <Note>
-        &nbsp; Shifts define working schedules and attendance policies. You can create multiple
-        shifts for different teams or departments. Rotational shifts automatically cycle through
-        different patterns.
+        Shifts define working schedules and attendance policies. You can create multiple shifts for
+        different teams or departments.
       </Note>
+
       <LineBreak />
+
+      {/* Footer actions */}
       <div className="w-full flex justify-between gap-4 items-center">
         <Buttons
           type="button"
@@ -347,19 +354,15 @@ export default function Shifts({
         >
           Skip This Step
         </Buttons>
-        <Buttons
-          type="button"
-          onClick={onNext}
-          variant="primary"
-          size="sm"
-          className="w-1/2 font-medium "
-        >
+        <Buttons type="submit" variant="primary" size="sm" className="w-1/2 font-medium ">
           <div className="flex items-center justify-center gap-3 font-medium ">
             Continue <Icon name="ArrowRight" size={16} />
           </div>
         </Buttons>
       </div>
+
       <LineBreak />
+
       <div className="flex justify-start items-center gap-4 w-fit px-2">
         <Buttons
           type="button"
@@ -374,6 +377,6 @@ export default function Shifts({
           </div>
         </Buttons>
       </div>
-    </div>
+    </form>
   );
 }

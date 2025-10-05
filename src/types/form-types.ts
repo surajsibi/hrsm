@@ -53,7 +53,27 @@ export interface DepartmentType {
 }
 
 export interface DesignationType {
-  designationNames: string[];
+  designation: Record<string, string[]>;
+}
+
+export interface IUsers {
+  firstName: string;
+  lastName: string;
+  emailAddress: string;
+  phoneNumber: string;
+  dateOfBirth?: string;
+  gender?: 'Male' | 'Female' | 'Other';
+  address?: string;
+  isOnProbation: boolean;
+  department?: string;
+  designation?: string;
+  userRole?: string;
+  password?: string;
+  probationStartDate?: string;
+  probationEndDate?: string;
+}
+export interface UserList {
+  userList: IUsers[];
 }
 
 export interface FormType {
@@ -82,4 +102,21 @@ export interface FormType {
     rotationalShifts: boolean;
   };
   ShiftList: FormType['Shift'][];
+  users: {
+    firstName: string;
+    lastName: string;
+    emailAddress: string;
+    phoneNumber: string;
+    dateOfBirth?: string;
+    gender?: 'Male' | 'Female' | 'Other';
+    address?: string;
+    isOnProbation: boolean;
+    department?: string;
+    designation?: string;
+    userRole?: string;
+    password?: string;
+    probationStartDate?: string;
+    probationEndDate?: string;
+  };
+  userList: FormType['users'][];
 }
