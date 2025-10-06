@@ -14,6 +14,11 @@ interface InputComponentProps extends InputHTMLAttributes<HTMLInputElement> {
   label?: string;
 
   /**
+   * Optional parent container CSS class for styling.
+   */
+  parentClassName?: string;
+
+  /**
    * Unique identifier for the input field.
    * Used for accessibility and linking with the label.
    */
@@ -77,6 +82,7 @@ export function InputComponent({
   label,
   placeholder,
   id,
+  parentClassName,
   className,
   icon,
   error,
@@ -85,7 +91,12 @@ export function InputComponent({
   ...props
 }: InputComponentProps) {
   return (
-    <div className="flex flex-col justify-center items-start gap-2 w-full relative">
+    <div
+      className={cn(
+        'flex flex-col justify-center items-start gap-2 w-full relative ',
+        parentClassName
+      )}
+    >
       {label && <Label htmlFor={id}>{label}</Label>}
       <div
         className={cn(

@@ -1,5 +1,14 @@
 'use client';
-import React, { ReactNode, useEffect, useRef, useState, memo, useCallback } from 'react';
+import React, {
+  ReactNode,
+  useEffect,
+  useRef,
+  useState,
+  memo,
+  useCallback,
+  HTMLAttributes,
+  HTMLInputTypeAttribute,
+} from 'react';
 import { cn } from '@/utils';
 import { Icon } from '@/components/Icons/Icon';
 import { Label } from '@/components/ui/utils/Label';
@@ -12,6 +21,9 @@ import { Description } from '@/components/ui/utils/Descriptions';
 interface SelectorProps {
   /** Optional custom content to render inside the button before the selected value. */
   children?: ReactNode;
+
+  /** Optional additional Tailwind or custom classes. */
+  className?: string;
 
   /** Placeholder text when no value is selected. Defaults to `"Select..."`. */
   placeholder?: string;
@@ -68,6 +80,7 @@ interface SelectorProps {
  */
 export const Selector = memo(function Selector({
   children,
+  className,
   placeholder = 'Select...',
   options = ['option1', 'option2', 'option3'],
   id,
@@ -136,7 +149,7 @@ export const Selector = memo(function Selector({
   );
 
   return (
-    <div className="w-full flex flex-col relative gap-2 ">
+    <div className={cn('w-full flex flex-col relative gap-2 ', className)}>
       {label && (
         <Label className="" htmlFor={id}>
           {label}
