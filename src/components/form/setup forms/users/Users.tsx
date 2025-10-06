@@ -1,4 +1,4 @@
-import { type JSX, useState } from 'react';
+import { type JSX, useCallback, useMemo, useState } from 'react';
 
 import { useForm } from 'react-hook-form';
 
@@ -24,13 +24,16 @@ export default function Users({
 }): JSX.Element {
   const { handleSubmit } = useForm<UserList>();
 
-  const roles = ['EMPLOYEE', 'ADMIN', 'HR MANAGER', 'MANAGER', 'TEAM LEAD', 'INTERN'];
+  const roles = useMemo(
+    () => ['EMPLOYEE', 'ADMIN', 'HR MANAGER', 'MANAGER', 'TEAM LEAD', 'INTERN'],
+    []
+  );
 
   const [departments, setDepartments] = useState<string[]>([]);
   const [designations, setDesignations] = useState<Record<string, string[]>>({});
   const [userList, setUserList] = useState<IUsers[]>([]);
 
-  const [currentUser, setCurrentUser] = useState<IUsers>({
+  const defaultUser: IUsers = {
     firstName: '',
     lastName: '',
     emailAddress: '',
@@ -45,11 +48,15 @@ export default function Users({
     password: '',
     probationStartDate: '',
     probationEndDate: '',
-  });
-
-  const handleDelete = (index: number) => {
-    setUserList(prev => prev.filter((_, i) => i !== index));
   };
+
+  const [currentUser, setCurrentUser] = useState<IUsers>({ ...defaultUser });
+
+  const resetCurrentUser = useCallback(() => setCurrentUser({ ...defaultUser }), []);
+
+  const handleDelete = useCallback((index: number) => {
+    setUserList(prev => prev.filter((_, i) => i !== index));
+  }, []);
 
   function generatePassword(length = 12): string {
     const upper = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -79,6 +86,26 @@ export default function Users({
         .join('')
     );
   }
+  const handleAddUser = useCallback(() => {
+    const userWithPassword = {
+      ...currentUser,
+      password: currentUser.password?.trim() ?? generatePassword(),
+    };
+
+    setUserList(prev => [...prev, userWithPassword]);
+
+    resetCurrentUser();
+  }, [currentUser, resetCurrentUser]);
+
+  const handleProbationToggle = useCallback(() => {
+    setCurrentUser(prev => ({
+      ...prev,
+      isOnProbation: !prev.isOnProbation,
+      probationStartDate: prev.isOnProbation ? new Date().toISOString().split('T')[0] : '',
+      probationEndDate: '',
+    }));
+  }, []);
+
   function onSubmit() {
     console.log(userList);
     onNext();
@@ -289,15 +316,7 @@ export default function Users({
       <TickLabel
         className="w-fit justify-starts"
         checked={currentUser.isOnProbation}
-        onChange={() =>
-          setCurrentUser(prev => ({
-            ...prev,
-            isOnProbation: !prev.isOnProbation,
-            probationStartDate: !prev.isOnProbation
-              ? new Date().toISOString().split('T')[0] // set today's date when enabling
-              : '', // reset when disabling
-          }))
-        }
+        onChange={handleProbationToggle}
       >
         Employee is on probation period
       </TickLabel>
@@ -351,36 +370,7 @@ export default function Users({
           !currentUser.emailAddress ||
           !currentUser.phoneNumber
         }
-        onClick={() => {
-          const userWithPassword = {
-            ...currentUser,
-            password:
-              currentUser.password && currentUser.password.trim() !== ''
-                ? currentUser.password
-                : generatePassword(),
-          };
-
-          // Add to list
-          setUserList(prev => [...prev, userWithPassword]);
-
-          // Reset after adding
-          setCurrentUser({
-            firstName: '',
-            lastName: '',
-            emailAddress: '',
-            phoneNumber: '',
-            dateOfBirth: '',
-            gender: 'Male',
-            address: '',
-            isOnProbation: false,
-            department: '',
-            designation: '',
-            userRole: 'EMPLOYEE',
-            password: '',
-            probationStartDate: '',
-            probationEndDate: '',
-          });
-        }}
+        onClick={handleAddUser}
       >
         <div className="text-white flex justify-center items-center">
           <Icon name="Plus" size={16} color="white" />

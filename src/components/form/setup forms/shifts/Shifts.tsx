@@ -204,59 +204,57 @@ export default function Shifts({
 
       {/* name, work type */}
       <div className="flex gap-4 w-full">
-        <div className="w-1/2">
-          <InputComponent
-            label="Shift Name *"
-            placeholder="Enter shift name"
-            value={currentShift.title}
-            onChange={e => setCurrentShift({ ...currentShift, title: e.target.value })}
-            icon={
-              <Icon
-                name="Clock"
-                size={16}
-                color="#7a8799"
-                className="absolute left-3 top-1/2 -translate-y-1/2"
-              />
-            }
-          />
-        </div>
-        <div className="w-1/2">
-          <Selector
-            onChange={val => setCurrentShift({ ...currentShift, workType: val })}
-            value={currentShift.workType}
-            options={workTypes}
-            id="workType"
-            label="Work Type *"
-          />
-        </div>
+        <InputComponent
+          parentClassName="w-1/2"
+          label="Shift Name *"
+          placeholder="Enter shift name"
+          value={currentShift.title}
+          onChange={e => setCurrentShift({ ...currentShift, title: e.target.value })}
+          icon={
+            <Icon
+              name="Clock"
+              size={16}
+              color="#7a8799"
+              className="absolute left-3 top-1/2 -translate-y-1/2"
+            />
+          }
+        />
+
+        <Selector
+          className="w-1/2"
+          onChange={val => setCurrentShift({ ...currentShift, workType: val })}
+          value={currentShift.workType}
+          options={workTypes}
+          id="workType"
+          label="Work Type *"
+        />
       </div>
 
       {/* times + hours */}
       <div className="flex gap-4 w-full">
-        <div className="w-1/3">
-          <InputComponent
-            label="Check-in Time *"
-            type="time"
-            value={currentShift.startingTime}
-            onChange={e => setCurrentShift({ ...currentShift, startingTime: e.target.value })}
-          />
-        </div>
-        <div className="w-1/3">
-          <InputComponent
-            label="Check-out Time *"
-            type="time"
-            value={currentShift.endingTime}
-            onChange={e => setCurrentShift({ ...currentShift, endingTime: e.target.value })}
-          />
-        </div>
-        <div className="w-1/3">
-          <InputComponent
-            label="Working Hours"
-            type="test"
-            value={currentShift.workingHours}
-            readOnly
-          />
-        </div>
+        <InputComponent
+          parentClassName="w-1/3"
+          label="Check-in Time *"
+          type="time"
+          value={currentShift.startingTime}
+          onChange={e => setCurrentShift({ ...currentShift, startingTime: e.target.value })}
+        />
+
+        <InputComponent
+          parentClassName="w-1/3"
+          label="Check-out Time *"
+          type="time"
+          value={currentShift.endingTime}
+          onChange={e => setCurrentShift({ ...currentShift, endingTime: e.target.value })}
+        />
+
+        <InputComponent
+          parentClassName="w-1/3"
+          label="Working Hours"
+          type="test"
+          value={currentShift.workingHours}
+          readOnly
+        />
       </div>
 
       {/* Days */}

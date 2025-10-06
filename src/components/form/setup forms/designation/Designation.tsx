@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 
 import { useForm } from 'react-hook-form';
 
@@ -69,60 +69,56 @@ const commonDesignations: Record<string, string[]> = {
 export default function Designation({
   onNext,
   onPrev,
-  apiDepartments = [],
+  apiDepartments = ['Legal & Compliance', 'Quality Assurance'],
 }: DesignationProps): JSX.Element {
   const { setValue, getValues } = useForm<DesignationType>({
     defaultValues: { designation: {} },
   });
+  const departments: string[] = useMemo(() => apiDepartments, [apiDepartments]);
 
-  const [departments] = useState<string[]>(apiDepartments);
   const [selectedDepartment, setSelectedDepartment] = useState<string>('');
   const [inputValue, setInputValue] = useState<string>('');
 
-  // Active designations (for quick UI toggling)
-  const [activeDesignations, setActiveDesignations] = useState<Record<string, string[]>>({});
-
-  // Keep activeDesignations in sync with RHF form
-  useEffect(() => {
+  const [activeDesignations, setActiveDesignations] = useState<Record<string, string[]>>(() => {
     const initial: Record<string, string[]> = {};
 
     for (const dep of departments) {
       initial[dep] = getValues(`designation.${dep}`) || [];
     }
-    setActiveDesignations(initial);
-  }, [departments]);
 
-  const updateDesignations = (
-    department: string,
-    designation: string,
-    action: 'add' | 'remove' | 'toggle'
-  ) => {
-    setActiveDesignations(prev => {
-      const current = prev[department] || [];
-      let updated: string[];
+    return initial;
+  });
 
-      switch (action) {
-        case 'add': {
-          updated = current.includes(designation) ? current : [...current, designation];
-          break;
+  const updateDesignations = useCallback(
+    (department: string, designation: string, action: 'add' | 'remove' | 'toggle') => {
+      setActiveDesignations(prev => {
+        const current = prev[department] || [];
+        let updated: string[];
+
+        switch (action) {
+          case 'add': {
+            updated = current.includes(designation) ? current : [...current, designation];
+            break;
+          }
+          case 'remove': {
+            updated = current.filter(d => d !== designation);
+            break;
+          }
+          case 'toggle': {
+            updated = current.includes(designation)
+              ? current.filter(d => d !== designation)
+              : [...current, designation];
+            break;
+          }
         }
-        case 'remove': {
-          updated = current.filter(d => d !== designation);
-          break;
-        }
-        case 'toggle': {
-          updated = current.includes(designation)
-            ? current.filter(d => d !== designation)
-            : [...current, designation];
-          break;
-        }
-      }
 
-      setValue(`designation.${department}`, updated); // update RHF form
+        setValue(`designation.${department}`, updated);
 
-      return { ...prev, [department]: updated };
-    });
-  };
+        return { ...prev, [department]: updated };
+      });
+    },
+    [setValue]
+  );
 
   const handleAddCustom = () => {
     if (!inputValue.trim() || !selectedDepartment) return;
@@ -187,14 +183,8 @@ export default function Designation({
     </div>
   );
 
-  const { handleSubmit } = useForm();
-
-  function onSubmit() {
-    onNext();
-  }
-
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col p-6 pt-8 gap-6">
+    <form className="flex flex-col p-6 pt-8 gap-6">
       {/* Header */}
       <div className="flex flex-col gap-1 items-start">
         <Title variant="h3">Designations</Title>
@@ -217,32 +207,31 @@ export default function Designation({
         Add Custom Designation
       </Title>
       <div className="flex w-full gap-4">
-        <div className="w-1/2">
-          <InputComponent
-            label="Designation Name *"
-            placeholder="Enter designation name"
-            value={inputValue}
-            onChange={e => setInputValue(e.target.value)}
-            icon={
-              <Icon
-                name="Crown"
-                size={16}
-                color="#7a8799"
-                className="absolute left-3 top-1/2 -translate-y-1/2"
-              />
-            }
-          />
-        </div>
-        <div className="w-1/2">
-          <Selector
-            placeholder="Select department"
-            label="Department *"
-            options={departments || []}
-            value={selectedDepartment}
-            onChange={setSelectedDepartment}
-            disabled={departments.length === 0}
-          />
-        </div>
+        <InputComponent
+          label="Designation Name *"
+          placeholder="Enter designation name"
+          value={inputValue}
+          parentClassName="w-1/2"
+          onChange={e => setInputValue(e.target.value)}
+          icon={
+            <Icon
+              name="Crown"
+              size={16}
+              color="#7a8799"
+              className="absolute left-3 top-1/2 -translate-y-1/2"
+            />
+          }
+        />
+
+        <Selector
+          placeholder="Select department"
+          label="Department *"
+          options={departments || []}
+          value={selectedDepartment}
+          onChange={setSelectedDepartment}
+          disabled={departments.length === 0}
+          className="w-1/2"
+        />
       </div>
       <Buttons
         type="button"
@@ -269,6 +258,7 @@ export default function Designation({
       <div className="w-full flex justify-between gap-4 items-center">
         <Buttons
           type="button"
+          onClick={onNext}
           variant="secondary"
           size="sm"
           className="w-1/2 font-medium text-black"
@@ -276,7 +266,7 @@ export default function Designation({
           Skip This Step
         </Buttons>
         <Buttons
-          type="button"
+          type="submit"
           onClick={onNext}
           variant="primary"
           size="sm"

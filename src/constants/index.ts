@@ -1,7 +1,7 @@
 import { isLive } from '@/utils';
 
 const constants = {
-  APP_NAME: 'HRMS Website',
+  APP_NAME: 'HRMS Solutions.',
   COOKIES: {
     TOKEN_NAME: 'token',
     THEME_NAME: 'theme',

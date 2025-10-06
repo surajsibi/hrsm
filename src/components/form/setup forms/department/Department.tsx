@@ -1,4 +1,4 @@
-import { type JSX, useState } from 'react';
+import { type JSX, useCallback, useMemo, useState } from 'react';
 
 import { useForm } from 'react-hook-form';
 
@@ -23,8 +23,8 @@ export default function Department({
 }): JSX.Element {
   const { setValue, getValues, handleSubmit } = useForm<DepartmentType>();
 
-  const [tabs, setTabs] = useState(
-    [
+  const quickAddDepartments = useMemo(
+    () => [
       'Human Resources',
       'Information Technology',
       'Sales & Marketing',
@@ -35,42 +35,51 @@ export default function Department({
       'Legal & Compliance',
       'Administration',
       'Quality Assurance',
-    ].map(name => ({ name, active: false }))
+    ],
+    []
   );
+
+  const [tabs, setTabs] = useState(quickAddDepartments.map(name => ({ name, active: false })));
 
   const [selectedTab, setSelectedTab] = useState<string[]>(getValues('departmentNames') || []);
   const [inputValue, setInputValue] = useState('');
 
-  // Toggle a quick-add tab
-  const toggleTab = (index: number) => {
-    const clickedTab = tabs[index].name;
+  const toggleTab = useCallback(
+    (index: number) => {
+      const name = tabs[index].name;
 
-    setTabs(prev => prev.map((tab, i) => (i === index ? { ...tab, active: !tab.active } : tab)));
+      setTabs(prev => prev.map((tab, i) => (i === index ? { ...tab, active: !tab.active } : tab)));
 
-    setSelectedTab(prev => {
-      if (prev.includes(clickedTab)) return prev;
+      setSelectedTab(prev => {
+        if (prev.includes(name)) return prev;
 
-      const updated = [...prev, clickedTab];
+        const updated = [...prev, name];
 
-      setValue('departmentNames', updated);
+        setValue('departmentNames', updated);
 
-      return updated;
-    });
-  };
+        return updated;
+      });
+    },
+    [tabs, setValue]
+  );
 
-  // Delete a selected tab
-  const onDelete = (tabName: string) => {
-    const updated = selectedTab.filter(name => name !== tabName);
+  const onDelete = useCallback(
+    (name: string) => {
+      setSelectedTab(prev => {
+        const updated = prev.filter(dep => dep !== name);
 
-    setSelectedTab(updated);
+        setValue('departmentNames', updated);
 
-    setValue('departmentNames', updated);
+        return updated;
+      });
 
-    setTabs(prev => prev.map(tab => (tab.name === tabName ? { ...tab, active: false } : tab)));
-  };
+      setTabs(prev => prev.map(tab => (tab.name === name ? { ...tab, active: false } : tab)));
+    },
+    [setValue]
+  );
 
   // Add custom department(s)
-  const addCustomDepartment = () => {
+  const addCustomDepartment = useCallback(() => {
     const entries = inputValue
       .split(',')
       .map(name => name.trim())
@@ -78,13 +87,16 @@ export default function Department({
 
     if (entries.length === 0) return;
 
-    const updated = [...new Set([...selectedTab, ...entries])];
+    setSelectedTab(prev => {
+      const updated = [...new Set([...prev, ...entries])];
 
-    setSelectedTab(updated);
+      setValue('departmentNames', updated);
 
-    setValue('departmentNames', updated);
+      return updated;
+    });
+
     setInputValue('');
-  };
+  }, [inputValue, setValue]);
 
   const onSubmit = (data: DepartmentType) => {
     console.log(data);

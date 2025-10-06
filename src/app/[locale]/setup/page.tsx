@@ -10,7 +10,7 @@ import Users from '@/components/form/setup forms/users/Users';
 import Header from '@/components/setup/Header';
 
 export default function HRMSSetupPage(): JSX.Element {
-  const [currentStep, setCurrentStep] = useState(1);
+  const [currentStep, setCurrentStep] = useState(4);
 
   function goNext() {
     setCurrentStep(currentStep + 1);
