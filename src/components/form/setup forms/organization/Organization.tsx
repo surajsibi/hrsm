@@ -28,6 +28,8 @@ export default function Organization({ onNext }: { onNext: () => void }): JSX.El
     onNext();
   };
 
+  const iconClass = 'absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none';
+
   const companyTypes = useMemo(
     () => [
       'Private Limited',
@@ -75,14 +77,7 @@ export default function Organization({ onNext }: { onNext: () => void }): JSX.El
               required: 'Company name is required',
             })}
             error={errors?.companyName}
-            icon={
-              <Icon
-                name="Building"
-                size={16}
-                color="#7a8799"
-                className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none"
-              />
-            }
+            icon={<Icon name="Building" size={16} color="#7a8799" className={iconClass} />}
           />
 
           <Controller
@@ -115,14 +110,7 @@ export default function Organization({ onNext }: { onNext: () => void }): JSX.El
               pattern: { value: /^\S+@\S+$/i, message: 'Invalid email address' },
             })}
             error={errors?.companyEmail}
-            icon={
-              <Icon
-                name="Mail"
-                size={16}
-                color="#7a8799"
-                className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none"
-              />
-            }
+            icon={<Icon name="Mail" size={16} color="#7a8799" className={iconClass} />}
           />
 
           <InputComponent
@@ -135,14 +123,7 @@ export default function Organization({ onNext }: { onNext: () => void }): JSX.El
               required: 'Company phone number is required',
             })}
             error={errors?.CompanyPhoneNumber}
-            icon={
-              <Icon
-                name="Phone"
-                size={16}
-                color="#7a8799"
-                className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none"
-              />
-            }
+            icon={<Icon name="Phone" size={16} color="#7a8799" className={iconClass} />}
           />
         </div>
 
@@ -160,14 +141,7 @@ export default function Organization({ onNext }: { onNext: () => void }): JSX.El
             })}
             parentClassName="w-1/2"
             error={errors?.companyWebsite}
-            icon={
-              <Icon
-                name="Globe"
-                size={16}
-                color="#7a8799"
-                className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none"
-              />
-            }
+            icon={<Icon name="Globe" size={16} color="#7a8799" className={iconClass} />}
           />
 
           <Controller
@@ -181,14 +155,7 @@ export default function Organization({ onNext }: { onNext: () => void }): JSX.El
                 id="companySize"
                 label="Company Size"
                 className="w-1/2"
-                icon={
-                  <Icon
-                    name="Users"
-                    size={16}
-                    color="#7a8799"
-                    className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none"
-                  />
-                }
+                icon={<Icon name="Users" size={16} color="#7a8799" className={iconClass} />}
               />
             )}
           />
@@ -202,14 +169,7 @@ export default function Organization({ onNext }: { onNext: () => void }): JSX.El
             required: 'Company address is required',
           })}
           error={errors?.companyAddress}
-          icon={
-            <Icon
-              name="MapPin"
-              size={16}
-              color="#7a8799"
-              className="absolute left-3 top-[24%] -translate-y-1/2 w-4 h-4 pointer-events-none"
-            />
-          }
+          icon={<Icon name="MapPin" size={16} color="#7a8799" className={iconClass} />}
         />
 
         <Textarea
