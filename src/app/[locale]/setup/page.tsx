@@ -10,24 +10,31 @@ import Users from '@/components/form/setup forms/users/Users';
 import Header from '@/components/setup/Header';
 
 export default function HRMSSetupPage(): JSX.Element {
-  const [currentStep, setCurrentStep] = useState(5);
+  const [currentStep, setCurrentStep] = useState(1);
+
+  function goNext() {
+    setCurrentStep(currentStep + 1);
+  }
+  function goPrev() {
+    setCurrentStep(currentStep - 1);
+  }
 
   const renderStep = () => {
     switch (currentStep) {
       case 1: {
-        return <Organization onNext={() => setCurrentStep(2)} />;
+        return <Organization onNext={goNext} />;
       }
       case 2: {
-        return <Department onNext={() => setCurrentStep(3)} onPrev={() => setCurrentStep(1)} />;
+        return <Department onNext={goNext} onPrev={goPrev} />;
       }
       case 3: {
-        return <Designation onNext={() => setCurrentStep(4)} onPrev={() => setCurrentStep(2)} />;
+        return <Designation onNext={goNext} onPrev={goPrev} />;
       }
       case 4: {
-        return <Shifts onNext={() => setCurrentStep(5)} onPrev={() => setCurrentStep(3)} />;
+        return <Shifts onNext={goNext} onPrev={goPrev} />;
       }
       case 5: {
-        return <Users onNext={() => setCurrentStep(6)} onPrev={() => setCurrentStep(4)} />;
+        return <Users onNext={goNext} onPrev={goPrev} />;
       }
       case 6: {
         return <Complete />;

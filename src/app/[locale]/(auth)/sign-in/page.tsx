@@ -6,5 +6,4 @@ const SignInPage = (): JSX.Element => {
   return <SignInForm />;
 };
 
-
 export default SignInPage;
