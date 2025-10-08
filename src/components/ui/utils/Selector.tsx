@@ -40,6 +40,9 @@ interface SelectorProps {
   /** Callback function called when an option is selected. Receives the selected value as a parameter. */
   onChange?: (value: string) => void;
 
+  /** onBlur */
+  onBlur?: () => void; //
+
   /** Disable the selector button. */
   disabled?: boolean;
 
@@ -90,6 +93,7 @@ export const Selector = memo(function Selector({
   onChange,
   error,
   disabled,
+  onBlur,
 }: SelectorProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [highlightedIndex, setHighlightedIndex] = useState<number>(-1);
@@ -165,6 +169,9 @@ export const Selector = memo(function Selector({
         aria-controls={`${id}-listbox`}
         onClick={() => setIsOpen(!isOpen)}
         onKeyDown={handleKeyDown}
+        onBlur={() => {
+          onBlur?.();
+        }}
         className={cn(
           'flex items-center justify-between text-sm text-black px-3 py-2 w-full rounded-md border border-gray-300',
           'focus:border-blue-500 focus:outline-2 focus:outline-offset-4 focus:outline-blue-500',
@@ -206,6 +213,7 @@ export const Selector = memo(function Selector({
             onClick={() => {
               onChange?.(item);
               setIsOpen(false);
+              onBlur?.();
             }}
             className={cn(
               'text-sm text-black px-6 py-2 w-full text-left rounded-sm hover:bg-blue-100 hover:text-blue-500',

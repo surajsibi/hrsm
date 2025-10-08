@@ -20,7 +20,7 @@ export default function ResetPassword({ onNext }: { onNext: () => void }): JSX.E
 
   const onSubmit = async (data: PasswordSetup) => {
     try {
-      await new Promise(resolve => setTimeout(resolve, 5000));
+      await new Promise(resolve => setTimeout(resolve, 1000));
 
       reset();
 
@@ -42,7 +42,7 @@ export default function ResetPassword({ onNext }: { onNext: () => void }): JSX.E
       </div>
       <form onSubmit={handleSubmit(onSubmit)} className="w-full">
         <InputComponent
-          label="Tentant Code"
+          label="Email"
           placeholder="Enter your email"
           id="resetEmail"
           type="email"
@@ -68,6 +68,7 @@ export default function ResetPassword({ onNext }: { onNext: () => void }): JSX.E
           disabled={isSubmitting || !isValid}
           variant="primary"
           loading={isSubmitting}
+          type="submit"
           loadingChildren="Sending..."
           className="w-full mt-6"
         >

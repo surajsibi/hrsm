@@ -1,3 +1,5 @@
+'use client';
+
 import { useFormContext } from 'react-hook-form';
 
 import { Icon } from '@/components/Icons/Icon';
@@ -21,7 +23,7 @@ export default function SetNewPassword(): JSX.Element {
 
   const onSubmit = async (data: PasswordSetup) => {
     try {
-      await new Promise(resolve => setTimeout(resolve, 5000));
+      await new Promise(resolve => setTimeout(resolve, 1000));
 
       reset();
 

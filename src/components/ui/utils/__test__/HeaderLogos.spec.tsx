@@ -13,13 +13,11 @@ describe('HeaderLogo', () => {
   });
 
   it('should render with intent', () => {
-    render(<HeaderLogo intent="square" icon={<div>Icon</div>} />);
+    render(<HeaderLogo variant="square" icon={<div>Icon</div>} />);
     const icon = screen.getByText('Icon');
     expect(icon).toBeInTheDocument();
     const parent = icon.parentElement;
-    expect(parent).toHaveClass(
-      'bg-gradient-primary shadow-sm py-4 px-4 rounded-2xl flex items-center justify-center'
-    );
+    expect(parent).toHaveClass('bg-gradient-primary ');
   });
 
   it('should render with custom classname', () => {

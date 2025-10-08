@@ -7,7 +7,7 @@ describe('Buttons', () => {
     render(<Buttons>Button</Buttons>);
     const button = screen.getByRole('button', { name: /button/i });
     expect(button).toHaveClass('border-[#dfe2e7]');
-    expect(button).toHaveClass('text-base');
+    expect(button).toHaveClass('text-lg');
     expect(button).not.toBeDisabled();
   });
 

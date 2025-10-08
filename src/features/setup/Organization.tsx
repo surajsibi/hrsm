@@ -21,12 +21,14 @@ export default function Organization({ onNext }: { onNext: () => void }): JSX.El
     control,
     handleSubmit,
     formState: { errors, isSubmitting, isValid },
-  } = useForm<OrganizationType>();
+  } = useForm<OrganizationType>({ mode: 'all' });
 
   const onSubmit = (data: OrganizationType) => {
     console.log(data);
     onNext();
   };
+
+  console.log(errors);
 
   const iconClass = 'absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none';
 
@@ -83,7 +85,10 @@ export default function Organization({ onNext }: { onNext: () => void }): JSX.El
           <Controller
             name="companyType"
             control={control}
-            rules={{ required: 'Company type is required' }}
+            rules={{
+              required: 'Company type is required',
+              onBlur: value => companyTypes.includes(value) || 'Company type is required',
+            }}
             render={({ field }) => (
               <Selector
                 className="w-1/2"
