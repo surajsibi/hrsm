@@ -29,8 +29,8 @@ export default function Users({
     []
   );
 
-  const [departments, setDepartments] = useState<string[]>([]);
-  const [designations, setDesignations] = useState<Record<string, string[]>>({});
+  const [departments] = useState<string[]>([]);
+  const [designations] = useState<Record<string, string[]>>({});
   const [userList, setUserList] = useState<IUsers[]>([]);
 
   const defaultUser: IUsers = {
@@ -152,7 +152,7 @@ export default function Users({
           <div className="w-1/2">
             <InputComponent
               label="Last Name *"
-              placeholder="Enter Last name"
+              placeholder="Enter last name"
               id="lastName"
               type="text"
               value={currentUser.lastName}

@@ -17,6 +17,8 @@ interface AddShiftProps {
   days?: string[];
   /** Action triggered when clicking "Add Shift" */
   handleAddShift?: () => void;
+  /** Disable the "Add Shift" button */
+  disabled?: boolean;
 }
 
 /** Format a number (24h) into 12h time with AM/PM */
@@ -40,6 +42,7 @@ export const AddShift = memo(function AddShift({
   endingTime,
   days = ['Sunday', 'Monday'],
   handleAddShift,
+  disabled,
 }: AddShiftProps) {
   const hours = (endingTime - startingTime + 24) % 24;
   const timeRange = `${formatTime(startingTime)} - ${formatTime(endingTime)} (${hours}h)`;
@@ -75,6 +78,7 @@ export const AddShift = memo(function AddShift({
           variant="default"
           size="sm"
           className="w-full "
+          disabled={disabled}
           onClick={handleAddShift}
         >
           Add Shift

@@ -92,7 +92,7 @@ export function InputComponent({
 }: InputComponentProps) {
   return (
     <div
-      data-textid={id}
+      data-testid={id}
       className={cn(
         'flex flex-col justify-center items-start gap-2 w-full relative ',
         parentClassName

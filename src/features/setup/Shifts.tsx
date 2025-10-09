@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { type JSX, useEffect, useMemo, useState } from 'react';
 
 import { useFieldArray, useForm } from 'react-hook-form';
 
@@ -6,7 +6,6 @@ import { Icon } from '@/components/Icons/Icon';
 import { AddedSection } from '@/components/ui/utils/AddSections';
 import { AddShift } from '@/components/ui/utils/AddShift';
 import { Buttons } from '@/components/ui/utils/Buttons';
-import { Day } from '@/components/ui/utils/Day';
 import { Description } from '@/components/ui/utils/Descriptions';
 import { InputComponent } from '@/components/ui/utils/InputComponent';
 import { Label } from '@/components/ui/utils/Label';
@@ -15,9 +14,7 @@ import { Note } from '@/components/ui/utils/Note';
 import { Selector } from '@/components/ui/utils/Selector';
 import { TickLabel } from '@/components/ui/utils/TickLabel';
 import { Title } from '@/components/ui/utils/Titles';
-
-// eslint-disable-next-line no-duplicate-imports
-import type { JSX } from 'react';
+import { cn } from '@/utils';
 
 interface ShiftType {
   title?: string;
@@ -182,9 +179,10 @@ export default function Shifts({
             key={shift.title}
             title={shift.title}
             workType={shift.workType}
-            startingTime={Number.parseInt(shift.startingTime.split(':')[0], 10)} // "09:00" → 9
-            endingTime={Number.parseInt(shift.endingTime.split(':')[0], 10)} // "18:00" → 18
+            startingTime={Number.parseInt(shift.startingTime.split(':')[0], 10)}
+            endingTime={Number.parseInt(shift.endingTime.split(':')[0], 10)}
             days={shift.days}
+            disabled={shifts.some(s => s.title === shift.title)}
             handleAddShift={() =>
               append({
                 ...shift,
@@ -207,6 +205,7 @@ export default function Shifts({
         <InputComponent
           parentClassName="w-1/2"
           label="Shift Name *"
+          id="shiftName"
           placeholder="Enter shift name"
           value={currentShift.title}
           onChange={e => setCurrentShift({ ...currentShift, title: e.target.value })}
@@ -234,6 +233,7 @@ export default function Shifts({
       <div className="flex gap-4 w-full">
         <InputComponent
           parentClassName="w-1/3"
+          id="checkInTime"
           label="Check-in Time *"
           type="time"
           value={currentShift.startingTime}
@@ -243,6 +243,7 @@ export default function Shifts({
         <InputComponent
           parentClassName="w-1/3"
           label="Check-out Time *"
+          id="checkOutTime"
           type="time"
           value={currentShift.endingTime}
           onChange={e => setCurrentShift({ ...currentShift, endingTime: e.target.value })}
@@ -251,6 +252,7 @@ export default function Shifts({
         <InputComponent
           parentClassName="w-1/3"
           label="Working Hours"
+          id="workingHours"
           type="test"
           value={currentShift.workingHours}
           readOnly
@@ -262,13 +264,20 @@ export default function Shifts({
         <Label className="mb-2">Weekend Days</Label>
         <div className="flex gap-2 flex-wrap">
           {weekDays.map(day => (
-            <Day
+            <button
               key={day}
               onClick={() => handleDayClick(day)}
-              isActive={currentShift.days?.includes(day) ?? false}
+              type="button"
+              className={cn(
+                'ring-offset-[#fcfcfc] font-[400] text-sm px-3 py-2 bg-[#fcfcfc] text-black border border-[#dfe2e7] rounded-md gap-2 flex items-center justify-center hover:text-[#3c83f6] hover:bg-[#bedbfe] cursor-pointer transition-all duration-300',
+                {
+                  'bg-[#3c83f6] hover:bg-[#3c83f6e6] text-white hover:text-white':
+                    currentShift.days?.includes(day) ?? false,
+                }
+              )}
             >
               {day}
-            </Day>
+            </button>
           ))}
         </div>
       </div>
@@ -295,6 +304,7 @@ export default function Shifts({
       </div>
 
       <Buttons
+        data-testid="add-shift"
         type="button"
         disabled={
           currentShift.workingHours === '0' ||
@@ -347,6 +357,7 @@ export default function Shifts({
         <Buttons
           type="button"
           variant="secondary"
+          onClick={onNext}
           size="sm"
           className="w-1/2 font-medium text-black"
         >
