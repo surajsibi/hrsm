@@ -25,7 +25,7 @@ export default function SignInForm(): JSX.Element {
 
   const onSubmit = async (data: SignInFormType) => {
     try {
-      await new Promise(resolve => setTimeout(resolve, 5000));
+      console.log('response', data);
       reset();
 
       return data;

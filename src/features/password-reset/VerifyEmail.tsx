@@ -26,8 +26,6 @@ export default function VerifyEmail({
 
   const onSubmit = async (data: PasswordSetup) => {
     try {
-      await new Promise(resolve => setTimeout(resolve, 1000));
-
       reset();
       onNext();
 

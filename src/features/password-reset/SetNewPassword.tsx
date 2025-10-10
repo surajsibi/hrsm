@@ -23,8 +23,6 @@ export default function SetNewPassword(): JSX.Element {
 
   const onSubmit = async (data: PasswordSetup) => {
     try {
-      await new Promise(resolve => setTimeout(resolve, 1000));
-
       reset();
 
       return data;

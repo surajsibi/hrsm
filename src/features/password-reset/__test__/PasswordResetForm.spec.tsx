@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 import PasswordResetForm from '@/features/password-reset/PasswordResetForm';
@@ -24,12 +24,11 @@ describe('PasswordResetForm', () => {
     await userEvent.type(input, 'rj7bH@example.com');
     expect(button).toBeInTheDocument();
     await userEvent.click(button);
-    await waitFor(() => {
-      expect(screen.getByText(/Verify Email/i)).toBeInTheDocument();
-      expect(screen.getByPlaceholderText(/Enter 6 digit code/i)).toBeInTheDocument();
-      expect(screen.getByRole('button', { name: /Back/i })).toBeInTheDocument();
-      expect(screen.getByRole('button', { name: /Verify OTP/i })).toBeInTheDocument();
-    });
+
+    expect(screen.getByText(/Verify Email/i)).toBeInTheDocument();
+    expect(screen.getByPlaceholderText(/Enter 6 digit code/i)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Back/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Verify OTP/i })).toBeInTheDocument();
   });
   it('should render set new password component', async () => {
     render(<PasswordResetForm />);
@@ -41,25 +40,22 @@ describe('PasswordResetForm', () => {
     await userEvent.type(input, 'rj7bH@example.com');
     expect(button).toBeInTheDocument();
     await userEvent.click(button);
-    await waitFor(() => {
-      expect(screen.getByText(/Verify Email/i)).toBeInTheDocument();
-      expect(screen.getByPlaceholderText(/Enter 6 digit code/i)).toBeInTheDocument();
-      expect(screen.getByRole('button', { name: /Back/i })).toBeInTheDocument();
-      expect(screen.getByRole('button', { name: /Verify OTP/i })).toBeInTheDocument();
-    });
+
+    expect(screen.getByText(/Verify Email/i)).toBeInTheDocument();
+    expect(screen.getByPlaceholderText(/Enter 6 digit code/i)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Back/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Verify OTP/i })).toBeInTheDocument();
+
     const verifyButton = screen.getByRole('button', { name: /Verify OTP/i });
 
     await userEvent.type(screen.getByPlaceholderText(/Enter 6 digit code/i), '123456');
 
     await userEvent.click(verifyButton);
-    await waitFor(() => {
-      expect(screen.getByText(/Set New Password/i)).toBeInTheDocument();
-      expect(
-        screen.getByText(/Create a strong new password for your account/i)
-      ).toBeInTheDocument();
-      expect(screen.getByPlaceholderText(/Enter new password/i)).toBeInTheDocument();
-      expect(screen.getByPlaceholderText(/Confirm new password/i)).toBeInTheDocument();
-      expect(screen.getByRole('button', { name: /update password/i })).toBeInTheDocument();
-    });
+
+    expect(screen.getByText(/Set New Password/i)).toBeInTheDocument();
+    expect(screen.getByText(/Create a strong new password for your account/i)).toBeInTheDocument();
+    expect(screen.getByPlaceholderText(/Enter new password/i)).toBeInTheDocument();
+    expect(screen.getByPlaceholderText(/Confirm new password/i)).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /update password/i })).toBeInTheDocument();
   });
 });

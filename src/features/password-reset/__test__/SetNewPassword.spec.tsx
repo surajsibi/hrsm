@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { FormProvider, useForm } from 'react-hook-form';
 
@@ -114,15 +114,11 @@ describe('New Password setter', () => {
 
     await userEvent.click(setPasswordButton);
 
-    expect(setPasswordButton).toHaveTextContent('Updating...');
-    expect(setPasswordButton).toBeDisabled();
-
     await userEvent.clear(password);
     await userEvent.clear(confirmPassword);
 
     expect(setPasswordButton).toBeDisabled();
-    await waitFor(() => {
-      expect(setPasswordButton).toHaveTextContent('Update Password');
-    });
+
+    expect(setPasswordButton).toHaveTextContent('Update Password');
   });
 });

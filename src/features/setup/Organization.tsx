@@ -174,7 +174,14 @@ export default function Organization({ onNext }: { onNext: () => void }): JSX.El
             required: 'Company address is required',
           })}
           error={errors?.companyAddress}
-          icon={<Icon name="MapPin" size={16} color="#7a8799" className={iconClass} />}
+          icon={
+            <Icon
+              name="MapPin"
+              size={16}
+              color="#7a8799"
+              className={'absolute left-3 top-[10%]  w-4 h-4 pointer-events-none'}
+            />
+          }
         />
 
         <Textarea

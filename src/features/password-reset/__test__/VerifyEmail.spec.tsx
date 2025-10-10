@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { FormProvider, useForm } from 'react-hook-form';
 
@@ -97,11 +97,6 @@ describe('VerifyEmail', () => {
 
     await userEvent.click(button);
 
-    expect(button).toHaveTextContent('Verifying...');
-    expect(button).toBeDisabled();
-
-    await waitFor(() => {
-      expect(onNext).toHaveBeenCalledTimes(1);
-    });
+    expect(onNext).toHaveBeenCalledTimes(1);
   });
 });

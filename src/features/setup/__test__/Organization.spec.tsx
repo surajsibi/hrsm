@@ -14,19 +14,19 @@ describe('Organization  ', () => {
     expect(screen.getByLabelText(/Company Type/i)).toBeInTheDocument();
     expect(screen.getByPlaceholderText(/company@example.com/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/Company Email/i)).toBeInTheDocument();
-    expect(screen.getByTestId(/Mail/i)).toBeInTheDocument();
+    expect(screen.getByTestId('Mail')).toBeInTheDocument();
     expect(screen.getByPlaceholderText('+1 (234) 567 8901')).toBeInTheDocument();
     expect(screen.getByLabelText(/Phone Number/i)).toBeInTheDocument();
-    expect(screen.getByTestId(/Phone/i)).toBeInTheDocument();
+    expect(screen.getByTestId('Phone')).toBeInTheDocument();
     expect(screen.getByPlaceholderText('https://www.company.com')).toBeInTheDocument();
     expect(screen.getByLabelText(/Website/i)).toBeInTheDocument();
-    expect(screen.getByTestId(/Globe/i)).toBeInTheDocument();
+    expect(screen.getByTestId('Globe')).toBeInTheDocument();
     expect(screen.getByText(/Select Company size/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/Company Size/i)).toBeInTheDocument();
-    expect(screen.getByTestId(/Users/i)).toBeInTheDocument();
+    expect(screen.getByTestId('Users')).toBeInTheDocument();
     expect(screen.getByPlaceholderText(/Enter company address/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/Company Address/i)).toBeInTheDocument();
-    expect(screen.getByTestId(/MapPin/i)).toBeInTheDocument();
+    expect(screen.getByTestId('MapPin')).toBeInTheDocument();
     expect(
       screen.getByPlaceholderText(/Brief description about your company/i)
     ).toBeInTheDocument();

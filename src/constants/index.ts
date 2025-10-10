@@ -16,4 +16,6 @@ const constants = {
   STARTUP_PROGRESS_BAR_TIMEOUT: 200,
 } as const;
 
+export const backendUrl = process.env.NEXT_PUBLIC_ENDPOINT_URL;
+
 export default constants;

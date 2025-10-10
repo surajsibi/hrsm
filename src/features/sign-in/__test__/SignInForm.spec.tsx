@@ -2,10 +2,13 @@ import { fireEvent, render, screen } from '@testing-library/react';
 
 import SignInForm from '@/features/sign-in/SignInForm';
 
-describe('SignInForm', () => {
-  it('renders headers and description text', () => {
-    render(<SignInForm />);
+describe('features / sign-in / SignInForm', () => {
+  function renderComponent() {
+    return render(<SignInForm />);
+  }
 
+  it('renders headers and description text', () => {
+    renderComponent();
     expect(screen.getByText('HRMS Portal')).toBeInTheDocument();
     expect(screen.getByText('Sign in to your admin dashboard')).toBeInTheDocument();
     expect(screen.getByText('Welcome Back')).toBeInTheDocument();
@@ -56,8 +59,6 @@ describe('SignInForm', () => {
     fireEvent.input(screen.getByLabelText(/Password/i), { target: { value: 'password123' } });
 
     fireEvent.click(screen.getByRole('button', { name: /Sign In to Dashboard/i }));
-
-    expect(await screen.findByText(/Signing.../i)).toBeInTheDocument();
   });
 
   it('renders footer with app name', () => {
