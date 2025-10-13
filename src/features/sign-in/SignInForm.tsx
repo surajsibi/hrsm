@@ -26,14 +26,13 @@ export default function SignInForm({
     handleSubmit,
     register,
     formState: { errors, isSubmitting },
-    reset,
   } = useForm<SignInFormType>({ resolver: zodResolver(SignInFormSchema), mode: 'all' });
   const { APP_NAME } = constants;
 
   const submit = (data: SignInFormType) => {
     try {
-      reset();
       formSubmit(data);
+      // reset();
     } catch (error) {
       console.error('Form submission error:', error);
     }
