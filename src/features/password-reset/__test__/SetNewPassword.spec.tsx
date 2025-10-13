@@ -7,7 +7,7 @@ import SetNewPassword from '@/features/password-reset/SetNewPassword';
 import type { PasswordSetup } from '@/types/passwordSetup.types';
 import type { ReactNode } from 'react';
 
-describe('New Password setter', () => {
+describe('features / password-reset / SetNewPassword', () => {
   const Wrapper = ({ children }: { children: ReactNode }) => {
     const methods = useForm<PasswordSetup>({ mode: 'all' });
 

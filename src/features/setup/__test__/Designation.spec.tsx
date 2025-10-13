@@ -2,7 +2,7 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 import Designation from '@/features/setup/Designation';
-describe('Designation', () => {
+describe('features / setup / Designation', () => {
   const onNext = jest.fn();
   const onPrev = jest.fn();
 

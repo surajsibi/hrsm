@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event';
 
 import Organization from '@/features/setup/Organization';
 
-describe('Organization  ', () => {
+describe('features / setup / Organization  ', () => {
   it('should render the component', () => {
     render(<Organization onNext={jest.fn()} />);
     expect(screen.getByText('Organization')).toBeInTheDocument();
@@ -64,7 +64,7 @@ describe('Organization  ', () => {
     const website = screen.getByPlaceholderText('https://www.company.com');
 
     await userEvent.type(website, 'company');
-    expect(screen.getByText(/Invalid URL/i));
+    expect(screen.getByText(/Invalid website URL/i));
 
     const Address = screen.getByPlaceholderText(/Enter company address/i);
 
@@ -81,31 +81,42 @@ describe('Organization  ', () => {
 
     await userEvent.type(companyName, 'companyName');
 
-    const companyType = screen.getByText(/Select Company Type/i);
+    const companyType = screen.getByRole('button', { name: /Company Type/i });
+
+    expect(companyType).toBeInTheDocument();
 
     await userEvent.click(companyType);
-    await userEvent.click(screen.getByText('Private Limited'));
+    await userEvent.click(screen.getByRole('option', { name: 'Private Limited' }));
 
     const companyEmail = screen.getByPlaceholderText(/company@example.com/);
+
+    expect(companyEmail).toBeInTheDocument();
 
     await userEvent.type(companyEmail, 'company@example.com');
 
     const phoneNumber = screen.getByPlaceholderText('+1 (234) 567 8901');
 
+    expect(phoneNumber).toBeInTheDocument();
+
     await userEvent.type(phoneNumber, '1234567890');
 
     const Address = screen.getByPlaceholderText(/Enter company address/i);
+
+    expect(Address).toBeInTheDocument();
 
     await userEvent.type(Address, 'company address');
 
     const button = screen.getByRole('button', { name: /Create Organization/i });
 
     expect(button).toBeInTheDocument();
-    expect(button).not.toBeDisabled();
+    expect(button).toBeEnabled();
 
     await userEvent.click(button);
 
-    await userEvent.click(screen.getByRole('button', { name: /Skip This Step/i }));
+    const skip = screen.getByRole('button', { name: /Skip This Step/i });
+
+    expect(skip).toBeInTheDocument();
+    await userEvent.click(skip);
 
     expect(onNext).toHaveBeenCalledTimes(2);
   });

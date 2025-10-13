@@ -1,13 +1,14 @@
 'use client';
-import { useFormContext } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
 
 import { Icon } from '@/components/Icons/Icon';
 import { Buttons } from '@/components/ui/utils/Buttons';
 import { Description } from '@/components/ui/utils/Descriptions';
 import { InputComponent } from '@/components/ui/utils/InputComponent';
 import { Title } from '@/components/ui/utils/Titles';
+import { ResetPasswordSchema, type ResetPasswordType } from '@/types/passwordSetup.types';
 
-import type { PasswordSetup } from '@/types/passwordSetup.types';
 import type { JSX } from 'react';
 
 export default function ResetPassword({ onNext }: { onNext: () => void }): JSX.Element {
@@ -16,9 +17,9 @@ export default function ResetPassword({ onNext }: { onNext: () => void }): JSX.E
     handleSubmit,
     formState: { errors, isSubmitting, isValid },
     reset,
-  } = useFormContext<PasswordSetup>();
+  } = useForm<ResetPasswordType>({ mode: 'all', resolver: zodResolver(ResetPasswordSchema) });
 
-  const onSubmit = async (data: PasswordSetup) => {
+  const onSubmit = async (data: ResetPasswordType) => {
     try {
       reset();
 
@@ -28,7 +29,7 @@ export default function ResetPassword({ onNext }: { onNext: () => void }): JSX.E
     } catch (error) {
       console.error('Form submission error:', error);
 
-      return null; // don’t call onNext() on error
+      return null;
     }
   };
 
@@ -44,13 +45,7 @@ export default function ResetPassword({ onNext }: { onNext: () => void }): JSX.E
           placeholder="Enter your email"
           id="resetEmail"
           type="email"
-          {...register('resetEmail', {
-            required: 'Email is required',
-            pattern: {
-              value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-              message: 'Invalid email address',
-            },
-          })}
+          {...register('resetEmail')}
           error={errors.resetEmail}
           icon={
             <Icon

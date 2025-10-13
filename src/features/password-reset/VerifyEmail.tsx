@@ -1,13 +1,14 @@
 'use client';
-import { useFormContext } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
 
 import { Icon } from '@/components/Icons/Icon';
 import { Buttons } from '@/components/ui/utils/Buttons';
 import { Description } from '@/components/ui/utils/Descriptions';
 import { InputComponent } from '@/components/ui/utils/InputComponent';
 import { Title } from '@/components/ui/utils/Titles';
+import { VerifyEmailSchema, type VerifyEmailType } from '@/types/passwordSetup.types';
 
-import type { PasswordSetup } from '@/types/passwordSetup.types';
 import type { JSX } from 'react';
 
 export default function VerifyEmail({
@@ -22,9 +23,9 @@ export default function VerifyEmail({
     handleSubmit,
     formState: { errors, isSubmitting, isValid },
     reset,
-  } = useFormContext<PasswordSetup>();
+  } = useForm<VerifyEmailType>({ mode: 'all', resolver: zodResolver(VerifyEmailSchema) });
 
-  const onSubmit = async (data: PasswordSetup) => {
+  const onSubmit = async (data: VerifyEmailType) => {
     try {
       reset();
       onNext();
@@ -50,13 +51,7 @@ export default function VerifyEmail({
           placeholder="Enter 6 digit code"
           id="otp"
           type="text"
-          {...register('otp', {
-            required: 'OTP is required',
-            pattern: {
-              value: /^[0-9]{6}$/,
-              message: 'OTP must be 6 digits long',
-            },
-          })}
+          {...register('otp')}
           error={errors.otp}
           icon={
             <Icon

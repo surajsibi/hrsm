@@ -37,23 +37,56 @@ export const EmployeeDetail = z.object({
     }),
 });
 
-export interface OrganizationType {
-  companyName: string;
-  companyType: string;
-  companyEmail: string;
-  CompanyPhoneNumber: string;
-  companyWebsite?: string;
-  companySize?: string;
-  companyAddress: string;
-  companyDescription?: string;
+export const OrganizationSchema = z.object({
+  companyName: z.string().min(1, 'Company Name is required'),
+  companyType: z.preprocess(
+    val => val ?? '',
+    z.string().min(1, 'Company Type is required')
+  ) as unknown as z.ZodString,
+  companyEmail: z
+    .string()
+    .min(1, 'Company Email is required')
+    .regex(/^[^\s@]+@[^\s@]+\.[^\s@]+$/, 'Invalid email address'),
+  CompanyPhoneNumber: z.string().min(1, 'Company Phone Number is required'),
+  companyWebsite: z.preprocess(
+    val => (val === '' ? undefined : val),
+    z
+      .string()
+      .regex(/^(http|https):\/\/[^\s]+$/, 'Invalid website URL')
+      .optional()
+  ) as unknown as z.ZodString,
+
+  companySize: z.string().optional(),
+  companyAddress: z.string().min(1, 'Company Address is required'),
+  companyDescription: z.string().optional(),
+});
+
+export const DepartmentSchema = z.object({
+  departmentNames: z.array(z.string()).optional(),
+});
+
+export const DesignationSchema = z.object({
+  designation: z.record(z.string(), z.array(z.string())).optional(),
+});
+
+export type OrganizationType = z.infer<typeof OrganizationSchema>;
+
+export type DepartmentType = z.infer<typeof DepartmentSchema>;
+
+export type DesignationType = z.infer<typeof DesignationSchema>;
+export interface ShiftType {
+  title?: string;
+  workType: string;
+  startingTime: string;
+  endingTime: string;
+  days: string[];
+  workingHours: string;
+  shiftTracking: boolean;
+  rotationalShifts: boolean;
 }
 
-export interface DepartmentType {
-  departmentNames: string[];
-}
-
-export interface DesignationType {
-  designation: Record<string, string[]>;
+export interface IShiftList {
+  ShiftList: ShiftType[];
 }
 
 export interface IUsers {
@@ -74,49 +107,4 @@ export interface IUsers {
 }
 export interface UserList {
   userList: IUsers[];
-}
-
-export interface FormType {
-  organization: {
-    companyName: string;
-    companyType: string;
-    companyEmail: string;
-    CompanyPhoneNumber: string;
-    companyWebsite?: string;
-    companySize?: string;
-    companyAddress: string;
-    companyDescription?: string;
-  };
-  department: {
-    departmentNames: string[];
-  };
-  designation: Record<string, string[]>;
-  Shift: {
-    title: string;
-    workType: string;
-    startingTime: string;
-    endingTime: string;
-    days: string[];
-    workingHours: number;
-    shiftTracking: boolean;
-    rotationalShifts: boolean;
-  };
-  ShiftList: FormType['Shift'][];
-  users: {
-    firstName: string;
-    lastName: string;
-    emailAddress: string;
-    phoneNumber: string;
-    dateOfBirth?: string;
-    gender?: 'Male' | 'Female' | 'Other';
-    address?: string;
-    isOnProbation: boolean;
-    department?: string;
-    designation?: string;
-    userRole?: string;
-    password?: string;
-    probationStartDate?: string;
-    probationEndDate?: string;
-  };
-  userList: FormType['users'][];
 }

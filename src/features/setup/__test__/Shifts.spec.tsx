@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event';
 
 import Shifts from '@/features/setup/Shifts';
 
-describe('Shifts', () => {
+describe('features / setup / Shifts', () => {
   const onNext = jest.fn();
   const onPrev = jest.fn();
 

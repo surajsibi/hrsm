@@ -1,6 +1,7 @@
 'use client';
 import { type JSX, useMemo } from 'react';
 
+import { zodResolver } from '@hookform/resolvers/zod';
 import { Controller, useForm } from 'react-hook-form';
 
 import { Icon } from '@/components/Icons/Icon';
@@ -12,8 +13,7 @@ import { LineBreak } from '@/components/ui/utils/LineBreak';
 import { Selector } from '@/components/ui/utils/Selector';
 import { Spinner } from '@/components/ui/utils/Spinner';
 import { Title } from '@/components/ui/utils/Titles';
-
-import type { OrganizationType } from '@/types/form-types';
+import { OrganizationSchema, type OrganizationType } from '@/types/form-types';
 
 export default function Organization({ onNext }: { onNext: () => void }): JSX.Element {
   const {
@@ -21,7 +21,7 @@ export default function Organization({ onNext }: { onNext: () => void }): JSX.El
     control,
     handleSubmit,
     formState: { errors, isSubmitting, isValid },
-  } = useForm<OrganizationType>({ mode: 'all' });
+  } = useForm<OrganizationType>({ mode: 'all', resolver: zodResolver(OrganizationSchema) });
 
   const onSubmit = (data: OrganizationType) => {
     console.log(data);
@@ -75,9 +75,7 @@ export default function Organization({ onNext }: { onNext: () => void }): JSX.El
             placeholder="Enter company name"
             id="companyName"
             type="text"
-            {...register('companyName', {
-              required: 'Company name is required',
-            })}
+            {...register('companyName')}
             error={errors?.companyName}
             icon={<Icon name="Building" size={16} color="#7a8799" className={iconClass} />}
           />
@@ -85,10 +83,6 @@ export default function Organization({ onNext }: { onNext: () => void }): JSX.El
           <Controller
             name="companyType"
             control={control}
-            rules={{
-              required: 'Company type is required',
-              onBlur: value => companyTypes.includes(value) || 'Company type is required',
-            }}
             render={({ field }) => (
               <Selector
                 className="w-1/2"
@@ -110,10 +104,7 @@ export default function Organization({ onNext }: { onNext: () => void }): JSX.El
             placeholder="company@example.com"
             id="companyEmail"
             type="email"
-            {...register('companyEmail', {
-              required: 'Company email is required',
-              pattern: { value: /^\S+@\S+$/i, message: 'Invalid email address' },
-            })}
+            {...register('companyEmail')}
             error={errors?.companyEmail}
             icon={<Icon name="Mail" size={16} color="#7a8799" className={iconClass} />}
           />
@@ -124,9 +115,7 @@ export default function Organization({ onNext }: { onNext: () => void }): JSX.El
             id="CompanyPhoneNumber"
             type="text"
             parentClassName="w-1/2"
-            {...register('CompanyPhoneNumber', {
-              required: 'Company phone number is required',
-            })}
+            {...register('CompanyPhoneNumber')}
             error={errors?.CompanyPhoneNumber}
             icon={<Icon name="Phone" size={16} color="#7a8799" className={iconClass} />}
           />
@@ -138,12 +127,7 @@ export default function Organization({ onNext }: { onNext: () => void }): JSX.El
             placeholder="https://www.company.com"
             id="companyWebsite"
             type="text"
-            {...register('companyWebsite', {
-              pattern: {
-                value: /^(https?:\/\/)?([\w-]+(\.[\w-]+)+)(\/[\w-]*)*\/?$/,
-                message: 'Invalid URL',
-              },
-            })}
+            {...register('companyWebsite')}
             parentClassName="w-1/2"
             error={errors?.companyWebsite}
             icon={<Icon name="Globe" size={16} color="#7a8799" className={iconClass} />}
@@ -170,9 +154,7 @@ export default function Organization({ onNext }: { onNext: () => void }): JSX.El
           label="Company Address *"
           placeholder="Enter company address"
           id="companyAddress"
-          {...register('companyAddress', {
-            required: 'Company address is required',
-          })}
+          {...register('companyAddress')}
           error={errors?.companyAddress}
           icon={
             <Icon

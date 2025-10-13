@@ -4,7 +4,7 @@ import userEvent from '@testing-library/user-event';
 
 import Department from '@/features/setup/Department';
 
-describe('Department Component', () => {
+describe('features / setup / Department', () => {
   const onNext = jest.fn();
   const onPrev = jest.fn();
 

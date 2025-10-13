@@ -7,7 +7,7 @@ import VerifyEmail from '@/features/password-reset/VerifyEmail';
 import type { PasswordSetup } from '@/types/passwordSetup.types';
 import type { ReactNode } from 'react';
 
-describe('VerifyEmail', () => {
+describe('features / password-reset / VerifyEmail', () => {
   const Wrapper = ({ children }: { children: ReactNode }) => {
     const methods = useForm<PasswordSetup>({ mode: 'all' });
 
@@ -41,7 +41,7 @@ describe('VerifyEmail', () => {
     await userEvent.click(input);
     await userEvent.tab();
 
-    expect(screen.getByText(/OTP is required/i)).toBeInTheDocument();
+    expect(screen.getByText(/OTP should be at least 6 characters/i)).toBeInTheDocument();
 
     const button = screen.getByRole('button', { name: /Verify OTP/i });
 

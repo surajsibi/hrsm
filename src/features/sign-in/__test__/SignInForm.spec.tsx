@@ -1,69 +1,88 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { render, screen, waitFor, within } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 
 import SignInForm from '@/features/sign-in/SignInForm';
 
 describe('features / sign-in / SignInForm', () => {
   function renderComponent() {
-    return render(<SignInForm />);
+    return render(
+      <SignInForm
+        formSubmit={() => {
+          /* implementation here */
+        }}
+      />
+    );
   }
 
-  it('renders headers and description text', () => {
+  it('render full component', () => {
     renderComponent();
-    expect(screen.getByText('HRMS Portal')).toBeInTheDocument();
-    expect(screen.getByText('Sign in to your admin dashboard')).toBeInTheDocument();
-    expect(screen.getByText('Welcome Back')).toBeInTheDocument();
-    expect(screen.getByText('Enter your credentials to access the system')).toBeInTheDocument();
-  });
 
-  it('renders input fields with labels', () => {
-    render(<SignInForm />);
+    expect(screen.getByRole('heading', { name: 'HRMS Portal', level: 1 })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Welcome Back', level: 3 })).toBeInTheDocument();
+    const tenantCode = screen.getByTestId('tenantCode');
 
-    expect(screen.getByLabelText(/Tenant Code/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/Email \/ Username/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/Password/i)).toBeInTheDocument();
-  });
+    expect(tenantCode).toBeInTheDocument();
+    const Building2 = within(tenantCode).getByTestId('Building2');
 
-  it('shows validation errors when fields are empty', async () => {
-    render(<SignInForm />);
-
-    const button = screen.getByRole('button', { name: /Sign In to Dashboard/i });
-
-    fireEvent.click(button);
-
-    expect(await screen.findByText(/Tenant Code is required/i)).toBeInTheDocument();
-    expect(await screen.findByText(/Email is required/i)).toBeInTheDocument();
-    expect(await screen.findByText(/Password is required/i)).toBeInTheDocument();
-  });
-
-  it('shows invalid email message if email is wrong', async () => {
-    render(<SignInForm />);
-
-    fireEvent.input(screen.getByLabelText(/Tenant Code/i), { target: { value: 'ABC123' } });
-    fireEvent.input(screen.getByLabelText(/Email \/ Username/i), {
-      target: { value: 'wrong-email' },
-    });
-    fireEvent.input(screen.getByLabelText(/Password/i), { target: { value: 'password123' } });
-
-    fireEvent.click(screen.getByRole('button', { name: /Sign In to Dashboard/i }));
-
-    expect(await screen.findByText(/Invalid email address/i)).toBeInTheDocument();
-  });
-
-  it('submits form successfully with valid inputs', async () => {
-    render(<SignInForm />);
-
-    fireEvent.input(screen.getByLabelText(/Tenant Code/i), { target: { value: 'ABC123' } });
-    fireEvent.input(screen.getByLabelText(/Email \/ Username/i), {
-      target: { value: 'test@example.com' },
-    });
-    fireEvent.input(screen.getByLabelText(/Password/i), { target: { value: 'password123' } });
-
-    fireEvent.click(screen.getByRole('button', { name: /Sign In to Dashboard/i }));
-  });
-
-  it('renders footer with app name', () => {
-    render(<SignInForm />);
-
+    expect(Building2).toBeInTheDocument();
+    expect(screen.getByPlaceholderText('admin@company.com')).toBeInTheDocument();
+    expect(screen.getByTestId('User')).toBeInTheDocument();
+    expect(screen.getByPlaceholderText('Enter your password')).toBeInTheDocument();
+    expect(screen.getByTestId('Lock')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Sign In to Dashboard' })).toBeInTheDocument();
     expect(screen.getByText(/All Rights Reserved/i)).toBeInTheDocument();
+  });
+
+  it('should render error message', async () => {
+    renderComponent();
+    const email = screen.getByPlaceholderText('admin@company.com');
+
+    expect(email).toBeInTheDocument();
+    await userEvent.click(email);
+    await userEvent.tab();
+    expect(screen.getByText(/Email is required/i)).toBeInTheDocument();
+
+    await userEvent.type(email, 'test');
+    await userEvent.tab();
+    expect(screen.getByText(/Invalid email address/i)).toBeInTheDocument();
+
+    const password = screen.getByPlaceholderText('Enter your password');
+
+    await userEvent.click(password);
+    await userEvent.tab();
+    expect(screen.getByText(/Password is required/i)).toBeInTheDocument();
+
+    await userEvent.type(password, 'test');
+    await userEvent.tab();
+    expect(screen.getByText(/Password should be at least 6 characters/i)).toBeInTheDocument();
+
+    await userEvent.clear(email);
+    await userEvent.clear(password);
+
+    const button = screen.getByRole('button', { name: 'Sign In to Dashboard' });
+
+    await userEvent.click(button);
+    expect(screen.getByText(/Email is required/i)).toBeInTheDocument();
+    expect(screen.getByText(/Password is required/i)).toBeInTheDocument();
+  });
+
+  it('submit button test case', async () => {
+    const formSubmit = jest.fn();
+
+    render(<SignInForm formSubmit={formSubmit} />);
+    const email = screen.getByPlaceholderText('admin@company.com');
+    const password = screen.getByPlaceholderText('Enter your password');
+    const button = screen.getByRole('button', { name: 'Sign In to Dashboard' });
+
+    expect(email).toBeInTheDocument();
+    expect(password).toBeInTheDocument();
+    expect(button).toBeInTheDocument();
+    await userEvent.type(email, 'admin@company');
+    await userEvent.type(password, 'test123');
+    await userEvent.click(button);
+
+    waitFor(() => {
+      expect(formSubmit).toHaveBeenCalledTimes(1);
+    });
   });
 });

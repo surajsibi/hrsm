@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event';
 
 import Users from '@/features/setup/Users';
 
-describe('Users', () => {
+describe('features / setup / Users', () => {
   const onNext = jest.fn();
   const onPrev = jest.fn();
 

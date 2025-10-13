@@ -1,5 +1,6 @@
-import { useCallback, useMemo, useState } from 'react';
+import { type JSX, useCallback, useMemo, useState } from 'react';
 
+import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 
 import { Icon } from '@/components/Icons/Icon';
@@ -12,10 +13,7 @@ import { Note } from '@/components/ui/utils/Note';
 import { Selector } from '@/components/ui/utils/Selector';
 import { Tab } from '@/components/ui/utils/Tabs';
 import { Title } from '@/components/ui/utils/Titles';
-
-import type { DesignationType } from '@/types/form-types';
-// eslint-disable-next-line no-duplicate-imports
-import type { JSX } from 'react';
+import { DesignationSchema, type DesignationType } from '@/types/form-types';
 
 interface DesignationProps {
   onNext: () => void;
@@ -71,7 +69,8 @@ export default function Designation({
   onPrev,
   apiDepartments = ['Legal & Compliance', 'Quality Assurance'],
 }: DesignationProps): JSX.Element {
-  const { setValue, getValues } = useForm<DesignationType>({
+  const { setValue, getValues, handleSubmit } = useForm<DesignationType>({
+    resolver: zodResolver(DesignationSchema),
     defaultValues: { designation: {} },
   });
   const departments: string[] = useMemo(() => apiDepartments, [apiDepartments]);
@@ -183,8 +182,13 @@ export default function Designation({
     </div>
   );
 
+  const onSubmit = (data: DesignationType) => {
+    console.log(data);
+    onNext();
+  };
+
   return (
-    <form className="flex flex-col p-6 pt-8 gap-6">
+    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col p-6 pt-8 gap-6">
       {/* Header */}
       <div className="flex flex-col gap-1 items-start">
         <Title variant="h3">Designations</Title>
@@ -265,13 +269,7 @@ export default function Designation({
         >
           Skip This Step
         </Buttons>
-        <Buttons
-          type="submit"
-          onClick={onNext}
-          variant="primary"
-          size="sm"
-          className="w-1/2 font-medium"
-        >
+        <Buttons type="submit" variant="primary" size="sm" className="w-1/2 font-medium">
           <div className="flex items-center justify-center gap-3 font-medium">
             Continue <Icon name="ArrowRight" size={16} />
           </div>

@@ -2,7 +2,7 @@ import { render, screen } from '@testing-library/react';
 
 import Complete from '@/features/setup/Complete';
 
-describe('Complete', () => {
+describe('features / setup / Complete', () => {
   it('should render', () => {
     render(<Complete />);
     expect(screen.getByTestId('Check')).toBeInTheDocument();

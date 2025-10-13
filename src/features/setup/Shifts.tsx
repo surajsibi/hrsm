@@ -16,20 +16,7 @@ import { TickLabel } from '@/components/ui/utils/TickLabel';
 import { Title } from '@/components/ui/utils/Titles';
 import { cn } from '@/utils';
 
-interface ShiftType {
-  title?: string;
-  workType: string;
-  startingTime: string;
-  endingTime: string;
-  days: string[];
-  workingHours: string;
-  shiftTracking: boolean;
-  rotationalShifts: boolean;
-}
-
-interface FormType {
-  ShiftList: ShiftType[];
-}
+import type { IShiftList, ShiftType } from '@/types/form-types';
 
 export default function Shifts({
   onNext,
@@ -89,7 +76,7 @@ export default function Shifts({
     []
   );
 
-  const { control, handleSubmit } = useForm<FormType>({
+  const { control, handleSubmit } = useForm<IShiftList>({
     defaultValues: {
       ShiftList: [],
     },
@@ -104,7 +91,7 @@ export default function Shifts({
     name: 'ShiftList',
   });
 
-  function onSubmit(data: FormType) {
+  function onSubmit(data: IShiftList) {
     console.log(data);
     onNext();
   }

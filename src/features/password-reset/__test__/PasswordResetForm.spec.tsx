@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event';
 
 import PasswordResetForm from '@/features/password-reset/PasswordResetForm';
 
-describe('PasswordResetForm', () => {
+describe('features / password-reset / PasswordResetForm', () => {
   it('should render the reset password component', () => {
     render(<PasswordResetForm />);
     expect(screen.getByText(/Password Setup/i)).toBeInTheDocument();

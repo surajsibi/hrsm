@@ -1,5 +1,6 @@
 'use client';
 
+import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 
 import { Icon } from '@/components/Icons/Icon';
@@ -10,29 +11,31 @@ import { InputComponent } from '@/components/ui/utils/InputComponent';
 import { Spinner } from '@/components/ui/utils/Spinner';
 import { Title } from '@/components/ui/utils/Titles';
 import constants from '@/constants/index';
+import { SignInFormSchema } from '@/types/signin-form-types';
 
-import type { SignInForm as SignInFormType } from '@/types/signin-form-types';
+// eslint-disable-next-line no-duplicate-imports
+import type { SignInFormType } from '@/types/signin-form-types';
 import type { JSX } from 'react';
 
-export default function SignInForm(): JSX.Element {
+export default function SignInForm({
+  formSubmit,
+}: {
+  formSubmit: (_data: SignInFormType) => void;
+}): JSX.Element {
   const {
     handleSubmit,
     register,
     formState: { errors, isSubmitting },
     reset,
-  } = useForm<SignInFormType>({ mode: 'all' });
+  } = useForm<SignInFormType>({ resolver: zodResolver(SignInFormSchema), mode: 'all' });
   const { APP_NAME } = constants;
 
-  const onSubmit = async (data: SignInFormType) => {
+  const submit = (data: SignInFormType) => {
     try {
-      console.log('response', data);
       reset();
-
-      return data;
+      formSubmit(data);
     } catch (error) {
       console.error('Form submission error:', error);
-
-      return null;
     }
   };
 
@@ -49,7 +52,7 @@ export default function SignInForm(): JSX.Element {
           <Description size="sm">Enter your credentials to access the system</Description>
         </div>
         <form
-          onSubmit={handleSubmit(onSubmit)}
+          onSubmit={handleSubmit(submit)}
           className="w-full h-full px-6 gap-6 flex flex-col py-6 pt-0"
         >
           <InputComponent
@@ -57,9 +60,7 @@ export default function SignInForm(): JSX.Element {
             placeholder="Enter your tenant code"
             id="tenantCode"
             type="text"
-            {...register('tenantCode', {
-              required: 'Tenant Code is required',
-            })}
+            {...register('tenantCode')}
             error={errors.tenantCode}
             icon={
               <Icon
@@ -75,13 +76,7 @@ export default function SignInForm(): JSX.Element {
             placeholder="admin@company.com"
             id="email"
             type="email"
-            {...register('email', {
-              required: 'Email is required',
-              pattern: {
-                value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                message: 'Invalid email address',
-              },
-            })}
+            {...register('email')}
             error={errors.email}
             icon={
               <Icon
@@ -97,9 +92,7 @@ export default function SignInForm(): JSX.Element {
             placeholder="Enter your password"
             id="password"
             type="password"
-            {...register('password', {
-              required: 'Password is required',
-            })}
+            {...register('password')}
             error={errors.password}
             icon={
               <Icon

@@ -1,14 +1,15 @@
 'use client';
 
-import { useFormContext } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
 
 import { Icon } from '@/components/Icons/Icon';
 import { Buttons } from '@/components/ui/utils/Buttons';
 import { Description } from '@/components/ui/utils/Descriptions';
 import { InputComponent } from '@/components/ui/utils/InputComponent';
 import { Title } from '@/components/ui/utils/Titles';
+import { SetNewPasswordSchema, type SetNewPasswordType } from '@/types/passwordSetup.types';
 
-import type { PasswordSetup } from '@/types/passwordSetup.types';
 import type { JSX } from 'react';
 
 export default function SetNewPassword(): JSX.Element {
@@ -16,12 +17,10 @@ export default function SetNewPassword(): JSX.Element {
     register,
     handleSubmit,
     reset,
-    watch,
     formState: { errors, isSubmitting, isValid },
-  } = useFormContext<PasswordSetup>();
-  const newPassword = watch('newPassword');
+  } = useForm<SetNewPasswordType>({ mode: 'all', resolver: zodResolver(SetNewPasswordSchema) });
 
-  const onSubmit = async (data: PasswordSetup) => {
+  const onSubmit = async (data: SetNewPasswordType) => {
     try {
       reset();
 
@@ -46,9 +45,7 @@ export default function SetNewPassword(): JSX.Element {
           placeholder="Enter new password"
           id="newPassword"
           type="password"
-          {...register('newPassword', {
-            required: 'Password is required',
-          })}
+          {...register('newPassword')}
           error={errors.newPassword}
           icon={
             <Icon
@@ -64,10 +61,7 @@ export default function SetNewPassword(): JSX.Element {
           placeholder="Confirm new password"
           id="newPassword"
           type="password"
-          {...register('confirmNewPassword', {
-            required: 'Confirm Password is required',
-            validate: value => value === newPassword || 'Passwords do not match',
-          })}
+          {...register('confirmNewPassword')}
           error={errors.confirmNewPassword}
           icon={
             <Icon

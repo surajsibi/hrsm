@@ -424,13 +424,7 @@ export default function Users({
         >
           Skip This Step
         </Buttons>
-        <Buttons
-          variant="primary"
-          size="sm"
-          type="submit"
-          className="w-1/2 font-medium"
-          disabled={userList === undefined || userList.length === 0}
-        >
+        <Buttons variant="primary" size="sm" type="submit" className="w-1/2 font-medium">
           <p className="flex items-center justify-center gap-4">
             <span className="font-semibold text-center">Complete Setup</span>
             <Icon name="ArrowRight" size={16} color="white" />

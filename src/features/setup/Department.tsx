@@ -1,5 +1,6 @@
 import { type JSX, useCallback, useMemo, useState } from 'react';
 
+import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 
 import { Icon } from '@/components/Icons/Icon';
@@ -11,8 +12,7 @@ import { LineBreak } from '@/components/ui/utils/LineBreak';
 import { Note } from '@/components/ui/utils/Note';
 import { Tab } from '@/components/ui/utils/Tabs';
 import { Title } from '@/components/ui/utils/Titles';
-
-import type { DepartmentType } from '@/types/form-types';
+import { DepartmentSchema, type DepartmentType } from '@/types/form-types';
 
 export default function Department({
   onNext,
@@ -21,7 +21,9 @@ export default function Department({
   onNext: () => void;
   onPrev: () => void;
 }): JSX.Element {
-  const { setValue, getValues, handleSubmit } = useForm<DepartmentType>();
+  const { setValue, getValues, handleSubmit } = useForm<DepartmentType>({
+    resolver: zodResolver(DepartmentSchema),
+  });
 
   const quickAddDepartments = useMemo(
     () => [
@@ -41,7 +43,7 @@ export default function Department({
 
   const [tabs, setTabs] = useState(quickAddDepartments.map(name => ({ name, active: false })));
 
-  const [selectedTab, setSelectedTab] = useState<string[]>(getValues('departmentNames') || []);
+  const [selectedTab, setSelectedTab] = useState<string[]>(getValues('departmentNames') ?? []);
   const [inputValue, setInputValue] = useState('');
 
   const toggleTab = useCallback(

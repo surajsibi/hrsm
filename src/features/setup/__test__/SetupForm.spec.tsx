@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event';
 
 import SetupForm from '@/features/setup/SetupForm';
 
-describe('SetupForm', () => {
+describe('features / setup / SetupForm', () => {
   it('should render', async () => {
     render(<SetupForm />);
     expect(

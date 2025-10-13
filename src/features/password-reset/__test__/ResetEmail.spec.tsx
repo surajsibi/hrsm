@@ -9,7 +9,7 @@ import ResetPassword from '@/features/password-reset/ResetEmail';
 import type { PasswordSetup } from '@/types/passwordSetup.types';
 import type { ReactNode } from 'react';
 
-describe('Reset password component', () => {
+describe('features / password-reset / ResetPassword', () => {
   const Wrapper = ({ children }: { children: ReactNode }) => {
     const methods = useForm<PasswordSetup>({ mode: 'all' });
 
