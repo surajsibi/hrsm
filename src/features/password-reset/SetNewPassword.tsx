@@ -47,14 +47,7 @@ export default function SetNewPassword(): JSX.Element {
           type="password"
           {...register('newPassword')}
           error={errors.newPassword}
-          icon={
-            <Icon
-              name="Lock"
-              size={16}
-              color="#7a8799"
-              className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none"
-            />
-          }
+          icon={<Icon name="Lock" />}
         />
         <InputComponent
           label="Confirm Password"
@@ -63,14 +56,7 @@ export default function SetNewPassword(): JSX.Element {
           type="password"
           {...register('confirmNewPassword')}
           error={errors.confirmNewPassword}
-          icon={
-            <Icon
-              name="Lock"
-              size={16}
-              color="#7a8799"
-              className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none"
-            />
-          }
+          icon={<Icon name="Lock" />}
         />
         <Buttons
           variant="primary"

@@ -85,7 +85,11 @@ export function StepsCircle({
               )}
             >
               <p className="text-sm font-medium">
-                {currentStep > index + 1 ? <Icon name="Check" /> : index + 1}
+                {currentStep > index + 1 ? (
+                  <Icon name="Check" color="white" variant="header" />
+                ) : (
+                  index + 1
+                )}
               </p>
             </div>
             <p className="text-xs text-blue-500 text-center font-medium">{step}</p>

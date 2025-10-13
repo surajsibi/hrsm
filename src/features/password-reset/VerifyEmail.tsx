@@ -53,21 +53,14 @@ export default function VerifyEmail({
           type="text"
           {...register('otp')}
           error={errors.otp}
-          icon={
-            <Icon
-              name="Shield"
-              size={16}
-              color="#7a8799"
-              className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none"
-            />
-          }
+          icon={<Icon name="Shield" />}
         />
         <Description className="mt-5 text-left">Code sent to surajsibi2022@gmail.com</Description>
         <div className="flex justify-between mt-5 gap-5">
           <Buttons onClick={onPrev} type="button" variant="secondary" className="w-1/2">
             {
               <div className="flex items-center gap-2">
-                <Icon name="ArrowLeft" size={16} /> Back
+                <Icon name="ArrowLeft" size={16} variant="header" /> Back
               </div>
             }
           </Buttons>

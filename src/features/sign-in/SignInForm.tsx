@@ -42,7 +42,10 @@ export default function SignInForm({
   return (
     <div className="max-w-md w-full flex flex-col justify-center  gap-8">
       <div className="flex flex-col items-center justify-center gap-4 ">
-        <HeaderLogo variant="square" icon={<Icon name="Building2" size="30" color="white" />} />
+        <HeaderLogo
+          variant="square"
+          icon={<Icon name="Building2" size="30" color="white" variant="header" />}
+        />
         <Title variant="h1">HRMS Portal</Title>
         <Description size="md">Sign in to your admin dashboard</Description>
       </div>
@@ -62,14 +65,7 @@ export default function SignInForm({
             type="text"
             {...register('tenantCode')}
             error={errors.tenantCode}
-            icon={
-              <Icon
-                name="Building2"
-                size={16}
-                color="#7a8799"
-                className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none"
-              />
-            }
+            icon={<Icon name="Building2" />}
           />
           <InputComponent
             label="Email / Username"
@@ -78,14 +74,7 @@ export default function SignInForm({
             type="email"
             {...register('email')}
             error={errors.email}
-            icon={
-              <Icon
-                name="User"
-                size={16}
-                color="#7a8799"
-                className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none"
-              />
-            }
+            icon={<Icon name="User" />}
           />
           <InputComponent
             label="Password"
@@ -94,14 +83,7 @@ export default function SignInForm({
             type="password"
             {...register('password')}
             error={errors.password}
-            icon={
-              <Icon
-                name="Lock"
-                size={16}
-                color="#7a8799"
-                className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none"
-              />
-            }
+            icon={<Icon name="Lock" />}
           />
           <Buttons
             variant="primary"

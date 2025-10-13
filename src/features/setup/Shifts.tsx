@@ -196,14 +196,7 @@ export default function Shifts({
           placeholder="Enter shift name"
           value={currentShift.title}
           onChange={e => setCurrentShift({ ...currentShift, title: e.target.value })}
-          icon={
-            <Icon
-              name="Clock"
-              size={16}
-              color="#7a8799"
-              className="absolute left-3 top-1/2 -translate-y-1/2"
-            />
-          }
+          icon={<Icon name="Clock" />}
         />
 
         <Selector
@@ -307,7 +300,7 @@ export default function Shifts({
         size="md"
       >
         <div className="flex gap-2 items-center justify-center">
-          <Icon name="ArrowLeft" size={16} />
+          <Icon name="ArrowLeft" size={16} color="white" variant="header" />
           Add Shift
         </div>
       </Buttons>
@@ -324,7 +317,7 @@ export default function Shifts({
                 key={shift.id}
                 title={shift.title}
                 description={`${shift.workType} • ${shift.startingTime} - ${shift.endingTime} • ${shift.workingHours}h`}
-                icon={<Icon name="Crown" size={16} />}
+                icon={<Icon name="Crown" size={16} variant="header" />}
                 onDelete={() => remove(index)}
               />
             ))}
@@ -352,7 +345,7 @@ export default function Shifts({
         </Buttons>
         <Buttons type="submit" variant="primary" size="sm" className="w-1/2 font-medium ">
           <div className="flex items-center justify-center gap-3 font-medium ">
-            Continue <Icon name="ArrowRight" size={16} />
+            Continue <Icon name="ArrowRight" color="white" size={16} variant="header" />
           </div>
         </Buttons>
       </div>
@@ -368,7 +361,7 @@ export default function Shifts({
           className="text-black font-medium "
         >
           <div className="flex items-center justify-center gap-3 font-medium">
-            <Icon name="ArrowLeft" size={16} />
+            <Icon name="ArrowLeft" size={16} variant="header" />
             <span className="font-medium text-center">Previous Step</span>
           </div>
         </Buttons>

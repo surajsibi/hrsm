@@ -59,7 +59,7 @@ interface AddedSectionProps {
 export const AddedSection = memo(function AddedSection({
   title = 'Quality Assurance',
   description = 'Status: ACTIVE',
-  icon = <Icon name="Briefcase" color="#3c83f6" size={16} />,
+  icon = <Icon name="Briefcase" color="#3c83f6" size={16} variant="header" />,
   onDelete,
 }: AddedSectionProps) {
   return (
@@ -75,7 +75,7 @@ export const AddedSection = memo(function AddedSection({
       </div>
 
       <button onClick={onDelete} aria-label="Delete section">
-        <Icon name="Trash2" color="#dc2828" size={16} />
+        <Icon name="Trash2" color="#dc2828" size={16} variant="header" />
       </button>
     </div>
   );

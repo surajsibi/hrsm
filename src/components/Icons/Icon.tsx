@@ -1,3 +1,4 @@
+import { type VariantProps, cva } from 'class-variance-authority';
 import {
   ArrowLeft,
   ArrowRight,
@@ -22,6 +23,8 @@ import {
   Users,
   X,
 } from 'lucide-react';
+
+import { cn } from '@/utils';
 
 import type { JSX } from 'react/jsx-runtime';
 /**
@@ -67,6 +70,12 @@ export interface IconProps extends LucideProps {
    * Must be one of the keys from the ICONS object.
    */
   name: IconName;
+
+  /**
+   * Variant for the icon.
+   * Can be used to apply different styles to the icon.
+   */
+  variant?: VariantProps<typeof icon>['variant'];
 }
 
 /**
@@ -87,10 +96,38 @@ export interface IconProps extends LucideProps {
  * <Icon name="Check" varient="absolute" className="text-gray-500" />
  * ```
  */
-export function Icon({ name, ...props }: IconProps): JSX.Element | null {
+
+const icon = cva('', {
+  variants: {
+    variant: {
+      absolute: 'absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none',
+      header: '',
+    },
+  },
+  defaultVariants: {
+    variant: 'absolute',
+  },
+});
+
+export function Icon({
+  name,
+  variant,
+  className,
+  size = 16,
+  color = '#7a8799',
+  ...props
+}: IconProps): JSX.Element | null {
   const Component = ICONS[name];
 
   if (!Component) return null;
 
-  return <Component data-testid={name} {...props} />;
+  return (
+    <Component
+      data-testid={name}
+      {...props}
+      size={size}
+      color={color}
+      className={cn(icon({ variant }), className)}
+    />
+  );
 }

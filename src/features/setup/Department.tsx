@@ -136,14 +136,7 @@ export default function Department({
           placeholder="Enter department names"
           value={inputValue}
           onChange={e => setInputValue(e.target.value)}
-          icon={
-            <Icon
-              name="Briefcase"
-              size={16}
-              color="#7a8799"
-              className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none"
-            />
-          }
+          icon={<Icon name="Briefcase" />}
         />
         <Buttons
           disabled={inputValue === ''}
@@ -151,7 +144,7 @@ export default function Department({
           variant="primary"
           className="h-12"
         >
-          <Icon name="Plus" size={20} color="white" />
+          <Icon name="Plus" size={20} color="white" variant="header" />
         </Buttons>
       </div>
 
@@ -201,7 +194,7 @@ export default function Department({
         <Buttons type="submit" variant="primary" size="sm" className="w-1/2 font-medium">
           <p className="flex items-center justify-center gap-4">
             <span className="font-semibold text-center">Continue</span>
-            <Icon name="ArrowRight" size={16} color="white" />
+            <Icon name="ArrowRight" size={16} color="white" variant="header" />
           </p>
         </Buttons>
       </div>
@@ -216,7 +209,7 @@ export default function Department({
           className="text-black font-medium"
         >
           <p className="flex items-center justify-center gap-4">
-            <Icon name="ArrowLeft" size={16} />
+            <Icon name="ArrowLeft" variant="header" />
             <span className="font-medium text-center">Previous Step</span>
           </p>
         </Buttons>

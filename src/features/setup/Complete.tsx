@@ -9,7 +9,10 @@ import type { JSX } from 'react';
 export default function Complete(): JSX.Element {
   return (
     <div className="flex flex-col items-center justify-center gap-4 my-[30%] p-5">
-      <HeaderLogo icon={<Icon name="Check" size="30" color="white" />} variant="rounded" />
+      <HeaderLogo
+        icon={<Icon name="Check" size="30" color="white" variant="header" />}
+        variant="rounded"
+      />
       <Title variant="h1">Setup Completed</Title>
       <Description>
         Your HRMS system has been successfully congigured. you can now start managing your

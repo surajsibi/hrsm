@@ -135,7 +135,7 @@ export default function Designation({
   const DepartmentCard = ({ department }: { department: string }) => (
     <div className="shadow-md bg-white border border-border rounded-lg p-4 flex flex-col gap-3">
       <div className="flex gap-2 text-primary items-center justify-start">
-        <Icon name="Building" size={16} />
+        <Icon name="Building" variant="header" />
         <Title variant="h4" className="text-md">
           {department}
         </Title>
@@ -173,7 +173,7 @@ export default function Designation({
               key={`${department}-${i}`}
               title={des}
               description={department}
-              icon={<Icon name="Crown" size={16} />}
+              icon={<Icon name="Crown" variant="header" />}
               onDelete={() => updateDesignations(department, des, 'remove')}
             />
           ))
@@ -217,14 +217,7 @@ export default function Designation({
           value={inputValue}
           parentClassName="w-1/2"
           onChange={e => setInputValue(e.target.value)}
-          icon={
-            <Icon
-              name="Crown"
-              size={16}
-              color="#7a8799"
-              className="absolute left-3 top-1/2 -translate-y-1/2"
-            />
-          }
+          icon={<Icon name="Crown" />}
         />
 
         <Selector
@@ -246,7 +239,7 @@ export default function Designation({
         disabled={!inputValue || !selectedDepartment || departments.length === 0}
       >
         <div className="flex gap-2 items-center justify-center">
-          <Icon name="Plus" size={16} /> Add Designation
+          <Icon name="Plus" variant="header" /> Add Designation
         </div>
       </Buttons>
 
@@ -271,7 +264,7 @@ export default function Designation({
         </Buttons>
         <Buttons type="submit" variant="primary" size="sm" className="w-1/2 font-medium">
           <div className="flex items-center justify-center gap-3 font-medium">
-            Continue <Icon name="ArrowRight" size={16} />
+            Continue <Icon name="ArrowRight" color="white" size={16} variant="header" />
           </div>
         </Buttons>
       </div>
@@ -287,7 +280,7 @@ export default function Designation({
           className="text-black font-medium"
         >
           <div className="flex items-center justify-center gap-3 font-medium">
-            <Icon name="ArrowLeft" size={16} />
+            <Icon name="ArrowLeft" variant="header" />
             <span className="font-medium text-center">Previous Step</span>
           </div>
         </Buttons>

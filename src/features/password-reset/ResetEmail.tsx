@@ -47,14 +47,7 @@ export default function ResetPassword({ onNext }: { onNext: () => void }): JSX.E
           type="email"
           {...register('resetEmail')}
           error={errors.resetEmail}
-          icon={
-            <Icon
-              name="Mail"
-              size={16}
-              color="#7a8799"
-              className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none"
-            />
-          }
+          icon={<Icon name="Mail" />}
         />
         <Description className="mt-5">We'll send you an email with a verification code</Description>
         <Buttons

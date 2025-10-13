@@ -1,3 +1,4 @@
+'use client';
 import SignInForm from '@/features/sign-in/SignInForm';
 
 import type { SignInFormType } from '@/types/signin-form-types';

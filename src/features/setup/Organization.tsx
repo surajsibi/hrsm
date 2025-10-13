@@ -30,8 +30,6 @@ export default function Organization({ onNext }: { onNext: () => void }): JSX.El
 
   console.log(errors);
 
-  const iconClass = 'absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none';
-
   const companyTypes = useMemo(
     () => [
       'Private Limited',
@@ -77,7 +75,7 @@ export default function Organization({ onNext }: { onNext: () => void }): JSX.El
             type="text"
             {...register('companyName')}
             error={errors?.companyName}
-            icon={<Icon name="Building" size={16} color="#7a8799" className={iconClass} />}
+            icon={<Icon name="Building" />}
           />
 
           <Controller
@@ -106,7 +104,7 @@ export default function Organization({ onNext }: { onNext: () => void }): JSX.El
             type="email"
             {...register('companyEmail')}
             error={errors?.companyEmail}
-            icon={<Icon name="Mail" size={16} color="#7a8799" className={iconClass} />}
+            icon={<Icon name="Mail" />}
           />
 
           <InputComponent
@@ -117,7 +115,7 @@ export default function Organization({ onNext }: { onNext: () => void }): JSX.El
             parentClassName="w-1/2"
             {...register('CompanyPhoneNumber')}
             error={errors?.CompanyPhoneNumber}
-            icon={<Icon name="Phone" size={16} color="#7a8799" className={iconClass} />}
+            icon={<Icon name="Phone" />}
           />
         </div>
 
@@ -130,7 +128,7 @@ export default function Organization({ onNext }: { onNext: () => void }): JSX.El
             {...register('companyWebsite')}
             parentClassName="w-1/2"
             error={errors?.companyWebsite}
-            icon={<Icon name="Globe" size={16} color="#7a8799" className={iconClass} />}
+            icon={<Icon name="Globe" />}
           />
 
           <Controller
@@ -144,7 +142,7 @@ export default function Organization({ onNext }: { onNext: () => void }): JSX.El
                 id="companySize"
                 label="Company Size"
                 className="w-1/2"
-                icon={<Icon name="Users" size={16} color="#7a8799" className={iconClass} />}
+                icon={<Icon name="Users" />}
               />
             )}
           />
@@ -156,14 +154,7 @@ export default function Organization({ onNext }: { onNext: () => void }): JSX.El
           id="companyAddress"
           {...register('companyAddress')}
           error={errors?.companyAddress}
-          icon={
-            <Icon
-              name="MapPin"
-              size={16}
-              color="#7a8799"
-              className={'absolute left-3 top-[10%]  w-4 h-4 pointer-events-none'}
-            />
-          }
+          icon={<Icon name="MapPin" className={'top-[22%]'} />}
         />
 
         <Textarea

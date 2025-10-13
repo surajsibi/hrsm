@@ -139,14 +139,7 @@ export default function Users({
               type="text"
               value={currentUser.firstName}
               onChange={e => setCurrentUser({ ...currentUser, firstName: e.target.value })}
-              icon={
-                <Icon
-                  name="User"
-                  size={16}
-                  color="#7a8799"
-                  className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none"
-                />
-              }
+              icon={<Icon name="User" />}
             />
           </div>
           <div className="w-1/2">
@@ -170,14 +163,7 @@ export default function Users({
               type="email"
               value={currentUser.emailAddress}
               onChange={e => setCurrentUser({ ...currentUser, emailAddress: e.target.value })}
-              icon={
-                <Icon
-                  name="Mail"
-                  size={16}
-                  color="#7a8799"
-                  className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none"
-                />
-              }
+              icon={<Icon name="Mail" />}
             />
           </div>
           <div className="w-1/2">
@@ -188,14 +174,7 @@ export default function Users({
               type="text"
               value={currentUser.phoneNumber}
               onChange={e => setCurrentUser({ ...currentUser, phoneNumber: e.target.value })}
-              icon={
-                <Icon
-                  name="Phone"
-                  size={16}
-                  color="#7a8799"
-                  className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none"
-                />
-              }
+              icon={<Icon name="Phone" />}
             />
           </div>
         </div>
@@ -209,14 +188,7 @@ export default function Users({
             className="appearance-none"
             value={currentUser.dateOfBirth}
             onChange={e => setCurrentUser({ ...currentUser, dateOfBirth: e.target.value })}
-            icon={
-              <Icon
-                name="Calendar"
-                size={16}
-                color="#7a8799"
-                className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none"
-              />
-            }
+            icon={<Icon name="Calendar" />}
           />
         </div>
         <div className="w-1/2">
@@ -243,14 +215,7 @@ export default function Users({
           type="text"
           value={currentUser.address}
           onChange={e => setCurrentUser({ ...currentUser, address: e.target.value })}
-          icon={
-            <Icon
-              name="MapPin"
-              size={16}
-              color="#7a8799"
-              className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none"
-            />
-          }
+          icon={<Icon name="MapPin" />}
         />
       </div>
       <Title className="text-md font-medium text-start" variant="h3">
@@ -330,14 +295,7 @@ export default function Users({
               type="date"
               value={currentUser.probationStartDate}
               onChange={e => setCurrentUser({ ...currentUser, probationStartDate: e.target.value })}
-              icon={
-                <Icon
-                  name="Calendar"
-                  size={16}
-                  color="#7a8799"
-                  className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none"
-                />
-              }
+              icon={<Icon name="Calendar" />}
             />
           </div>
           <div className="w-1/2">
@@ -348,14 +306,7 @@ export default function Users({
               className="appearance-none"
               value={currentUser.probationEndDate}
               onChange={e => setCurrentUser({ ...currentUser, probationEndDate: e.target.value })}
-              icon={
-                <Icon
-                  name="Calendar"
-                  size={16}
-                  color="#7a8799"
-                  className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none"
-                />
-              }
+              icon={<Icon name="Calendar" />}
             />
           </div>
         </div>
@@ -373,7 +324,7 @@ export default function Users({
         onClick={handleAddUser}
       >
         <div className="text-white flex justify-center items-center">
-          <Icon name="Plus" size={16} color="white" />
+          <Icon name="Plus" size={16} color="white" variant="header" />
           <span className="ml-2">Add User</span>
         </div>
       </Buttons>
@@ -399,7 +350,7 @@ export default function Users({
                     </span>
                   }
                   onDelete={() => handleDelete(i)}
-                  icon={<Icon name="User" size={16} />}
+                  icon={<Icon name="User" size={16} variant="header" />}
                 />
               </div>
             ))}
@@ -427,7 +378,7 @@ export default function Users({
         <Buttons variant="primary" size="sm" type="submit" className="w-1/2 font-medium">
           <p className="flex items-center justify-center gap-4">
             <span className="font-semibold text-center">Complete Setup</span>
-            <Icon name="ArrowRight" size={16} color="white" />
+            <Icon name="ArrowRight" size={16} color="white" variant="header" />
           </p>
         </Buttons>
       </div>
@@ -442,7 +393,7 @@ export default function Users({
           className="text-black font-medium"
         >
           <p className="flex items-center justify-center gap-4">
-            <Icon name="ArrowLeft" size={16} />
+            <Icon name="ArrowLeft" size={16} variant="header" />
             <span className="font-medium text-center">Previous Step</span>
           </p>
         </Buttons>
