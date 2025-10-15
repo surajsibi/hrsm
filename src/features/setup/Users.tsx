@@ -324,7 +324,7 @@ export default function Users({
         onClick={handleAddUser}
       >
         <div className="text-white flex justify-center items-center">
-          <Icon name="Plus" size={16} color="white" variant="header" />
+          <Icon name="Plus" size={16} color="white" variant="normal" />
           <span className="ml-2">Add User</span>
         </div>
       </Buttons>
@@ -350,7 +350,7 @@ export default function Users({
                     </span>
                   }
                   onDelete={() => handleDelete(i)}
-                  icon={<Icon name="User" size={16} variant="header" />}
+                  icon={<Icon name="User" size={16} variant="normal" />}
                 />
               </div>
             ))}
@@ -378,7 +378,7 @@ export default function Users({
         <Buttons variant="primary" size="sm" type="submit" className="w-1/2 font-medium">
           <p className="flex items-center justify-center gap-4">
             <span className="font-semibold text-center">Complete Setup</span>
-            <Icon name="ArrowRight" size={16} color="white" variant="header" />
+            <Icon name="ArrowRight" size={16} color="white" variant="normal" />
           </p>
         </Buttons>
       </div>
@@ -393,7 +393,7 @@ export default function Users({
           className="text-black font-medium"
         >
           <p className="flex items-center justify-center gap-4">
-            <Icon name="ArrowLeft" size={16} variant="header" />
+            <Icon name="ArrowLeft" size={16} variant="normal" />
             <span className="font-medium text-center">Previous Step</span>
           </p>
         </Buttons>

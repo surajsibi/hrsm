@@ -65,10 +65,10 @@ export const AddShift = memo(function AddShift({
         {/* Time and Days */}
         <div className="flex flex-col gap-1 justify-center">
           <Description className="flex items-center gap-3">
-            <Icon name="Clock" size={16} variant="header" /> {timeRange}
+            <Icon name="Clock" size={16} variant="normal" /> {timeRange}
           </Description>
           <Description className="flex items-center gap-3">
-            <Icon name="Calendar" size={16} variant="header" /> Days: {daysText}
+            <Icon name="Calendar" size={16} variant="normal" /> Days: {daysText}
           </Description>
         </div>
 

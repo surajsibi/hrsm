@@ -1,6 +1,7 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 
 import { Icon } from '@/components/Icons/Icon';
@@ -20,15 +21,17 @@ export default function SetNewPassword(): JSX.Element {
     formState: { errors, isSubmitting, isValid },
   } = useForm<SetNewPasswordType>({ mode: 'all', resolver: zodResolver(SetNewPasswordSchema) });
 
-  const onSubmit = async (data: SetNewPasswordType) => {
+  const router = useRouter();
+
+  const onSubmit = (data: SetNewPasswordType): void => {
     try {
       reset();
 
-      return data;
+      console.log(data);
+
+      router.push('/setup');
     } catch (error) {
       console.error('Form submission error:', error);
-
-      return null;
     }
   };
 

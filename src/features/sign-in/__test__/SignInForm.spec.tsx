@@ -77,6 +77,7 @@ describe('features / sign-in / SignInForm', () => {
     expect(email).toBeInTheDocument();
     expect(password).toBeInTheDocument();
     expect(button).toBeInTheDocument();
+
     await userEvent.type(email, 'admin@company');
     await userEvent.type(password, 'test123');
     await userEvent.click(button);

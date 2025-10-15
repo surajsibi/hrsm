@@ -30,8 +30,8 @@ export function Tab({
   children,
   active,
   onClick,
-  activeIcon = <Icon name="X" size={16} variant="header" />,
-  inactiveIcon = <Icon name="Plus" size={16} variant="header" />,
+  activeIcon = <Icon name="X" size={16} variant="normal" />,
+  inactiveIcon = <Icon name="Plus" size={16} variant="normal" />,
 }: TabProps) {
   const baseClasses =
     'text-[#344256] text-sm flex font-medium items-center justify-center gap-2 py-2 px-3 border border-gray-700/20 rounded-md hover:bg-[#3c83f61a] hover:text-[#3c83f6] transition-colors duration-300 bg-[#fcfcfc] h-9';

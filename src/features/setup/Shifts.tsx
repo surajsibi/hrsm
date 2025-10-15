@@ -300,7 +300,7 @@ export default function Shifts({
         size="md"
       >
         <div className="flex gap-2 items-center justify-center">
-          <Icon name="ArrowLeft" size={16} color="white" variant="header" />
+          <Icon name="ArrowLeft" size={16} color="white" variant="normal" />
           Add Shift
         </div>
       </Buttons>
@@ -317,7 +317,7 @@ export default function Shifts({
                 key={shift.id}
                 title={shift.title}
                 description={`${shift.workType} • ${shift.startingTime} - ${shift.endingTime} • ${shift.workingHours}h`}
-                icon={<Icon name="Crown" size={16} variant="header" />}
+                icon={<Icon name="Crown" size={16} variant="normal" />}
                 onDelete={() => remove(index)}
               />
             ))}
@@ -345,7 +345,7 @@ export default function Shifts({
         </Buttons>
         <Buttons type="submit" variant="primary" size="sm" className="w-1/2 font-medium ">
           <div className="flex items-center justify-center gap-3 font-medium ">
-            Continue <Icon name="ArrowRight" color="white" size={16} variant="header" />
+            Continue <Icon name="ArrowRight" color="white" size={16} variant="normal" />
           </div>
         </Buttons>
       </div>
@@ -361,7 +361,7 @@ export default function Shifts({
           className="text-black font-medium "
         >
           <div className="flex items-center justify-center gap-3 font-medium">
-            <Icon name="ArrowLeft" size={16} variant="header" />
+            <Icon name="ArrowLeft" size={16} variant="normal" />
             <span className="font-medium text-center">Previous Step</span>
           </div>
         </Buttons>

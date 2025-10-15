@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 export const SignInFormSchema = z.object({
-  tenantCode: z.string().optional(),
+  tenantCode: z.string().min(1, 'Tenant Code is required'),
   email: z
     .string()
     .min(1, 'Email is required')

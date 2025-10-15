@@ -135,7 +135,7 @@ export default function Designation({
   const DepartmentCard = ({ department }: { department: string }) => (
     <div className="shadow-md bg-white border border-border rounded-lg p-4 flex flex-col gap-3">
       <div className="flex gap-2 text-primary items-center justify-start">
-        <Icon name="Building" variant="header" />
+        <Icon name="Building" variant="normal" />
         <Title variant="h4" className="text-md">
           {department}
         </Title>
@@ -173,7 +173,7 @@ export default function Designation({
               key={`${department}-${i}`}
               title={des}
               description={department}
-              icon={<Icon name="Crown" variant="header" />}
+              icon={<Icon name="Crown" variant="normal" />}
               onDelete={() => updateDesignations(department, des, 'remove')}
             />
           ))
@@ -239,7 +239,7 @@ export default function Designation({
         disabled={!inputValue || !selectedDepartment || departments.length === 0}
       >
         <div className="flex gap-2 items-center justify-center">
-          <Icon name="Plus" variant="header" /> Add Designation
+          <Icon name="Plus" variant="normal" /> Add Designation
         </div>
       </Buttons>
 
@@ -264,7 +264,7 @@ export default function Designation({
         </Buttons>
         <Buttons type="submit" variant="primary" size="sm" className="w-1/2 font-medium">
           <div className="flex items-center justify-center gap-3 font-medium">
-            Continue <Icon name="ArrowRight" color="white" size={16} variant="header" />
+            Continue <Icon name="ArrowRight" color="white" size={16} variant="normal" />
           </div>
         </Buttons>
       </div>
@@ -280,7 +280,7 @@ export default function Designation({
           className="text-black font-medium"
         >
           <div className="flex items-center justify-center gap-3 font-medium">
-            <Icon name="ArrowLeft" variant="header" />
+            <Icon name="ArrowLeft" variant="normal" />
             <span className="font-medium text-center">Previous Step</span>
           </div>
         </Buttons>

@@ -144,7 +144,7 @@ export default function Department({
           variant="primary"
           className="h-12"
         >
-          <Icon name="Plus" size={20} color="white" variant="header" />
+          <Icon name="Plus" size={20} color="white" variant="normal" />
         </Buttons>
       </div>
 
@@ -194,7 +194,7 @@ export default function Department({
         <Buttons type="submit" variant="primary" size="sm" className="w-1/2 font-medium">
           <p className="flex items-center justify-center gap-4">
             <span className="font-semibold text-center">Continue</span>
-            <Icon name="ArrowRight" size={16} color="white" variant="header" />
+            <Icon name="ArrowRight" size={16} color="white" variant="normal" />
           </p>
         </Buttons>
       </div>
@@ -209,7 +209,7 @@ export default function Department({
           className="text-black font-medium"
         >
           <p className="flex items-center justify-center gap-4">
-            <Icon name="ArrowLeft" variant="header" />
+            <Icon name="ArrowLeft" variant="normal" />
             <span className="font-medium text-center">Previous Step</span>
           </p>
         </Buttons>

@@ -10,7 +10,7 @@ export default function Complete(): JSX.Element {
   return (
     <div className="flex flex-col items-center justify-center gap-4 my-[30%] p-5">
       <HeaderLogo
-        icon={<Icon name="Check" size="30" color="white" variant="header" />}
+        icon={<Icon name="Check" size="30" color="white" variant="normal" />}
         variant="rounded"
       />
       <Title variant="h1">Setup Completed</Title>

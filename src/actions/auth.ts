@@ -17,6 +17,11 @@ export const login = async (formData: {
       tenantCode: formData?.tenantCode,
     });
 
+    if (!data?.accessToken || !data.refreshToken || !data.user) {
+      console.error('Login failed: invalid response from server', data);
+
+      return { success: false, message: 'Invalid response from server' };
+    }
     const { user, accessToken, refreshToken } = data;
 
     console.log(data, 'this is data');
@@ -34,7 +39,6 @@ export const login = async (formData: {
       httpOnly: false,
     });
 
-    // 🔐 Tell NextAuth to create a session
     await signIn('credentials', {
       redirect: false,
       ...user,

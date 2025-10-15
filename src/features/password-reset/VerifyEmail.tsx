@@ -60,7 +60,7 @@ export default function VerifyEmail({
           <Buttons onClick={onPrev} type="button" variant="secondary" className="w-1/2">
             {
               <div className="flex items-center gap-2">
-                <Icon name="ArrowLeft" size={16} variant="header" /> Back
+                <Icon name="ArrowLeft" size={16} variant="normal" /> Back
               </div>
             }
           </Buttons>

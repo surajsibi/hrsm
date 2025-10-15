@@ -1,5 +1,7 @@
 'use client';
 
+import { type JSX, memo, useCallback } from 'react';
+
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 
@@ -10,83 +12,98 @@ import { HeaderLogo } from '@/components/ui/utils/HeaderLogos';
 import { InputComponent } from '@/components/ui/utils/InputComponent';
 import { Spinner } from '@/components/ui/utils/Spinner';
 import { Title } from '@/components/ui/utils/Titles';
-import constants from '@/constants/index';
-import { SignInFormSchema } from '@/types/signin-form-types';
+import { SignInFormSchema, type SignInFormType } from '@/types/signin-form-types';
 
-// eslint-disable-next-line no-duplicate-imports
-import type { SignInFormType } from '@/types/signin-form-types';
-import type { JSX } from 'react';
-
-export default function SignInForm({
+/**
+ * Optimized SignInForm
+ * - Uses `useCallback` to memoize submit handler
+ * - Uses `memo` to avoid unnecessary re-renders
+ * - Removes unnecessary wrapping div nesting
+ * - Uses minimal re-renders by relying on RHF's built-in optimization
+ * - Improves accessibility & semantics
+ */
+function SignInFormBase({
   formSubmit,
+  isPending,
 }: {
   formSubmit: (_data: SignInFormType) => void;
+  isPending: boolean;
 }): JSX.Element {
   const {
     handleSubmit,
     register,
-    formState: { errors, isSubmitting },
-  } = useForm<SignInFormType>({ resolver: zodResolver(SignInFormSchema), mode: 'all' });
-  const { APP_NAME } = constants;
+    formState: { errors, isSubmitting, isValid },
+  } = useForm<SignInFormType>({
+    resolver: zodResolver(SignInFormSchema),
+    mode: 'all',
+  });
 
-  const submit = (data: SignInFormType) => {
-    try {
-      formSubmit(data);
-      // reset();
-    } catch (error) {
-      console.error('Form submission error:', error);
-    }
-  };
+  const onSubmit = useCallback(
+    async (data: SignInFormType) => {
+      try {
+        formSubmit(data);
+      } catch (error) {
+        console.error('Form submission error:', error);
+      }
+    },
+    [formSubmit]
+  );
 
   return (
-    <div className="max-w-md w-full flex flex-col justify-center  gap-8">
-      <div className="flex flex-col items-center justify-center gap-4 ">
+    <section className="w-full max-w-md mx-auto flex flex-col justify-center gap-8">
+      <header className="flex flex-col items-center justify-center gap-4">
         <HeaderLogo
           variant="square"
-          icon={<Icon name="Building2" size="30" color="white" variant="header" />}
+          icon={<Icon name="Building2" size="30" color="white" variant="normal" />}
         />
         <Title variant="h1">HRMS Portal</Title>
         <Description size="md">Sign in to your admin dashboard</Description>
-      </div>
-      <div className="backdrop-blur-sm shadow-lg text-primary bg-[#ffffff80] flex flex-col  w-full  rounded-lg  gap-6">
-        <div className="flex  flex-col gap-1 p-6 pb-0  ">
+      </header>
+
+      <article className="bg-white/50 backdrop-blur-sm shadow-lg text-primary rounded-lg flex flex-col gap-6">
+        <div className="flex flex-col gap-1 p-6 pb-0">
           <Title variant="h3">Welcome Back</Title>
           <Description size="sm">Enter your credentials to access the system</Description>
         </div>
-        <form
-          onSubmit={handleSubmit(submit)}
-          className="w-full h-full px-6 gap-6 flex flex-col py-6 pt-0"
-        >
+
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6 p-6 pt-0" noValidate>
           <InputComponent
             label="Tenant Code"
             placeholder="Enter your tenant code"
             id="tenantCode"
             type="text"
+            autoComplete="organization"
             {...register('tenantCode')}
             error={errors.tenantCode}
             icon={<Icon name="Building2" />}
           />
+
           <InputComponent
             label="Email / Username"
             placeholder="admin@company.com"
             id="email"
             type="email"
+            autoComplete="username"
             {...register('email')}
             error={errors.email}
             icon={<Icon name="User" />}
           />
+
           <InputComponent
             label="Password"
             placeholder="Enter your password"
             id="password"
             type="password"
+            autoComplete="current-password"
             {...register('password')}
             error={errors.password}
             icon={<Icon name="Lock" />}
           />
+
           <Buttons
             variant="primary"
             loading={isSubmitting}
+            disabled={isSubmitting || !isValid || isPending}
             loadingChildren={
               <span className="flex items-center gap-2">
                 <Spinner /> Signing...
@@ -97,8 +114,11 @@ export default function SignInForm({
             Sign In to Dashboard
           </Buttons>
         </form>
-      </div>
-      <footer className="text-paragraph text-center ">&copy;{APP_NAME} All Rights Reserved</footer>
-    </div>
+      </article>
+    </section>
   );
 }
+
+const SignInForm = memo(SignInFormBase);
+
+export default SignInForm;
