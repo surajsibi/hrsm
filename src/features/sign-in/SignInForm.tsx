@@ -79,7 +79,7 @@ function SignInFormBase({
           />
 
           <InputComponent
-            label="Email / Username"
+            label="Email"
             placeholder="admin@company.com"
             id="email"
             type="email"

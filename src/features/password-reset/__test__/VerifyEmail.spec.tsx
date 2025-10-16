@@ -14,88 +14,75 @@ describe('features / password-reset / VerifyEmail', () => {
     return <FormProvider {...methods}>{children}</FormProvider>;
   };
 
-  it('should render the component', () => {
+  const VerifyEmailSetup = (props = {}) => {
+    const defaultProps = {
+      onNext: jest.fn(),
+      onPrev: jest.fn(),
+    };
+
     render(
       <Wrapper>
-        <VerifyEmail onNext={jest.fn()} onPrev={jest.fn()} />
+        <VerifyEmail {...defaultProps} {...props} />
       </Wrapper>
     );
-    expect(screen.getByText(/Verify Email/i)).toBeInTheDocument();
-    expect(
-      screen.getByText(/Enter your verification code we sent to your email/i)
-    ).toBeInTheDocument();
-    expect(screen.getByPlaceholderText(/Enter 6 digit code/i)).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /Back/i })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /Verify OTP/i })).toBeInTheDocument();
+
+    const otpInput = screen.getByRole('textbox', { name: /Veification Code/i });
+    const backButton = screen.getByRole('button', { name: /Back/i });
+    const verifyButton = screen.getByRole('button', { name: /Verify OTP/i });
+
+    return { otpInput, backButton, verifyButton, ...defaultProps };
+  };
+
+  it('renders all UI elements correctly', async () => {
+    const { otpInput, backButton, verifyButton } = VerifyEmailSetup();
+
+    expect(screen.getByRole('heading', { name: /Verify Email/i, level: 3 })).toBeInTheDocument();
+
+    expect(otpInput).toBeInTheDocument();
+    expect(backButton).toBeInTheDocument();
+    expect(verifyButton).toBeInTheDocument();
   });
 
-  it('should show error if code is not valid or empty', async () => {
-    render(
-      <Wrapper>
-        <VerifyEmail onNext={jest.fn()} onPrev={jest.fn()} />
-      </Wrapper>
-    );
+  it('show error if email is not valid and button disabled and enable if valid', async () => {
+    const { otpInput, verifyButton } = VerifyEmailSetup();
 
-    const input = screen.getByPlaceholderText(/Enter 6 digit code/i);
-
-    await userEvent.click(input);
+    await userEvent.click(otpInput);
     await userEvent.tab();
 
-    expect(screen.getByText(/OTP should be at least 6 characters/i)).toBeInTheDocument();
+    expect(await screen.findByText(/OTP should be at least 6 characters/i)).toBeInTheDocument();
 
-    const button = screen.getByRole('button', { name: /Verify OTP/i });
+    expect(verifyButton).toBeDisabled();
 
-    expect(button).toBeDisabled();
+    await userEvent.clear(otpInput);
+    await userEvent.type(otpInput, 'abcdef');
 
-    await userEvent.type(input, '12345');
+    expect(await screen.findByText(/OTP should be numeric/i)).toBeInTheDocument();
 
-    expect(screen.getByText(/OTP must be 6 digits long/i)).toBeInTheDocument();
-    expect(button).toBeDisabled();
+    expect(verifyButton).toBeDisabled();
 
-    await userEvent.type(input, '123456');
+    await userEvent.clear(otpInput);
+    await userEvent.type(otpInput, '123456');
 
-    expect(button).not.toBeDisabled();
-
-    await userEvent.clear(input);
-
-    expect(button).toBeDisabled();
+    expect(verifyButton).toBeEnabled();
   });
 
   it("test case for 'Back' button", async () => {
     const onPrev = jest.fn();
+    const { backButton } = VerifyEmailSetup({ onPrev });
 
-    render(
-      <Wrapper>
-        <VerifyEmail onNext={jest.fn()} onPrev={onPrev} />
-      </Wrapper>
-    );
-
-    const button = screen.getByRole('button', { name: /Back/i });
-
-    await userEvent.click(button);
+    await userEvent.click(backButton);
 
     expect(onPrev).toHaveBeenCalledTimes(1);
   });
 
-  it('test case for "Verify OTP" button', async () => {
+  it('test case for "Verify" button', async () => {
     const onNext = jest.fn();
+    const { otpInput, verifyButton } = VerifyEmailSetup({ onNext });
 
-    render(
-      <Wrapper>
-        <VerifyEmail onNext={onNext} onPrev={jest.fn()} />
-      </Wrapper>
-    );
+    await userEvent.type(otpInput, '123456');
 
-    const input = screen.getByPlaceholderText(/Enter 6 digit code/i);
-    const button = screen.getByRole('button', { name: /Verify OTP/i });
-
-    expect(button).toBeDisabled();
-
-    await userEvent.type(input, '123456');
-
-    expect(button).not.toBeDisabled();
-
-    await userEvent.click(button);
+    expect(verifyButton).toBeEnabled();
+    await userEvent.click(verifyButton);
 
     expect(onNext).toHaveBeenCalledTimes(1);
   });
