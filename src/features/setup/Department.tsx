@@ -132,6 +132,7 @@ export default function Department({
       </Title>
       <div className="flex gap-5 items-end">
         <InputComponent
+          id="custom-department"
           type="text"
           placeholder="Enter department names"
           value={inputValue}
@@ -139,6 +140,7 @@ export default function Department({
           icon={<Icon name="Briefcase" />}
         />
         <Buttons
+          aria-label="Add custom department"
           disabled={inputValue === ''}
           onClick={addCustomDepartment}
           variant="primary"

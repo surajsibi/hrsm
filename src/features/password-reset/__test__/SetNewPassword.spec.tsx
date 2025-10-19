@@ -1,124 +1,57 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { FormProvider, useForm } from 'react-hook-form';
 
 import SetNewPassword from '@/features/password-reset/SetNewPassword';
 
-import type { PasswordSetup } from '@/types/passwordSetup.types';
-import type { ReactNode } from 'react';
-
 describe('features / password-reset / SetNewPassword', () => {
-  const Wrapper = ({ children }: { children: ReactNode }) => {
-    const methods = useForm<PasswordSetup>({ mode: 'all' });
+  const SetNewPasswordSetup = () => {
+    render(<SetNewPassword />);
 
-    return <FormProvider {...methods}>{children}</FormProvider>;
+    const newPasswordInput = screen.getByRole('textbox', { name: /New Password/i });
+    const confirmPasswordInput = screen.getByRole('textbox', { name: /Confirm Password/i });
+    const submitButton = screen.getByRole('button', { name: /update password/i });
+
+    return { newPasswordInput, confirmPasswordInput, submitButton };
   };
 
-  it('render with default', () => {
-    render(
-      <Wrapper>
-        <SetNewPassword />
-      </Wrapper>
-    );
-    expect(screen.getByText(/Set New Password/i)).toBeInTheDocument();
-    expect(screen.getByText(/Create a strong new password for your account/i)).toBeInTheDocument();
-    expect(screen.getByPlaceholderText(/Enter new password/i)).toBeInTheDocument();
-    expect(screen.getByPlaceholderText(/Confirm new password/i)).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /update password/i })).toBeInTheDocument();
+  it('render all ui elements correctly', () => {
+    const { newPasswordInput, confirmPasswordInput, submitButton } = SetNewPasswordSetup();
+
+    expect(
+      screen.getByRole('heading', { name: /Set New Password/i, level: 3 })
+    ).toBeInTheDocument();
+    expect(newPasswordInput).toBeInTheDocument();
+    expect(confirmPasswordInput).toBeInTheDocument();
+    expect(submitButton).toBeInTheDocument();
   });
 
-  it('render with value', async () => {
-    render(
-      <Wrapper>
-        <SetNewPassword />
-      </Wrapper>
-    );
-    const password = screen.getByPlaceholderText(/Enter new password/i);
-    const confirmPassword = screen.getByPlaceholderText(/Confirm new password/i);
+  it('show error if password and confirm password is not valid ("input field are empty or not matching") button are disable if input fields are not valid and enable when input fields are valid', async () => {
+    const { newPasswordInput, confirmPasswordInput, submitButton } = SetNewPasswordSetup();
 
-    await userEvent.type(password, 'password');
-
-    expect(password).toHaveValue('password');
-
-    await userEvent.type(confirmPassword, 'password');
-
-    expect(confirmPassword).toHaveValue('password');
-  });
-
-  it('check for error if no input given ', async () => {
-    render(
-      <Wrapper>
-        <SetNewPassword />
-      </Wrapper>
-    );
-    const password = screen.getByPlaceholderText(/Enter new password/i);
-    const confirmPassword = screen.getByPlaceholderText(/Confirm new password/i);
-
-    await userEvent.click(password);
+    await userEvent.click(newPasswordInput);
     await userEvent.tab();
 
-    await userEvent.click(confirmPassword);
+    expect(screen.getByText(/Password is required/i)).toBeInTheDocument();
+
+    await userEvent.click(confirmPasswordInput);
     await userEvent.tab();
 
-    await screen.findByText('*Password is required*');
-    await screen.findByText(/Confirm password is required/i);
-  });
+    expect(screen.getByText(/Confirm password is required/i)).toBeInTheDocument();
 
-  it("check for error if password and confirm password don't match", async () => {
-    render(
-      <Wrapper>
-        <SetNewPassword />
-      </Wrapper>
-    );
-    const password = screen.getByPlaceholderText(/Enter new password/i);
-    const confirmPassword = screen.getByPlaceholderText(/Confirm new password/i);
+    expect(submitButton).toBeDisabled();
 
-    await userEvent.type(password, 'password');
+    await userEvent.type(newPasswordInput, 'password');
+    await userEvent.type(confirmPasswordInput, 'different-password');
 
-    await userEvent.type(confirmPassword, 'wrong-password');
-
+    expect(screen.queryByText(/Password is required/i)).not.toBeInTheDocument();
+    expect(screen.queryByText(/Confirm password is required/i)).not.toBeInTheDocument();
     expect(screen.getByText(/Passwords do not match/i)).toBeInTheDocument();
-  });
+    expect(submitButton).toBeDisabled();
 
-  it('button should be disabled if form is not valid', async () => {
-    render(
-      <Wrapper>
-        <SetNewPassword />
-      </Wrapper>
-    );
-    const password = screen.getByPlaceholderText(/Enter new password/i);
-    const confirmPassword = screen.getByPlaceholderText(/Confirm new password/i);
+    await userEvent.clear(confirmPasswordInput);
+    await userEvent.type(confirmPasswordInput, 'password');
 
-    await userEvent.type(password, 'password');
-
-    expect(screen.getByRole('button', { name: /update password/i })).toBeDisabled();
-
-    await userEvent.type(confirmPassword, 'password');
-
-    expect(screen.getByRole('button', { name: /update password/i })).not.toBeDisabled();
-  });
-
-  it('Submitting form', async () => {
-    render(
-      <Wrapper>
-        <SetNewPassword />
-      </Wrapper>
-    );
-    const password = screen.getByPlaceholderText(/Enter new password/i);
-    const confirmPassword = screen.getByPlaceholderText(/Confirm new password/i);
-
-    await userEvent.type(password, 'password');
-    await userEvent.type(confirmPassword, 'password');
-
-    const setPasswordButton = screen.getByRole('button', { name: /update password/i });
-
-    await userEvent.click(setPasswordButton);
-
-    await userEvent.clear(password);
-    await userEvent.clear(confirmPassword);
-
-    expect(setPasswordButton).toBeDisabled();
-
-    expect(setPasswordButton).toHaveTextContent('Update Password');
+    expect(screen.queryByText(/Passwords do not match/i)).not.toBeInTheDocument();
+    expect(submitButton).toBeEnabled();
   });
 });

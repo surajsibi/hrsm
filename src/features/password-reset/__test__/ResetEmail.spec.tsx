@@ -1,31 +1,15 @@
-// __tests__/ResetPassword.test.tsx
-
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { FormProvider, useForm } from 'react-hook-form';
 
 import ResetPassword from '@/features/password-reset/ResetEmail';
 
-import type { PasswordSetup } from '@/types/passwordSetup.types';
-import type { ReactNode } from 'react';
-
 describe('features / password-reset / ResetPassword', () => {
-  const Wrapper = ({ children }: { children: ReactNode }) => {
-    const methods = useForm<PasswordSetup>({ mode: 'all' });
-
-    return <FormProvider {...methods}>{children}</FormProvider>;
-  };
-
   const ResetPasswordSetup = (props = {}) => {
     const defaultProps = {
       onNext: jest.fn(),
     };
 
-    render(
-      <Wrapper>
-        <ResetPassword {...defaultProps} {...props} />
-      </Wrapper>
-    );
+    render(<ResetPassword {...defaultProps} {...props} />);
 
     const emailInput = screen.getByRole('textbox', { name: /email/i });
     const sendButton = screen.getByRole('button', { name: /send otp/i });

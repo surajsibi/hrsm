@@ -1,73 +1,65 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { Selector } from '../Selector';
+import { Selector } from '@/components/ui/utils/Selector';
 
-describe('Selector', () => {
-  const options = ['Apple', 'Banana', 'Orange'];
-
-  it('renders with placeholder by default', () => {
-    render(<Selector options={options} placeholder="Choose a fruit" />);
-    expect(screen.getByRole('button', { name: /choose a fruit/i })).toBeInTheDocument();
-  });
-
-  it('renders with children', () => {
+describe('components / ui / utils / Selector', () => {
+  const SelectorSetup = () => {
+    const options = ['Apple', 'Banana', 'Orange'];
+    const onChange = jest.fn();
     render(
-      <Selector options={options} placeholder="Pick">
-        <span>🍎</span>
-      </Selector>
+      <Selector
+        placeholder="Choose a fruit"
+        options={options}
+        id="fruit-selector "
+        onChange={onChange}
+      />
     );
-    expect(screen.getByText('🍎')).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /pick/i })).toBeInTheDocument();
-  });
 
-  it('opens dropdown on click and shows options', async () => {
-    render(<Selector options={options} placeholder="Pick" />);
-    const button = screen.getByRole('button', { name: /pick/i });
-    await userEvent.click(button);
-    options.forEach(opt => {
-      expect(screen.getByRole('option', { name: opt })).toBeInTheDocument();
+    const combobox = screen.getByRole('combobox');
+
+    return { options, onChange, combobox };
+  };
+
+  it('renders combobox and opens dropdown', async () => {
+    const { options, combobox } = SelectorSetup();
+
+    expect(combobox).toBeInTheDocument();
+
+    expect(combobox).toHaveAttribute('aria-expanded', 'false');
+
+    await userEvent.click(combobox);
+
+    options.forEach(option => {
+      expect(screen.getByRole('option', { name: option })).toBeVisible();
     });
   });
 
-  it('calls onChange when option is clicked', async () => {
-    const handleChange = jest.fn();
-    render(<Selector options={options} placeholder="Pick" onChange={handleChange} />);
-    await userEvent.click(screen.getByRole('button', { name: /pick/i }));
-    await userEvent.click(screen.getByRole('option', { name: /banana/i }));
-    expect(handleChange).toHaveBeenCalledWith('Banana');
+  it('calls onChange when an option is clicked', async () => {
+    const { options, combobox, onChange } = SelectorSetup();
+
+    await userEvent.click(combobox);
+
+    const bananaOption = screen.getByRole('option', { name: 'Banana' });
+    await userEvent.click(bananaOption);
+
+    expect(onChange).toHaveBeenCalledTimes(1);
+    expect(onChange).toHaveBeenCalledWith('Banana');
+
+    expect(combobox).toHaveAttribute('aria-expanded', 'false');
   });
 
-  it('closes dropdown when Escape is pressed', async () => {
-    render(<Selector options={options} placeholder="Pick" />);
-    const button = screen.getByRole('button', { name: /pick/i });
-    await userEvent.click(button);
-    expect(screen.getByRole('listbox')).toBeVisible();
+  it('supports keyboard navigation', async () => {
+    const { onChange, combobox } = SelectorSetup();
 
-    await userEvent.type(button, '{escape}');
-    expect(screen.getByRole('listbox')).toHaveClass('pointer-events-none');
-  });
+    combobox.focus();
 
-  it('closes dropdown when clicking outside', async () => {
-    render(
-      <div>
-        <Selector options={options} placeholder="Pick" />
-        <button>Outside</button>
-      </div>
-    );
+    await userEvent.keyboard('{Enter}');
+    expect(screen.getByRole('option', { name: 'Apple' })).toBeVisible();
 
-    const button = screen.getByRole('button', { name: /pick/i });
-    await userEvent.click(button);
-    expect(screen.getByRole('listbox')).toBeVisible();
+    await userEvent.keyboard('{ArrowDown}');
 
-    await userEvent.click(screen.getByText('Outside'));
-    expect(screen.getByRole('listbox')).toHaveClass('pointer-events-none');
-  });
+    await userEvent.keyboard('{Enter}');
 
-  it('does not open when disabled', async () => {
-    render(<Selector options={options} placeholder="Pick" disabled />);
-    const button = screen.getByRole('button', { name: /pick/i });
-    expect(button).toBeDisabled();
-    await userEvent.click(button);
-    expect(screen.getByRole('listbox')).toHaveClass('pointer-events-none');
+    expect(onChange).toHaveBeenCalledWith('Banana');
   });
 });

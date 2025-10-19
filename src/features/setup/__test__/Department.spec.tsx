@@ -4,129 +4,230 @@ import userEvent from '@testing-library/user-event';
 
 import Department from '@/features/setup/Department';
 
+jest.mock('@/components/ui/utils/Tabs', () => ({
+  __esModule: true,
+  Tab: ({
+    children,
+    active,
+    onClick,
+  }: {
+    children: string;
+    active?: boolean;
+    onClick?: () => void;
+  }) => (
+    <button onClick={onClick} aria-pressed={active} data-testid={`mock-tab-${children}`}>
+      {children}
+    </button>
+  ),
+}));
+
 describe('features / setup / Department', () => {
-  const onNext = jest.fn();
-  const onPrev = jest.fn();
+  const DepartmentSetup = (props = {}) => {
+    const defaultProps = {
+      onNext: jest.fn(),
+      onPrev: jest.fn(),
+    };
 
-  beforeEach(() => {
-    jest.clearAllMocks();
-  });
+    render(<Department {...defaultProps} {...props} />);
 
-  it('renders the component with all sections', () => {
-    render(<Department onNext={onNext} onPrev={onPrev} />);
+    const customDeparmentNameInput = screen.getByRole('textbox', {
+      name: '',
+    });
 
-    // Headers
-    expect(screen.getByText('Departments')).toBeInTheDocument();
-    expect(screen.getByText(/Quick Add Departments/i)).toBeInTheDocument();
-    expect(screen.getByText(/Add Custom Departments/i)).toBeInTheDocument();
-    expect(screen.getByText(/Departments help organize your workforce/i)).toBeInTheDocument();
-
-    // Input & buttons
-    expect(screen.getByPlaceholderText(/Enter department names/i)).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /Skip This Step/i })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /Continue/i })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /Previous Step/i })).toBeInTheDocument();
-
-    // Quick Add tabs
-    const quickAddTabs = [
-      'Human Resources',
-      'Information Technology',
-      'Sales & Marketing',
-      'Finance & Accounting',
-      'Operations',
-      'Customer Service',
-      'Research & Development',
-      'Legal & Compliance',
-      'Administration',
-      'Quality Assurance',
-    ];
-
-    for (const tab of quickAddTabs) {
-      expect(screen.getByText(tab)).toBeInTheDocument();
-    }
-  });
-
-  it('adds a quick add department when a tab is clicked', async () => {
-    render(<Department onNext={onNext} onPrev={onPrev} />);
-    const hrTab = screen.getByRole('button', { name: 'Human Resources' });
-
-    await userEvent.click(hrTab);
-
-    expect(screen.getByText(/Added Departments/i)).toBeInTheDocument();
-    expect(screen.getByRole('heading', { name: 'Human Resources' })).toBeInTheDocument();
-    expect(screen.getByTestId('Trash2')).toBeInTheDocument();
-
-    const addButton = screen.getByRole('button', { name: '' });
-
-    expect(addButton).toBeInTheDocument();
-    expect(addButton).toBeDisabled();
-  });
-
-  it('adds a custom department from input', async () => {
-    render(<Department onNext={onNext} onPrev={onPrev} />);
-    const input = screen.getByPlaceholderText(/Enter department names/i);
-    const addButton = screen.getByRole('button', { name: '' }); // the plus icon button
-
-    await userEvent.type(input, 'Marketing');
-    await userEvent.click(addButton);
-
-    // Should show Added Departments section
-    expect(screen.getByText(/Added Departments/i)).toBeInTheDocument();
-    expect(screen.getByRole('heading', { name: 'Marketing' })).toBeInTheDocument();
-    expect(screen.queryByText('1 department')).toBeInTheDocument();
-    expect(addButton).toBeInTheDocument();
-    expect(addButton).toBeDisabled();
-  });
-
-  it('adds multiple  custom department from input', async () => {
-    render(<Department onNext={onNext} onPrev={onPrev} />);
-    const input = screen.getByPlaceholderText(/Enter department names/i);
-    const addButton = screen.getByRole('button', { name: '' }); // the plus icon button
-
-    await userEvent.type(input, 'Marketing,Finance');
-    await userEvent.click(addButton);
-
-    // Should show Added Departments section
-    expect(screen.getByText(/Added Departments/i)).toBeInTheDocument();
-    expect(screen.getByRole('heading', { name: 'Marketing' })).toBeInTheDocument();
-    expect(screen.getByRole('heading', { name: 'Finance' })).toBeInTheDocument();
-    expect(screen.queryByText('2 departments')).toBeInTheDocument();
-    expect(addButton).toBeInTheDocument();
-    expect(addButton).toBeDisabled();
-  });
-
-  it('deletes a department when delete is clicked', async () => {
-    render(<Department onNext={onNext} onPrev={onPrev} />);
-    const input = screen.getByPlaceholderText(/Enter department names/i);
-    const addButton = screen.getByRole('button', { name: '' });
-
-    await userEvent.type(input, 'Marketing');
-    await userEvent.click(addButton);
-
-    const deleteButton = screen.getByLabelText(/Delete section/i);
-
-    await userEvent.click(deleteButton);
-
-    expect(screen.queryByText('Marketing')).not.toBeInTheDocument();
-    expect(screen.queryByText(/Added Departments/i)).not.toBeInTheDocument();
-  });
-
-  it('calls onNext and onPrev when respective buttons clicked', async () => {
-    render(<Department onNext={onNext} onPrev={onPrev} />);
+    const addCustomDepartmentButton = screen.getByRole('button', {
+      name: /Add custom department/i,
+    });
 
     const skipButton = screen.getByRole('button', { name: /Skip This Step/i });
+    const prevButton = screen.getByRole('button', { name: /Previous Step/i });
+    const continueButton = screen.getByRole('button', { name: /Continue/i });
+    const lineBreak = screen.getAllByRole('separator');
+    const hrDeparmentButton = screen.getByTestId('mock-tab-Human Resources');
+
+    return {
+      customDeparmentNameInput,
+      addCustomDepartmentButton,
+      skipButton,
+      prevButton,
+      continueButton,
+      lineBreak,
+      hrDeparmentButton,
+      ...defaultProps,
+    };
+  };
+
+  it('renders all UI elements correctly', () => {
+    const {
+      customDeparmentNameInput,
+      addCustomDepartmentButton,
+      skipButton,
+      prevButton,
+      continueButton,
+      lineBreak,
+      hrDeparmentButton,
+    } = DepartmentSetup();
+
+    expect(screen.getByRole('heading', { name: 'Departments', level: 3 }));
+    expect(screen.getByRole('heading', { name: 'Quick Add Departments', level: 3 }));
+    expect(screen.getByRole('heading', { name: 'Add Custom Departments', level: 3 }));
+    expect(customDeparmentNameInput).toBeInTheDocument();
+    expect(addCustomDepartmentButton).toBeInTheDocument();
+    expect(
+      screen.queryByRole('heading', { name: 'Added Departments', level: 3 })
+    ).not.toBeInTheDocument();
+
+    expect(lineBreak).toHaveLength(2);
+    for (const separator of lineBreak) expect(separator).toBeInTheDocument();
+
+    expect(skipButton).toBeInTheDocument();
+    expect(prevButton).toBeInTheDocument();
+    expect(continueButton).toBeInTheDocument();
+    expect(hrDeparmentButton).toBeInTheDocument();
+
+    const deleteCustomDepartmentButton = screen.queryByRole('button', {
+      name: /Delete section/i,
+    });
+
+    expect(deleteCustomDepartmentButton).not.toBeInTheDocument();
+  });
+
+  it('quick add departments', async () => {
+    const { hrDeparmentButton } = DepartmentSetup();
+
+    expect(hrDeparmentButton).toBeInTheDocument();
+
+    await userEvent.click(hrDeparmentButton);
+
+    expect(
+      screen.getByRole('heading', { name: /Added Departments/i, level: 3 })
+    ).toBeInTheDocument();
+
+    const deleteCustomDepartmentButton = await screen.findByRole('button', {
+      name: /Delete section/i,
+    });
+
+    expect(deleteCustomDepartmentButton).toBeInTheDocument();
+
+    expect(screen.getByRole('heading', { name: /Human Resources/i })).toBeInTheDocument();
+    expect(screen.getByText(/1 department/i)).toBeInTheDocument();
+  });
+
+  it('adding and deleting custom department ', async () => {
+    const { customDeparmentNameInput, addCustomDepartmentButton } = DepartmentSetup();
+
+    expect(customDeparmentNameInput).toBeInTheDocument();
+    expect(addCustomDepartmentButton).toBeInTheDocument();
+
+    expect(addCustomDepartmentButton).toBeDisabled();
+
+    await userEvent.type(customDeparmentNameInput, 'custom department');
+
+    expect(addCustomDepartmentButton).not.toBeDisabled();
+
+    await userEvent.click(addCustomDepartmentButton);
+
+    expect(
+      screen.getByRole('heading', { name: /Added Departments/i, level: 3 })
+    ).toBeInTheDocument();
+
+    const deleteCustomDepartmentButton = await screen.findByRole('button', {
+      name: /Delete section/i,
+    });
+
+    expect(deleteCustomDepartmentButton).toBeInTheDocument();
+
+    expect(
+      screen.getByRole('heading', { name: /custom department/i, level: 1 })
+    ).toBeInTheDocument();
+    expect(screen.getByText(/1 department/i)).toBeInTheDocument();
+
+    await userEvent.click(deleteCustomDepartmentButton);
+
+    expect(
+      screen.queryByRole('heading', { name: /custom department/i, level: 1 })
+    ).not.toBeInTheDocument();
+    expect(screen.queryByText(/1 department/i)).not.toBeInTheDocument();
+
+    expect(
+      screen.queryByRole('heading', { name: /Added Departments/i, level: 3 })
+    ).not.toBeInTheDocument();
+
+    expect(screen.queryByRole('button', { name: /Delete section/i })).not.toBeInTheDocument();
+
+    expect(addCustomDepartmentButton).toBeDisabled();
+  });
+
+  it('add multiple custom department', async () => {
+    const { customDeparmentNameInput, addCustomDepartmentButton } = DepartmentSetup();
+
+    expect(customDeparmentNameInput).toBeInTheDocument();
+    expect(addCustomDepartmentButton).toBeInTheDocument();
+
+    expect(addCustomDepartmentButton).toBeDisabled();
+
+    await userEvent.type(customDeparmentNameInput, 'custom department 1, custom department 2');
+
+    expect(addCustomDepartmentButton).not.toBeDisabled();
+
+    await userEvent.click(addCustomDepartmentButton);
+
+    expect(
+      screen.getByRole('heading', { name: /Added Departments/i, level: 3 })
+    ).toBeInTheDocument();
+
+    const deleteCustomDepartmentButton = await screen.findAllByRole('button', {
+      name: /Delete section/i,
+    });
+
+    expect(deleteCustomDepartmentButton).toHaveLength(2);
+
+    expect(
+      screen.queryByRole('heading', { name: /custom department 1/i, level: 1 })
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole('heading', { name: /custom department 2/i, level: 1 })
+    ).toBeInTheDocument();
+    expect(screen.getByText(/2 departments/i)).toBeInTheDocument();
+
+    await userEvent.click(deleteCustomDepartmentButton[0]);
+
+    expect(
+      screen.queryByRole('heading', { name: /custom department 1/i, level: 1 })
+    ).not.toBeInTheDocument();
+
+    expect(screen.getByText(/1 department/i)).toBeInTheDocument();
+
+    await userEvent.click(deleteCustomDepartmentButton[0]);
+
+    expect(
+      screen.queryByRole('heading', { name: /custom department 2/i, level: 1 })
+    ).not.toBeInTheDocument();
+
+    expect(
+      screen.queryByRole('heading', { name: /Added Departments/i, level: 3 })
+    ).not.toBeInTheDocument();
+
+    expect(screen.queryByRole('button', { name: /Delete section/i })).not.toBeInTheDocument();
+
+    expect(addCustomDepartmentButton).toBeDisabled();
+  });
+
+  it('testing all buttons ', async () => {
+    const onNext = jest.fn();
+    const onPrev = jest.fn();
+    const { skipButton, prevButton, continueButton } = DepartmentSetup({ onNext, onPrev });
+
+    expect(skipButton).toBeInTheDocument();
+    expect(prevButton).toBeInTheDocument();
+    expect(continueButton).toBeInTheDocument();
 
     await userEvent.click(skipButton);
     expect(onNext).toHaveBeenCalledTimes(1);
 
-    const prevButton = screen.getByRole('button', { name: /Previous Step/i });
+    await userEvent.click(continueButton);
+    expect(onNext).toHaveBeenCalledTimes(2);
 
     await userEvent.click(prevButton);
     expect(onPrev).toHaveBeenCalledTimes(1);
-
-    const continueButton = screen.getByRole('button', { name: /Continue/i });
-
-    await userEvent.click(continueButton);
-    expect(onNext).toHaveBeenCalledTimes(2);
   });
 });

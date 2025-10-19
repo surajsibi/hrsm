@@ -1,30 +1,16 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { FormProvider, useForm } from 'react-hook-form';
 
 import VerifyEmail from '@/features/password-reset/VerifyEmail';
 
-import type { PasswordSetup } from '@/types/passwordSetup.types';
-import type { ReactNode } from 'react';
-
 describe('features / password-reset / VerifyEmail', () => {
-  const Wrapper = ({ children }: { children: ReactNode }) => {
-    const methods = useForm<PasswordSetup>({ mode: 'all' });
-
-    return <FormProvider {...methods}>{children}</FormProvider>;
-  };
-
   const VerifyEmailSetup = (props = {}) => {
     const defaultProps = {
       onNext: jest.fn(),
       onPrev: jest.fn(),
     };
 
-    render(
-      <Wrapper>
-        <VerifyEmail {...defaultProps} {...props} />
-      </Wrapper>
-    );
+    render(<VerifyEmail {...defaultProps} {...props} />);
 
     const otpInput = screen.getByRole('textbox', { name: /Veification Code/i });
     const backButton = screen.getByRole('button', { name: /Back/i });

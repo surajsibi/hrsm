@@ -161,6 +161,7 @@ export const Selector = memo(function Selector({
       )}
       <button
         ref={buttonRef}
+        role="combobox"
         type="button"
         id={id}
         disabled={disabled}
@@ -207,6 +208,7 @@ export const Selector = memo(function Selector({
         {options.map((item, index) => (
           <button
             key={item}
+            id={`${id}-option-${index}`}
             role="option"
             aria-selected={item === value}
             type="button"

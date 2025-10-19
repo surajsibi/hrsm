@@ -4,120 +4,203 @@ import userEvent from '@testing-library/user-event';
 import Organization from '@/features/setup/Organization';
 
 describe('features / setup / Organization  ', () => {
+  const OrganizationSetup = (props = {}) => {
+    const defaultProps = {
+      onNext: jest.fn(),
+    };
+
+    render(<Organization {...defaultProps} {...props} />);
+
+    const companyNameInput = screen.getByRole('textbox', { name: /company name/i });
+    const companyTypeDropDown = screen.getByRole('combobox', { name: /company type/i });
+    const companyEmailInput = screen.getByRole('textbox', { name: /company email/i });
+    const companyPhoneInput = screen.getByRole('textbox', { name: /Phone Number/i });
+    const companyWebsiteInput = screen.getByRole('textbox', { name: /website/i });
+    const companySizeDropDown = screen.getByRole('combobox', { name: /company size/i });
+    const companyAddressInput = screen.getByRole('textbox', { name: /company address/i });
+    const companyDescriptionInput = screen.getByRole('textbox', {
+      name: /company description/i,
+    });
+    const createButton = screen.getByRole('button', { name: /Create Organization/i });
+    const skipButton = screen.getByRole('button', { name: /Skip This Step/i });
+
+    return {
+      companyNameInput,
+      companyTypeDropDown,
+      companyEmailInput,
+      companyPhoneInput,
+      companyWebsiteInput,
+      companySizeDropDown,
+      companyAddressInput,
+      companyDescriptionInput,
+      createButton,
+      skipButton,
+      ...defaultProps,
+    };
+  };
+
   it('should render the component', () => {
-    render(<Organization onNext={jest.fn()} />);
-    expect(screen.getByText('Organization')).toBeInTheDocument();
-    expect(screen.getByPlaceholderText(/Enter company name/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/Company Name/i)).toBeInTheDocument();
-    expect(screen.getByTestId(/Building/i)).toBeInTheDocument();
-    expect(screen.getByText(/Select Company Type/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/Company Type/i)).toBeInTheDocument();
-    expect(screen.getByPlaceholderText(/company@example.com/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/Company Email/i)).toBeInTheDocument();
-    expect(screen.getByTestId('Mail')).toBeInTheDocument();
-    expect(screen.getByPlaceholderText('+1 (234) 567 8901')).toBeInTheDocument();
-    expect(screen.getByLabelText(/Phone Number/i)).toBeInTheDocument();
-    expect(screen.getByTestId('Phone')).toBeInTheDocument();
-    expect(screen.getByPlaceholderText('https://www.company.com')).toBeInTheDocument();
-    expect(screen.getByLabelText(/Website/i)).toBeInTheDocument();
-    expect(screen.getByTestId('Globe')).toBeInTheDocument();
-    expect(screen.getByText(/Select Company size/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/Company Size/i)).toBeInTheDocument();
-    expect(screen.getByTestId('Users')).toBeInTheDocument();
-    expect(screen.getByPlaceholderText(/Enter company address/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/Company Address/i)).toBeInTheDocument();
-    expect(screen.getByTestId('MapPin')).toBeInTheDocument();
-    expect(
-      screen.getByPlaceholderText(/Brief description about your company/i)
-    ).toBeInTheDocument();
-    expect(screen.getByLabelText(/Company Description/i)).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /Skip This Step/i })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /Create Organization/i })).toBeInTheDocument();
+    const {
+      companyNameInput,
+      companyTypeDropDown,
+      companyEmailInput,
+      companyPhoneInput,
+      companyWebsiteInput,
+      companySizeDropDown,
+      companyAddressInput,
+      companyDescriptionInput,
+      createButton,
+      skipButton,
+    } = OrganizationSetup();
+
+    expect(screen.getByRole('heading', { name: 'Organization', level: 3 })).toBeInTheDocument();
+    expect(screen.getByText('Company details and information')).toBeInTheDocument();
+
+    expect(companyNameInput).toBeInTheDocument();
+    expect(companyTypeDropDown).toBeInTheDocument();
+    expect(companyEmailInput).toBeInTheDocument();
+    expect(companyPhoneInput).toBeInTheDocument();
+    expect(companyWebsiteInput).toBeInTheDocument();
+    expect(companySizeDropDown).toBeInTheDocument();
+    expect(companyAddressInput).toBeInTheDocument();
+    expect(companyDescriptionInput).toBeInTheDocument();
+    expect(createButton).toBeInTheDocument();
+    expect(skipButton).toBeInTheDocument();
   });
 
-  it('give error is required field are empty', async () => {
-    render(<Organization onNext={jest.fn()} />);
-    const companyName = screen.getByPlaceholderText(/Enter company name/i);
+  it('testing for error and button disable  ', async () => {
+    const {
+      companyNameInput,
+      companyTypeDropDown,
+      companyEmailInput,
+      companyPhoneInput,
+      companyWebsiteInput,
+      companyAddressInput,
+      createButton,
+    } = OrganizationSetup();
 
-    await userEvent.click(companyName);
+    expect(createButton).toBeDisabled();
+
+    await userEvent.click(companyNameInput);
     await userEvent.tab();
-    expect(screen.getByText(/Company name is required/i)).toBeInTheDocument();
 
-    const companyType = screen.getByText(/Select Company Type/i);
+    expect(await screen.findByText(/company name is required/i)).toBeInTheDocument();
 
-    await userEvent.click(companyType);
+    await userEvent.click(companyTypeDropDown);
     await userEvent.tab();
-    expect(screen.getByText(/Company type is required/i)).toBeInTheDocument();
 
-    const companyEmail = screen.getByPlaceholderText(/company@example.com/);
+    expect(await screen.findByText(/company type is required/i)).toBeInTheDocument();
 
-    await userEvent.click(companyEmail);
+    await userEvent.click(companyEmailInput);
     await userEvent.tab();
-    expect(screen.getByText(/Company email is required/i));
 
-    const phoneNumber = screen.getByPlaceholderText('+1 (234) 567 8901');
+    expect(await screen.findByText(/company email is required/i)).toBeInTheDocument();
 
-    await userEvent.click(phoneNumber);
+    await userEvent.type(companyEmailInput, 'test');
     await userEvent.tab();
-    expect(screen.getByText(/Phone number is required/i));
 
-    const website = screen.getByPlaceholderText('https://www.company.com');
+    expect(await screen.findByText(/invalid email address/i)).toBeInTheDocument();
 
-    await userEvent.type(website, 'company');
-    expect(screen.getByText(/Invalid website URL/i));
-
-    const Address = screen.getByPlaceholderText(/Enter company address/i);
-
-    await userEvent.click(Address);
+    await userEvent.click(companyPhoneInput);
     await userEvent.tab();
-    expect(screen.getByText(/Company address is required/i)).toBeInTheDocument();
+
+    expect(await screen.findByText(/Company Phone Number is required/i)).toBeInTheDocument();
+
+    await userEvent.type(companyWebsiteInput, 'test');
+    await userEvent.tab();
+
+    expect(await screen.findByText(/Invalid website URL/i)).toBeInTheDocument();
+
+    await userEvent.click(companyAddressInput);
+    await userEvent.tab();
+
+    expect(await screen.findByText(/company address is required/i)).toBeInTheDocument();
+
+    expect(createButton).toBeDisabled();
   });
 
-  it('submit the form', async () => {
+  it('calls onNext when valid data is submitted', async () => {
     const onNext = jest.fn();
+    const {
+      companyNameInput,
+      companyTypeDropDown,
+      companyEmailInput,
+      companyPhoneInput,
+      companyWebsiteInput,
+      companyAddressInput,
+      createButton,
+    } = OrganizationSetup({ onNext });
 
-    render(<Organization onNext={onNext} />);
-    const companyName = screen.getByPlaceholderText(/Enter company name/i);
+    await userEvent.type(companyNameInput, 'companyName');
 
-    await userEvent.type(companyName, 'companyName');
-
-    const companyType = screen.getByRole('button', { name: /Company Type/i });
-
-    expect(companyType).toBeInTheDocument();
-
-    await userEvent.click(companyType);
+    await userEvent.click(companyTypeDropDown);
     await userEvent.click(screen.getByRole('option', { name: 'Private Limited' }));
 
-    const companyEmail = screen.getByPlaceholderText(/company@example.com/);
+    await userEvent.type(companyEmailInput, 'company@example.com');
 
-    expect(companyEmail).toBeInTheDocument();
+    await userEvent.type(companyPhoneInput, '1234567890');
 
-    await userEvent.type(companyEmail, 'company@example.com');
+    await userEvent.type(companyWebsiteInput, 'https://www.example.com');
 
-    const phoneNumber = screen.getByPlaceholderText('+1 (234) 567 8901');
+    await userEvent.type(companyAddressInput, '123 Main St');
 
-    expect(phoneNumber).toBeInTheDocument();
+    expect(createButton).toBeEnabled();
+    await userEvent.click(createButton);
 
-    await userEvent.type(phoneNumber, '1234567890');
-
-    const Address = screen.getByPlaceholderText(/Enter company address/i);
-
-    expect(Address).toBeInTheDocument();
-
-    await userEvent.type(Address, 'company address');
-
-    const button = screen.getByRole('button', { name: /Create Organization/i });
-
-    expect(button).toBeInTheDocument();
-    expect(button).toBeEnabled();
-
-    await userEvent.click(button);
-
-    const skip = screen.getByRole('button', { name: /Skip This Step/i });
-
-    expect(skip).toBeInTheDocument();
-    await userEvent.click(skip);
-
-    expect(onNext).toHaveBeenCalledTimes(2);
+    expect(onNext).toHaveBeenCalledTimes(1);
   });
+
+  it('skip button test case', async () => {
+    const onNext = jest.fn();
+    const { skipButton } = OrganizationSetup({ onNext });
+
+    await userEvent.click(skipButton);
+    expect(onNext).toHaveBeenCalledTimes(1);
+  });
+  //   const onNext = jest.fn();
+
+  //   render(<Organization onNext={onNext} />);
+  //   const companyName = screen.getByPlaceholderText(/Enter company name/i);
+
+  //   await userEvent.type(companyName, 'companyName');
+
+  //   const companyType = screen.getByRole('button', { name: /Company Type/i });
+
+  //   expect(companyType).toBeInTheDocument();
+
+  //   await userEvent.click(companyType);
+  //   await userEvent.click(screen.getByRole('option', { name: 'Private Limited' }));
+
+  //   const companyEmail = screen.getByPlaceholderText(/company@example.com/);
+
+  //   expect(companyEmail).toBeInTheDocument();
+
+  //   await userEvent.type(companyEmail, 'company@example.com');
+
+  //   const phoneNumber = screen.getByPlaceholderText('+1 (234) 567 8901');
+
+  //   expect(phoneNumber).toBeInTheDocument();
+
+  //   await userEvent.type(phoneNumber, '1234567890');
+
+  //   const Address = screen.getByPlaceholderText(/Enter company address/i);
+
+  //   expect(Address).toBeInTheDocument();
+
+  //   await userEvent.type(Address, 'company address');
+
+  //   const button = screen.getByRole('button', { name: /Create Organization/i });
+
+  //   expect(button).toBeInTheDocument();
+  //   expect(button).toBeEnabled();
+
+  //   await userEvent.click(button);
+
+  //   const skip = screen.getByRole('button', { name: /Skip This Step/i });
+
+  //   expect(skip).toBeInTheDocument();
+  //   await userEvent.click(skip);
+
+  //   expect(onNext).toHaveBeenCalledTimes(2);
+  // });
 });

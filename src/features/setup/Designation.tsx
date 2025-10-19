@@ -1,3 +1,5 @@
+'use client';
+
 import { type JSX, useCallback, useMemo, useState } from 'react';
 
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -64,6 +66,39 @@ const commonDesignations: Record<string, string[]> = {
   'Quality Assurance': ['QA Manager', 'Quality Analyst', 'QA Lead', 'Test Engineer'],
 };
 
+const DepartmentCard = ({
+  department,
+  activeDesignations,
+  updateDesignations,
+  designationsMap,
+}: {
+  department: string;
+  activeDesignations: Record<string, string[]>;
+  updateDesignations: (_dep: string, _des: string, _action: 'add' | 'remove' | 'toggle') => void;
+  designationsMap: Record<string, string[]>;
+}) => {
+  return (
+    <div className="shadow-md bg-white border border-border rounded-lg p-4 flex flex-col gap-3">
+      <div className="flex gap-2 text-primary items-center justify-start">
+        <Title variant="h4" className="text-md">
+          {department}
+        </Title>
+      </div>
+      <div className="flex flex-wrap gap-2">
+        {designationsMap[department]?.map((designation, i) => (
+          <Tab
+            key={i}
+            active={activeDesignations[department]?.includes(designation)}
+            onClick={() => updateDesignations(department, designation, 'toggle')}
+          >
+            {designation}
+          </Tab>
+        ))}
+      </div>
+    </div>
+  );
+};
+
 export default function Designation({
   onNext,
   onPrev,
@@ -73,8 +108,8 @@ export default function Designation({
     resolver: zodResolver(DesignationSchema),
     defaultValues: { designation: {} },
   });
-  const departments: string[] = useMemo(() => apiDepartments, [apiDepartments]);
 
+  const departments: string[] = useMemo(() => apiDepartments, [apiDepartments]);
   const [selectedDepartment, setSelectedDepartment] = useState<string>('');
   const [inputValue, setInputValue] = useState<string>('');
 
@@ -92,7 +127,7 @@ export default function Designation({
     (department: string, designation: string, action: 'add' | 'remove' | 'toggle') => {
       setActiveDesignations(prev => {
         const current = prev[department] || [];
-        let updated: string[];
+        let updated: string[] = [];
 
         switch (action) {
           case 'add': {
@@ -121,7 +156,6 @@ export default function Designation({
 
   const handleAddCustom = () => {
     if (!inputValue.trim() || !selectedDepartment) return;
-
     updateDesignations(selectedDepartment, inputValue.trim(), 'add');
     setInputValue('');
     setSelectedDepartment('');
@@ -130,56 +164,6 @@ export default function Designation({
   const designationCount = useMemo(
     () => Object.values(activeDesignations).reduce((acc, curr) => acc + curr.length, 0),
     [activeDesignations]
-  );
-
-  const DepartmentCard = ({ department }: { department: string }) => (
-    <div className="shadow-md bg-white border border-border rounded-lg p-4 flex flex-col gap-3">
-      <div className="flex gap-2 text-primary items-center justify-start">
-        <Icon name="Building" variant="normal" />
-        <Title variant="h4" className="text-md">
-          {department}
-        </Title>
-      </div>
-      <div className="flex flex-wrap gap-2">
-        {commonDesignations[department]?.map((designation, i) => (
-          <Tab
-            key={i}
-            active={activeDesignations[department]?.includes(designation)}
-            onClick={() => updateDesignations(department, designation, 'toggle')}
-          >
-            {designation}
-          </Tab>
-        ))}
-      </div>
-    </div>
-  );
-
-  const AddedDesignationList = () => (
-    <div className="flex flex-col gap-4">
-      <div className="flex items-center justify-between gap-2">
-        <Title variant="h3" className="text-start">
-          Added Designations
-        </Title>
-        <div className="bg-[#edeff2] px-2.5 py-0.5 rounded-full items-center justify-center">
-          <Description size="sm" className="font-semibold">
-            {designationCount} {designationCount > 1 ? 'designations' : 'designation'}
-          </Description>
-        </div>
-      </div>
-      <div className="shadow-md space-y-4 bg-white border border-border rounded-lg p-4 text-primary">
-        {Object.entries(activeDesignations).map(([department, desigs]) =>
-          desigs.map((des, i) => (
-            <AddedSection
-              key={`${department}-${i}`}
-              title={des}
-              description={department}
-              icon={<Icon name="Crown" variant="normal" />}
-              onDelete={() => updateDesignations(department, des, 'remove')}
-            />
-          ))
-        )}
-      </div>
-    </div>
   );
 
   const onSubmit = (data: DesignationType) => {
@@ -200,11 +184,18 @@ export default function Designation({
         <Title variant="h3">Quick Add by Department</Title>
         <Description>Click on common designations to add them quickly</Description>
       </div>
-      {departments.length > 0
-        ? departments.map(dep =>
-            commonDesignations[dep] ? <DepartmentCard key={dep} department={dep} /> : null
-          )
-        : null}
+
+      {departments.map(dep =>
+        commonDesignations[dep] ? (
+          <DepartmentCard
+            key={dep}
+            department={dep}
+            designationsMap={commonDesignations}
+            activeDesignations={activeDesignations}
+            updateDesignations={updateDesignations}
+          />
+        ) : null
+      )}
 
       {/* Add Custom */}
       <Title variant="h3" className="text-start">
@@ -214,6 +205,7 @@ export default function Designation({
         <InputComponent
           label="Designation Name *"
           placeholder="Enter designation name"
+          id="designation-name"
           value={inputValue}
           parentClassName="w-1/2"
           onChange={e => setInputValue(e.target.value)}
@@ -223,6 +215,7 @@ export default function Designation({
         <Selector
           placeholder="Select department"
           label="Department *"
+          id="department"
           options={departments || []}
           value={selectedDepartment}
           onChange={setSelectedDepartment}
@@ -243,7 +236,33 @@ export default function Designation({
         </div>
       </Buttons>
 
-      {designationCount > 0 && <AddedDesignationList />}
+      {designationCount > 0 && (
+        <div className="flex flex-col gap-4">
+          <div className="flex items-center justify-between gap-2">
+            <Title variant="h3" className="text-start">
+              Added Designations
+            </Title>
+            <div className="bg-[#edeff2] px-2.5 py-0.5 rounded-full items-center justify-center">
+              <Description size="sm" className="font-semibold">
+                {designationCount} {designationCount > 1 ? 'designations' : 'designation'}
+              </Description>
+            </div>
+          </div>
+          <div className="shadow-md space-y-4 bg-white border border-border rounded-lg p-4 text-primary">
+            {Object.entries(activeDesignations).map(([department, desigs]) =>
+              desigs.map((des, i) => (
+                <AddedSection
+                  key={`${department}-${i}`}
+                  title={des}
+                  description={department}
+                  icon={<Icon name="Crown" variant="normal" />}
+                  onDelete={() => updateDesignations(department, des, 'remove')}
+                />
+              ))
+            )}
+          </div>
+        </div>
+      )}
 
       <Note>
         Designations define job roles within departments. You can create hierarchical structures by

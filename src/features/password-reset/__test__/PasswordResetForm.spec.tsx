@@ -3,59 +3,76 @@ import userEvent from '@testing-library/user-event';
 
 import PasswordResetForm from '@/features/password-reset/PasswordResetForm';
 
-describe('features / password-reset / PasswordResetForm', () => {
-  it('should render the reset password component', () => {
+import type { ReactNode } from 'react';
+
+jest.mock('@/features/password-reset/ResetEmail', () => ({
+  __esModule: true,
+  default: ({ onNext }: { onNext: () => void }) => (
+    <div>
+      <p>ResetPassword Step</p>
+      <button onClick={onNext}>Next</button>
+    </div>
+  ),
+}));
+
+jest.mock('@/features/password-reset/VerifyEmail', () => ({
+  __esModule: true,
+  default: ({ onNext, onPrev }: { onNext: () => void; onPrev: () => void }) => (
+    <div>
+      <p>VerifyEmail Step</p>
+      <button onClick={onPrev}>Back</button>
+      <button onClick={onNext}>Next</button>
+    </div>
+  ),
+}));
+
+jest.mock('@/features/password-reset/SetNewPassword', () => ({
+  __esModule: true,
+  default: () => <p>SetNewPassword Step</p>,
+}));
+
+jest.mock('@/components/ui/utils/Titles', () => ({
+  Title: ({ children }: { children: ReactNode }) => <h2>{children}</h2>,
+}));
+jest.mock('@/components/ui/utils/Descriptions', () => ({
+  Description: ({ children }: { children: ReactNode }) => <p>{children}</p>,
+}));
+jest.mock('@/components/ui/utils/StepsCircle', () => ({
+  StepsCircle: ({ currentStep }: { currentStep: number }) => (
+    <div data-testid="step-indicator">Step {currentStep}</div>
+  ),
+}));
+
+describe('PasswordResetForm', () => {
+  it('renders the first step (ResetPassword) by default', () => {
     render(<PasswordResetForm />);
-    expect(screen.getByText(/Password Setup/i)).toBeInTheDocument();
-    expect(screen.getByText(/1/i)).toBeInTheDocument();
-    expect(screen.getByText(/Reset Password/i)).toBeInTheDocument();
-    expect(screen.getByPlaceholderText(/Enter your email/i)).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /Send OTP/i })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /Skip for now/i })).toBeInTheDocument();
+    expect(screen.getByText(/ResetPassword Step/i)).toBeInTheDocument();
+    expect(screen.getByTestId('step-indicator')).toHaveTextContent('Step 1');
   });
 
-  it('should render verify otp component', async () => {
+  it('navigates to VerifyEmail on Next from step 1', async () => {
     render(<PasswordResetForm />);
-    expect(screen.getByText(/Password Setup/i)).toBeInTheDocument();
-    expect(screen.getByText(/1/i)).toBeInTheDocument();
-    const input = screen.getByPlaceholderText(/Enter your email/i);
-    const button = screen.getByRole('button', { name: /Send OTP/i });
+    await userEvent.click(screen.getByText(/Next/i));
 
-    await userEvent.type(input, 'rj7bH@example.com');
-    expect(button).toBeInTheDocument();
-    await userEvent.click(button);
-
-    expect(screen.getByText(/Verify Email/i)).toBeInTheDocument();
-    expect(screen.getByPlaceholderText(/Enter 6 digit code/i)).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /Back/i })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /Verify OTP/i })).toBeInTheDocument();
+    expect(await screen.findByText(/VerifyEmail Step/i)).toBeInTheDocument();
+    expect(screen.getByTestId('step-indicator')).toHaveTextContent('Step 2');
   });
-  it('should render set new password component', async () => {
+
+  it('goes back to ResetPassword from VerifyEmail on Back', async () => {
     render(<PasswordResetForm />);
-    expect(screen.getByText(/Password Setup/i)).toBeInTheDocument();
-    expect(screen.getByText(/1/i)).toBeInTheDocument();
-    const input = screen.getByPlaceholderText(/Enter your email/i);
-    const button = screen.getByRole('button', { name: /Send OTP/i });
+    await userEvent.click(screen.getByText(/Next/i)); // go to step 2
+    await userEvent.click(screen.getByText(/Back/i)); // go back
 
-    await userEvent.type(input, 'rj7bH@example.com');
-    expect(button).toBeInTheDocument();
-    await userEvent.click(button);
+    expect(await screen.findByText(/ResetPassword Step/i)).toBeInTheDocument();
+    expect(screen.getByTestId('step-indicator')).toHaveTextContent('Step 1');
+  });
 
-    expect(screen.getByText(/Verify Email/i)).toBeInTheDocument();
-    expect(screen.getByPlaceholderText(/Enter 6 digit code/i)).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /Back/i })).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /Verify OTP/i })).toBeInTheDocument();
+  it('navigates to SetNewPassword on Next from VerifyEmail', async () => {
+    render(<PasswordResetForm />);
+    await userEvent.click(screen.getByText(/Next/i)); // step 1 → 2
+    await userEvent.click(screen.getByText(/Next/i)); // step 2 → 3
 
-    const verifyButton = screen.getByRole('button', { name: /Verify OTP/i });
-
-    await userEvent.type(screen.getByPlaceholderText(/Enter 6 digit code/i), '123456');
-
-    await userEvent.click(verifyButton);
-
-    expect(screen.getByText(/Set New Password/i)).toBeInTheDocument();
-    expect(screen.getByText(/Create a strong new password for your account/i)).toBeInTheDocument();
-    expect(screen.getByPlaceholderText(/Enter new password/i)).toBeInTheDocument();
-    expect(screen.getByPlaceholderText(/Confirm new password/i)).toBeInTheDocument();
-    expect(screen.getByRole('button', { name: /update password/i })).toBeInTheDocument();
+    expect(await screen.findByText(/SetNewPassword Step/i)).toBeInTheDocument();
+    expect(screen.getByTestId('step-indicator')).toHaveTextContent('Step 3');
   });
 });
