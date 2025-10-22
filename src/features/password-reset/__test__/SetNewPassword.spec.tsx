@@ -3,12 +3,21 @@ import userEvent from '@testing-library/user-event';
 
 import SetNewPassword from '@/features/password-reset/SetNewPassword';
 
+jest.mock('next/navigation', () => ({
+  useRouter: () => ({
+    push: jest.fn(),
+    replace: jest.fn(),
+    prefetch: jest.fn(),
+  }),
+}));
+
 describe('features / password-reset / SetNewPassword', () => {
   const SetNewPasswordSetup = () => {
     render(<SetNewPassword />);
 
-    const newPasswordInput = screen.getByRole('textbox', { name: /New Password/i });
-    const confirmPasswordInput = screen.getByRole('textbox', { name: /Confirm Password/i });
+    const newPasswordInput = screen.getByPlaceholderText(/Enter new password/i);
+    const confirmPasswordInput = screen.getByPlaceholderText(/Confirm new password/i);
+
     const submitButton = screen.getByRole('button', { name: /update password/i });
 
     return { newPasswordInput, confirmPasswordInput, submitButton };

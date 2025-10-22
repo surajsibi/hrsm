@@ -89,7 +89,7 @@ export default function Users({
   const handleAddUser = useCallback(() => {
     const userWithPassword = {
       ...currentUser,
-      password: currentUser.password?.trim() ?? generatePassword(),
+      password: currentUser.password?.trim() === '' ? generatePassword() : currentUser.password,
     };
 
     setUserList(prev => [...prev, userWithPassword]);
@@ -107,7 +107,6 @@ export default function Users({
   }, []);
 
   function onSubmit() {
-    console.log(userList);
     onNext();
   }
 
@@ -209,7 +208,7 @@ export default function Users({
       </div>
       <div className="w-full">
         <InputComponent
-          label="Address "
+          label="Address"
           id="address"
           placeholder="Enter complete address"
           type="text"
@@ -251,8 +250,8 @@ export default function Users({
             value={currentUser.userRole}
             onChange={val => setCurrentUser({ ...currentUser, userRole: val })}
             options={roles}
-            id="department"
-            label="Department"
+            id="userRole"
+            label="User Role"
           />
         </div>
         <div className="w-1/2 flex  items-end justify-center gap-3">
