@@ -3,8 +3,10 @@
 import { type JSX, memo, useCallback } from 'react';
 
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useMutation } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 
+import { login } from '@/actions/auth';
 import { Icon } from '@/components/Icons/Icon';
 import { Buttons } from '@/components/ui/utils/Buttons';
 import { Description } from '@/components/ui/utils/Descriptions';
@@ -22,13 +24,7 @@ import { SignInFormSchema, type SignInFormType } from '@/types/signin-form-types
  * - Uses minimal re-renders by relying on RHF's built-in optimization
  * - Improves accessibility & semantics
  */
-function SignInFormBase({
-  formSubmit,
-  isPending,
-}: {
-  formSubmit: (_data: SignInFormType) => void;
-  isPending: boolean;
-}): JSX.Element {
+function SignInFormBase(): JSX.Element {
   const {
     handleSubmit,
     register,
@@ -38,15 +34,32 @@ function SignInFormBase({
     mode: 'all',
   });
 
+  const { mutateAsync: loginMutation, isPending } = useMutation({
+    mutationFn: login,
+    onSuccess: data => {
+      console.log(data);
+    },
+    onError: error => {
+      console.error('Login mutation error:', error);
+    },
+  });
+
   const onSubmit = useCallback(
     async (data: SignInFormType) => {
       try {
-        formSubmit(data);
+        const result = await loginMutation(data);
+
+        if (!result.success) {
+          console.error(result.message);
+
+          return;
+        }
+        console.log('Login successful ✅');
       } catch (error) {
-        console.error('Form submission error:', error);
+        console.error('Login mutation failed:', error);
       }
     },
-    [formSubmit]
+    [loginMutation]
   );
 
   return (
@@ -102,8 +115,8 @@ function SignInFormBase({
 
           <Buttons
             variant="primary"
-            loading={isSubmitting}
-            disabled={isSubmitting || !isValid || isPending}
+            loading={isSubmitting || isPending}
+            disabled={isSubmitting || isPending || !isValid}
             loadingChildren={
               <span className="flex items-center gap-2">
                 <Spinner /> Signing...

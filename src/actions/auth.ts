@@ -1,7 +1,5 @@
 'use server';
 
-import { cookies } from 'next/headers';
-
 import { signIn } from '@/lib/auth';
 import { axiosPublic } from '@/lib/axios';
 
@@ -18,38 +16,35 @@ export const login = async (formData: {
     });
 
     if (!data?.accessToken || !data.refreshToken || !data.user) {
-      console.error('Login failed: invalid response from server', data);
+      console.error('Invalid response from server', data);
 
       return { success: false, message: 'Invalid response from server' };
     }
+
     const { user, accessToken, refreshToken } = data;
 
-    console.log(data, 'this is data');
-
-    const cookieStore = await cookies();
-
-    cookieStore.set('accessToken', accessToken, {
-      path: '/',
-      maxAge: 60 * 15,
-      httpOnly: false, // accessible from client (for axios)
-    });
-    cookieStore.set('refreshToken', refreshToken, {
-      path: '/',
-      maxAge: 60 * 60 * 24 * 7,
-      httpOnly: false,
-    });
-
-    await signIn('credentials', {
+    const result = await signIn('credentials', {
       redirect: false,
-      ...user,
+      id: user.id,
+      email: user.email,
+      name: user.name,
+      role: user.role,
       accessToken,
       refreshToken,
+      organizationId: user.organizationId,
+      organizationName: user.organizationName,
     });
 
-    return { success: true };
-  } catch (error: unknown) {
-    console.log('Login failed:', error);
-  }
+    if (result?.error) {
+      console.error('NextAuth signIn failed:', result.error);
 
-  return { success: false, message: 'Invalid credentials or server error' };
+      return { success: false, message: result.error };
+    }
+
+    return { success: true };
+  } catch (error) {
+    console.error('Login failed:', error);
+
+    return { success: false, message: 'Invalid credentials or server error' };
+  }
 };
