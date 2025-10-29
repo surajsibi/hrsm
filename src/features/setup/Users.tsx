@@ -1,6 +1,6 @@
-import { type JSX, useCallback, useMemo, useState } from 'react';
+import { type JSX, useCallback, useMemo } from 'react';
 
-import { useForm } from 'react-hook-form';
+import { Controller, useFieldArray, useForm } from 'react-hook-form';
 
 import { Icon } from '@/components/Icons/Icon';
 import { AddedSection } from '@/components/ui/utils/AddSections';
@@ -13,7 +13,55 @@ import { Selector } from '@/components/ui/utils/Selector';
 import { TickLabel } from '@/components/ui/utils/TickLabel';
 import { Title } from '@/components/ui/utils/Titles';
 
-import type { IUsers, UserList } from '@/types/form-types';
+import type { IUserFormType, IUsers } from '@/types/form-types';
+
+const ROLES = ['EMPLOYEE', 'ADMIN', 'HR MANAGER', 'MANAGER', 'TEAM LEAD', 'INTERN'];
+
+const DEFAULT_USER: IUsers = {
+  firstName: '',
+  lastName: '',
+  emailAddress: '',
+  phoneNumber: '',
+  dateOfBirth: '',
+  gender: 'Male',
+  address: '',
+  isOnProbation: false,
+  department: '',
+  designation: '',
+  userRole: 'EMPLOYEE',
+  password: '',
+  probationStartDate: '',
+  probationEndDate: '',
+};
+
+const generatePassword = (length = 12): string => {
+  const upper = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  const lower = 'abcdefghijklmnopqrstuvwxyz';
+  const numbers = '0123456789';
+  const symbols = '!@#$%^&*()-_=+[]{};:,.<>?';
+  const all = upper + lower + numbers + symbols;
+
+  let newPassword = '';
+
+  newPassword += upper[Math.floor(Math.random() * upper.length)];
+  newPassword += lower[Math.floor(Math.random() * lower.length)];
+  newPassword += numbers[Math.floor(Math.random() * numbers.length)];
+  newPassword += symbols[Math.floor(Math.random() * symbols.length)];
+
+  // eslint-disable-next-line no-restricted-syntax
+  for (let i = newPassword.length; i < length; i++) {
+    newPassword += all[Math.floor(Math.random() * all.length)];
+  }
+
+  return (
+    newPassword
+      // eslint-disable-next-line unicorn/prefer-spread
+      .split('')
+      // eslint-disable-next-line unicorn/no-array-sort
+      .sort(() => Math.random() - 0.5)
+      .join('')
+  );
+};
 
 export default function Users({
   onNext,
@@ -22,93 +70,75 @@ export default function Users({
   onNext: () => void;
   onPrev: () => void;
 }): JSX.Element {
-  const { handleSubmit } = useForm<UserList>();
+  const { register, handleSubmit, watch, setValue, control } = useForm<IUserFormType>({
+    defaultValues: {
+      currentUser: DEFAULT_USER,
+      usersList: [],
+    },
+  });
 
-  const roles = useMemo(
-    () => ['EMPLOYEE', 'ADMIN', 'HR MANAGER', 'MANAGER', 'TEAM LEAD', 'INTERN'],
-    []
-  );
+  const {
+    fields: users,
+    append,
+    remove,
+  } = useFieldArray({
+    name: 'usersList',
+    control,
+  });
 
-  const [departments] = useState<string[]>([]);
-  const [designations] = useState<Record<string, string[]>>({});
-  const [userList, setUserList] = useState<IUsers[]>([]);
+  const currentUser = watch('currentUser');
+  const isOnProbation = currentUser.isOnProbation;
 
-  const defaultUser: IUsers = {
-    firstName: '',
-    lastName: '',
-    emailAddress: '',
-    phoneNumber: '',
-    dateOfBirth: '',
-    gender: 'Male',
-    address: '',
-    isOnProbation: false,
-    department: '',
-    designation: '',
-    userRole: 'EMPLOYEE',
-    password: '',
-    probationStartDate: '',
-    probationEndDate: '',
-  };
+  let departments;
+  let designations;
 
-  const [currentUser, setCurrentUser] = useState<IUsers>({ ...defaultUser });
-
-  const resetCurrentUser = useCallback(() => setCurrentUser({ ...defaultUser }), []);
-
-  const handleDelete = useCallback((index: number) => {
-    setUserList(prev => prev.filter((_, i) => i !== index));
-  }, []);
-
-  function generatePassword(length = 12): string {
-    const upper = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-    const lower = 'abcdefghijklmnopqrstuvwxyz';
-    const numbers = '0123456789';
-    const symbols = '!@#$%^&*()-_=+[]{};:,.<>?';
-    const all = upper + lower + numbers + symbols;
-
-    let newPassword = '';
-
-    newPassword += upper[Math.floor(Math.random() * upper.length)];
-    newPassword += lower[Math.floor(Math.random() * lower.length)];
-    newPassword += numbers[Math.floor(Math.random() * numbers.length)];
-    newPassword += symbols[Math.floor(Math.random() * symbols.length)];
-
-    // eslint-disable-next-line no-restricted-syntax
-    for (let i = newPassword.length; i < length; i++) {
-      newPassword += all[Math.floor(Math.random() * all.length)];
-    }
-
-    return (
-      newPassword
-        // eslint-disable-next-line unicorn/prefer-spread
-        .split('')
-        // eslint-disable-next-line unicorn/no-array-sort
-        .sort(() => Math.random() - 0.5)
-        .join('')
-    );
-  }
   const handleAddUser = useCallback(() => {
     const userWithPassword = {
       ...currentUser,
       password: currentUser.password?.trim() === '' ? generatePassword() : currentUser.password,
     };
 
-    setUserList(prev => [...prev, userWithPassword]);
+    append(userWithPassword);
 
-    resetCurrentUser();
-  }, [currentUser, resetCurrentUser]);
-
-  const handleProbationToggle = useCallback(() => {
-    setCurrentUser(prev => ({
-      ...prev,
-      isOnProbation: !prev.isOnProbation,
-      probationStartDate: prev.isOnProbation ? new Date().toISOString().split('T')[0] : '',
-      probationEndDate: '',
-    }));
-  }, []);
+    setValue('currentUser', DEFAULT_USER);
+  }, [currentUser, append, setValue]);
 
   function onSubmit() {
     onNext();
   }
+
+  const addedUserSection = useMemo(
+    () =>
+      users?.length > 0 && (
+        <div>
+          <Title className="text-md font-medium text-start" variant="h3">
+            Added Users
+          </Title>
+          <div className="shadow-md space-y-4 bg-white border border-border rounded-lg p-4 text-primary">
+            {users.map((user, i) => (
+              <div key={i}>
+                <AddedSection
+                  title={`${user.firstName}  ${user.lastName}`}
+                  description={
+                    <span>
+                      {`${user.emailAddress} • ${user.userRole}`}
+                      {user.isOnProbation ? (
+                        <span className="text-yellow"> • On Probation</span>
+                      ) : (
+                        ''
+                      )}
+                    </span>
+                  }
+                  onDelete={() => remove(i)}
+                  icon={<Icon name="User" size={16} variant="normal" />}
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+      ),
+    [users, remove]
+  );
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col p-6 pt-8 gap-6">
@@ -136,8 +166,7 @@ export default function Users({
               placeholder="Enter first name"
               id="userName"
               type="text"
-              value={currentUser.firstName}
-              onChange={e => setCurrentUser({ ...currentUser, firstName: e.target.value })}
+              {...register('currentUser.firstName')}
               icon={<Icon name="User" />}
             />
           </div>
@@ -147,8 +176,7 @@ export default function Users({
               placeholder="Enter last name"
               id="lastName"
               type="text"
-              value={currentUser.lastName}
-              onChange={e => setCurrentUser({ ...currentUser, lastName: e.target.value })}
+              {...register('currentUser.lastName')}
             />
           </div>
         </div>
@@ -160,8 +188,7 @@ export default function Users({
               placeholder="user@company.com"
               id="email"
               type="email"
-              value={currentUser.emailAddress}
-              onChange={e => setCurrentUser({ ...currentUser, emailAddress: e.target.value })}
+              {...register('currentUser.emailAddress')}
               icon={<Icon name="Mail" />}
             />
           </div>
@@ -171,8 +198,7 @@ export default function Users({
               placeholder="+1 (555) 123-4567"
               id="phoneNumber"
               type="text"
-              value={currentUser.phoneNumber}
-              onChange={e => setCurrentUser({ ...currentUser, phoneNumber: e.target.value })}
+              {...register('currentUser.phoneNumber')}
               icon={<Icon name="Phone" />}
             />
           </div>
@@ -185,24 +211,23 @@ export default function Users({
             id="dateOfBirth"
             type="date"
             className="appearance-none"
-            value={currentUser.dateOfBirth}
-            onChange={e => setCurrentUser({ ...currentUser, dateOfBirth: e.target.value })}
+            {...register('currentUser.dateOfBirth')}
             icon={<Icon name="Calendar" />}
           />
         </div>
         <div className="w-1/2">
-          <Selector
-            value={currentUser.gender}
-            onChange={val =>
-              setCurrentUser({
-                ...currentUser,
-                gender: val as 'Male' | 'Female' | 'Other',
-              })
-            }
-            placeholder="Select Gender"
-            options={['Male', 'Female', 'Other']}
-            id="gender"
-            label="Gender"
+          <Controller
+            name="currentUser.gender"
+            control={control}
+            render={({ field }) => (
+              <Selector
+                {...field}
+                placeholder="Select Company Type"
+                options={['Male', 'Female', 'Other']}
+                id="gender"
+                label="Gender"
+              />
+            )}
           />
         </div>
       </div>
@@ -212,8 +237,7 @@ export default function Users({
           id="address"
           placeholder="Enter complete address"
           type="text"
-          value={currentUser.address}
-          onChange={e => setCurrentUser({ ...currentUser, address: e.target.value })}
+          {...register('currentUser.address')}
           icon={<Icon name="MapPin" />}
         />
       </div>
@@ -222,36 +246,53 @@ export default function Users({
       </Title>
       <div className="flex gap-9 w-full">
         <div className="w-1/2">
-          <Selector
-            value={currentUser.department}
-            onChange={val => setCurrentUser({ ...currentUser, department: val })}
-            placeholder="Select department"
-            options={departments || []}
-            id="department"
-            label="Department"
+          <Controller
+            name="currentUser.department"
+            control={control}
+            render={({ field }) => (
+              <Selector
+                {...field}
+                placeholder="Select department"
+                options={departments ?? []}
+                id="department"
+                label="Department"
+              />
+            )}
           />
         </div>
         <div className="w-1/2">
-          <Selector
-            value={currentUser.designation}
-            disabled={!currentUser.department}
-            onChange={val => setCurrentUser({ ...currentUser, designation: val })}
-            placeholder="Select designation"
-            options={currentUser.department ? designations[currentUser.department] || [] : []}
-            id="designation"
-            label="Designation"
+          <Controller
+            name="currentUser.designation"
+            control={control}
+            render={({ field }) => (
+              <Selector
+                {...field}
+                disabled={!currentUser.department}
+                placeholder="Select designation"
+                options={
+                  currentUser.department ? (designations?.[currentUser.department] ?? []) : []
+                }
+                id="designation"
+                label="Designation"
+              />
+            )}
           />
         </div>
       </div>
       <div className="flex gap-9 w-full">
         <div className="w-1/2">
-          <Selector
-            placeholder="Select user role"
-            value={currentUser.userRole}
-            onChange={val => setCurrentUser({ ...currentUser, userRole: val })}
-            options={roles}
-            id="userRole"
-            label="User Role"
+          <Controller
+            name="currentUser.userRole"
+            control={control}
+            render={({ field }) => (
+              <Selector
+                {...field}
+                placeholder="Select user role"
+                options={ROLES}
+                id="userRole"
+                label="User Role"
+              />
+            )}
           />
         </div>
         <div className="w-1/2 flex  items-end justify-center gap-3">
@@ -260,40 +301,42 @@ export default function Users({
             id="password"
             placeholder="Auto-generated if empty"
             type="text"
-            value={currentUser.password}
-            onChange={e => setCurrentUser({ ...currentUser, password: e.target.value })}
+            {...register('currentUser.password')}
           />
+
           <Buttons
             type="button"
             className="h-11.5"
-            onClick={() => {
-              const password = generatePassword();
-
-              setCurrentUser({ ...currentUser, password });
-            }}
+            onClick={() => setValue('currentUser.password', generatePassword())}
             variant="default"
           >
             Generate
           </Buttons>
         </div>
       </div>
-      <TickLabel
-        className="w-fit justify-starts"
-        checked={currentUser.isOnProbation}
-        onChange={handleProbationToggle}
-      >
-        Employee is on probation period
-      </TickLabel>
 
-      {currentUser.isOnProbation && (
+      <Controller
+        name="currentUser.isOnProbation"
+        control={control}
+        render={({ field }) => (
+          <TickLabel
+            className="w-fit justify-starts"
+            checked={field.value}
+            onChange={() => field.onChange(!field.value)}
+          >
+            Employee is on probation period
+          </TickLabel>
+        )}
+      />
+
+      {isOnProbation && (
         <div className="flex gap-9 w-full">
           <div className="w-1/2">
             <InputComponent
               label="Probation Start Date"
               id="probationStartDate"
               type="date"
-              value={currentUser.probationStartDate}
-              onChange={e => setCurrentUser({ ...currentUser, probationStartDate: e.target.value })}
+              {...register('currentUser.probationStartDate')}
               icon={<Icon name="Calendar" />}
             />
           </div>
@@ -303,8 +346,7 @@ export default function Users({
               id="probationEndDate"
               type="date"
               className="appearance-none"
-              value={currentUser.probationEndDate}
-              onChange={e => setCurrentUser({ ...currentUser, probationEndDate: e.target.value })}
+              {...register('currentUser.probationEndDate')}
               icon={<Icon name="Calendar" />}
             />
           </div>
@@ -315,10 +357,10 @@ export default function Users({
         variant="primary"
         type="button"
         disabled={
-          !currentUser.firstName ||
-          !currentUser.lastName ||
-          !currentUser.emailAddress ||
-          !currentUser.phoneNumber
+          !watch('currentUser.firstName') ||
+          !watch('currentUser.lastName') ||
+          !watch('currentUser.emailAddress') ||
+          !watch('currentUser.phoneNumber')
         }
         onClick={handleAddUser}
       >
@@ -328,34 +370,7 @@ export default function Users({
         </div>
       </Buttons>
 
-      {userList?.length > 0 && (
-        <div>
-          <Title className="text-md font-medium text-start" variant="h3">
-            Added Users
-          </Title>
-          <div className="shadow-md space-y-4 bg-white border border-border rounded-lg p-4 text-primary">
-            {userList.map((user, i) => (
-              <div key={i}>
-                <AddedSection
-                  title={`${user.firstName}  ${user.lastName}`}
-                  description={
-                    <span>
-                      {`${user.emailAddress} • ${user.userRole}`}
-                      {user.isOnProbation ? (
-                        <span className="text-yellow"> • On Probation</span>
-                      ) : (
-                        ''
-                      )}
-                    </span>
-                  }
-                  onDelete={() => handleDelete(i)}
-                  icon={<Icon name="User" size={16} variant="normal" />}
-                />
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
+      {addedUserSection}
 
       <Note>
         User accounts will be created with the provided information. If no password is specified, a

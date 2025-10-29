@@ -1,4 +1,4 @@
-import { LabelHTMLAttributes, ReactNode } from 'react';
+import { LabelHTMLAttributes, memo, ReactNode, useMemo } from 'react';
 import { cn } from '@/utils';
 
 interface LabelProps extends LabelHTMLAttributes<HTMLLabelElement> {
@@ -6,7 +6,7 @@ interface LabelProps extends LabelHTMLAttributes<HTMLLabelElement> {
   className?: string;
 }
 
-export function Label({ children, htmlFor, className, ...props }: LabelProps) {
+function LabelMemo({ children, htmlFor, className, ...props }: LabelProps) {
   return (
     <label
       htmlFor={htmlFor}
@@ -17,3 +17,5 @@ export function Label({ children, htmlFor, className, ...props }: LabelProps) {
     </label>
   );
 }
+
+export const Label = memo(LabelMemo);

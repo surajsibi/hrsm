@@ -47,7 +47,7 @@ export const OrganizationSchema = z.object({
     .string()
     .min(1, 'Company Email is required')
     .regex(/^[^\s@]+@[^\s@]+\.[^\s@]+$/, 'Invalid email address'),
-  CompanyPhoneNumber: z.string().min(1, 'Company Phone Number is required'),
+  companyPhoneNumber: z.string().min(1, 'Company Phone Number is required'),
   companyWebsite: z.preprocess(
     val => (val === '' ? undefined : val),
     z
@@ -63,17 +63,33 @@ export const OrganizationSchema = z.object({
 
 export const DepartmentSchema = z.object({
   departmentNames: z.array(z.string()).optional(),
-});
-
-export const DesignationSchema = z.object({
-  designation: z.record(z.string(), z.array(z.string())).optional(),
+  customDepartment: z.string().optional(),
 });
 
 export type OrganizationType = z.infer<typeof OrganizationSchema>;
 
 export type DepartmentType = z.infer<typeof DepartmentSchema>;
 
-export type DesignationType = z.infer<typeof DesignationSchema>;
+export interface DesignationType {
+  designation?: Record<string, string[]>;
+  customDesignationName?: string;
+  customDesignationDepartment?: string;
+}
+
+export interface IShiftFormType {
+  currentShift: {
+    title: string;
+    workType: string;
+    startingTime: string;
+    endingTime: string;
+    days: string[];
+    workingHours: string;
+    shiftTracking: boolean;
+    rotationalShifts: boolean;
+  };
+  ShiftList: ShiftType[];
+}
+
 export interface ShiftType {
   title?: string;
   workType: string;
@@ -89,6 +105,14 @@ export interface IShiftList {
   ShiftList: ShiftType[];
 }
 
+export interface IUserFormType {
+  currentUser: IUsers;
+  usersList: IUsers[];
+}
+
+export interface IUsersList {
+  usersList: IUsers[];
+}
 export interface IUsers {
   firstName: string;
   lastName: string;
@@ -97,14 +121,11 @@ export interface IUsers {
   dateOfBirth?: string;
   gender?: 'Male' | 'Female' | 'Other';
   address?: string;
-  isOnProbation: boolean;
   department?: string;
   designation?: string;
   userRole?: string;
   password?: string;
+  isOnProbation: boolean;
   probationStartDate?: string;
   probationEndDate?: string;
-}
-export interface UserList {
-  userList: IUsers[];
 }

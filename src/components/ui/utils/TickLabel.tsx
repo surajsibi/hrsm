@@ -23,7 +23,7 @@ export function TickLabel({ children, className, checked, onChange, ...props }: 
           checked && 'bg-primary'
         )}
       >
-        {checked && <Icon name="Check" size={16} color="white" />}
+        {checked && <Icon variant="normal" name="Check" size={16} color="white" />}
       </div>
       <Title className="text-sm font-medium text-center">{children}</Title>
     </button>

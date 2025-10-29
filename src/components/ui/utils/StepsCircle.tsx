@@ -1,5 +1,5 @@
 import { cn } from '@/utils';
-import { HTMLAttributes } from 'react';
+import { HTMLAttributes, memo, useMemo } from 'react';
 import { Icon } from '@/components/Icons/Icon';
 
 interface StepsCircleProps extends HTMLAttributes<HTMLDivElement> {
@@ -27,13 +27,20 @@ interface StepsCircleProps extends HTMLAttributes<HTMLDivElement> {
  * - `primary`: simple circles with connectors
  * - `default`: progress bar with step labels
  */
-export function StepsCircle({
+function StepsCircleMemo({
   steps,
   currentStep = 1,
   variant = 'default',
-  secondarySteps = ['Organization', 'Departments', 'Designations', 'Shifts', 'Users', 'Complete'],
+  secondarySteps,
   ...props
 }: StepsCircleProps) {
+  const defaultSecondarySteps = useMemo(
+    () => ['Organization', 'Departments', 'Designations', 'Shifts', 'Users', 'Complete'],
+    []
+  );
+
+  const stepToRender = secondarySteps ?? defaultSecondarySteps;
+
   if (variant === 'primary') {
     return (
       <div className="flex mt-6" {...props}>
@@ -62,19 +69,20 @@ export function StepsCircle({
       </div>
     );
   }
+
   return (
     <div className="flex flex-col justify-center items-center gap-4" {...props}>
       <div className="w-[100%] h-2 rounded-full border border-gray-200 bg-gray-200">
         <div
           className="h-full bg-gradient-primary rounded-full transition-all"
           style={{
-            width: `${(currentStep / secondarySteps.length) * 100}%`,
+            width: `${(currentStep / stepToRender.length) * 100}%`,
           }}
         />
       </div>
 
       <div className="flex w-full justify-between items-center">
-        {secondarySteps.map((step, index) => (
+        {stepToRender.map((step, index) => (
           <div key={step} className="w-full flex flex-col gap-2 items-center justify-center">
             <div
               className={cn(
@@ -99,3 +107,5 @@ export function StepsCircle({
     </div>
   );
 }
+
+export const StepsCircle = memo(StepsCircleMemo);

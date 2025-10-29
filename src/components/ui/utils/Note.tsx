@@ -1,9 +1,9 @@
-import React, { HTMLAttributes, ReactNode } from 'react';
+import { HTMLAttributes, memo, ReactNode } from 'react';
 interface NoteProps extends HTMLAttributes<HTMLDivElement> {
   className?: string;
   children: ReactNode;
 }
-export function Note({ className, children, ...props }: NoteProps) {
+function NoteMemo({ className, children, ...props }: NoteProps) {
   return (
     <div
       className={`p-4 bg-[#bedbfe80] rounded-lg text-sm text-[#3c83f6] flex gap-1 items-start ${className}`}
@@ -16,3 +16,5 @@ export function Note({ className, children, ...props }: NoteProps) {
     </div>
   );
 }
+
+export const Note = memo(NoteMemo);

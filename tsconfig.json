@@ -23,6 +23,6 @@
       "@server/*": ["./src/app/api/*"]
     }
   },
-  "include": ["**/*.ts", "**/*.tsx", "next-env.d.ts", ".next/types/**/*.ts",".storybook/**/*.ts"],
+  "include": ["**/*.ts", "**/*.tsx", "next-env.d.ts", ".next/types/**/*.ts",".storybook/**/*.ts", "jest.config.mjs", "jest.setup.ts"],
   "exclude": ["node_modules", ".next", "dist", "build"]
 }

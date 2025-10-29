@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import { Tab } from '../Tabs';
+import { Tab } from '../Chips';
 import userEvent from '@testing-library/user-event';
 
 describe('Tab', () => {

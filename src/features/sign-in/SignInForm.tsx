@@ -54,7 +54,7 @@ function SignInFormBase(): JSX.Element {
 
           return;
         }
-        console.log('Login successful ✅');
+        console.log('Login successful');
       } catch (error) {
         console.error('Login mutation failed:', error);
       }

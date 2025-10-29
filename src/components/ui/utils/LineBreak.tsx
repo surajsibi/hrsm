@@ -1,5 +1,5 @@
 import { cn } from '@/utils';
-import { HTMLAttributes } from 'react';
+import { HTMLAttributes, memo } from 'react';
 
 type LineBreakProps = HTMLAttributes<HTMLDivElement> & {
   className?: string;
@@ -8,7 +8,7 @@ type LineBreakProps = HTMLAttributes<HTMLDivElement> & {
 /**
  * A simple horizontal divider.
  */
-export function LineBreak({ className, ...props }: LineBreakProps) {
+export function LineBreakMemo({ className, ...props }: LineBreakProps) {
   return (
     <div
       role="separator"
@@ -18,3 +18,5 @@ export function LineBreak({ className, ...props }: LineBreakProps) {
     />
   );
 }
+
+export const LineBreak = memo(LineBreakMemo);

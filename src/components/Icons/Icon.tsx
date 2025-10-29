@@ -1,3 +1,5 @@
+import { memo } from 'react';
+
 import { type VariantProps, cva } from 'class-variance-authority';
 import {
   ArrowLeft,
@@ -110,7 +112,7 @@ const icon = cva('', {
   },
 });
 
-export function Icon({
+export function IconMemo({
   name,
   variant,
   className,
@@ -124,7 +126,7 @@ export function Icon({
 
   return (
     <Component
-      data-testid={name}
+      aria-label={name}
       {...props}
       size={size}
       color={color}
@@ -132,3 +134,5 @@ export function Icon({
     />
   );
 }
+
+export const Icon = memo(IconMemo);

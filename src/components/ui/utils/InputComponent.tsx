@@ -1,4 +1,4 @@
-import { HTMLAttributes, InputHTMLAttributes, ReactNode } from 'react';
+import { HTMLAttributes, InputHTMLAttributes, memo, ReactNode, useMemo } from 'react';
 import { Label } from './Label';
 import { Input } from './Input';
 import { cn } from '@/utils';
@@ -78,7 +78,7 @@ interface InputComponentProps extends InputHTMLAttributes<HTMLInputElement> {
  * }
  * ```
  */
-export function InputComponent({
+function InputComponentMemo({
   label,
   placeholder,
   id,
@@ -124,3 +124,5 @@ export function InputComponent({
     </div>
   );
 }
+
+export const InputComponent = memo(InputComponentMemo);

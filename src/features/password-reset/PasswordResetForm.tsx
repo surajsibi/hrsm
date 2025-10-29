@@ -5,32 +5,28 @@ import { type JSX, useState } from 'react';
 import { Description } from '@/components/ui/utils/Descriptions';
 import { StepsCircle } from '@/components/ui/utils/StepsCircle';
 import { Title } from '@/components/ui/utils/Titles';
-import ResetPassword from '@/features/password-reset/ResetEmail';
+import ResetEmail from '@/features/password-reset/ResetEmail';
 import SetNewPassword from '@/features/password-reset/SetNewPassword';
 import VerifyEmail from '@/features/password-reset/VerifyEmail';
 
 export default function PasswordResetForm(): JSX.Element {
-  const [currentStep, setCurrentStep] = useState<number | null>(1);
+  const [currentStep, setCurrentStep] = useState<number>(1);
 
   const renderStep = () => {
-    if (currentStep && setCurrentStep) {
-      switch (currentStep) {
-        case 1: {
-          return <ResetPassword onNext={() => setCurrentStep(2)} />;
-        }
-        case 2: {
-          return <VerifyEmail onNext={() => setCurrentStep(3)} onPrev={() => setCurrentStep(1)} />;
-        }
-        case 3: {
-          return <SetNewPassword />;
-        }
-        default: {
-          return null;
-        }
+    switch (currentStep) {
+      case 1: {
+        return <ResetEmail onNext={() => setCurrentStep(2)} />;
+      }
+      case 2: {
+        return <VerifyEmail onNext={() => setCurrentStep(3)} onPrev={() => setCurrentStep(1)} />;
+      }
+      case 3: {
+        return <SetNewPassword />;
+      }
+      default: {
+        return <SetNewPassword />;
       }
     }
-
-    return <SetNewPassword />;
   };
 
   return (

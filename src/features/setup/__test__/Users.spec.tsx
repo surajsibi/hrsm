@@ -16,13 +16,14 @@ jest.mock('@/components/ui/utils/AddSections', () => ({
 }));
 
 describe('features / setup / Users', () => {
+  const user = userEvent.setup();
   const UserSetup = (props = {}) => {
     const defaultProps = {
       onNext: jest.fn(),
       onPrev: jest.fn(),
     };
 
-    render(<Users {...defaultProps} {...props} />);
+    const renderComponent = render(<Users {...defaultProps} {...props} />);
 
     const firstNameInput = screen.getByRole('textbox', { name: /First Name/i });
     const lastNameInput = screen.getByRole('textbox', { name: /Last Name/i });
@@ -62,6 +63,7 @@ describe('features / setup / Users', () => {
       skipButton,
       completeSetupButton,
       prevButton,
+      ...renderComponent,
     };
   };
 
@@ -117,11 +119,11 @@ describe('features / setup / Users', () => {
 
     expect(addUserButton).toBeDisabled();
 
-    await userEvent.type(firstNameInput, 'firstName');
-    await userEvent.type(lastNameInput, 'lastName');
-    await userEvent.type(emailInput, 'test@example.com');
-    await userEvent.type(phoneInput, '1234567890');
-    await userEvent.click(addUserButton);
+    await user.type(firstNameInput, 'firstName');
+    await user.type(lastNameInput, 'lastName');
+    await user.type(emailInput, 'test@example.com');
+    await user.type(phoneInput, '1234567890');
+    await user.click(addUserButton);
 
     expect(screen.getByTestId('mock-added-section')).toBeInTheDocument();
     expect(
@@ -131,11 +133,11 @@ describe('features / setup / Users', () => {
 
     expect(addUserButton).toBeDisabled();
 
-    await userEvent.type(firstNameInput, 'firstName2');
-    await userEvent.type(lastNameInput, 'lastName2');
-    await userEvent.type(emailInput, 'test2@example.com');
-    await userEvent.type(phoneInput, '1234567890');
-    await userEvent.click(addUserButton);
+    await user.type(firstNameInput, 'firstName2');
+    await user.type(lastNameInput, 'lastName2');
+    await user.type(emailInput, 'test2@example.com');
+    await user.type(phoneInput, '1234567890');
+    await user.click(addUserButton);
 
     expect(screen.getAllByTestId('mock-added-section').length).toBe(2);
     expect(
@@ -147,14 +149,14 @@ describe('features / setup / Users', () => {
 
     expect(deleteButtons.length).toBe(2);
 
-    await userEvent.click(deleteButtons[0]);
+    await user.click(deleteButtons[0]);
 
     expect(screen.getAllByTestId('mock-added-section').length).toBe(1);
     expect(
       screen.queryByRole('heading', { name: /firstName lastname/i, level: 4 })
     ).not.toBeInTheDocument();
 
-    await userEvent.click(deleteButtons[0]);
+    await user.click(deleteButtons[0]);
 
     expect(screen.queryByTestId('mock-added-section')).not.toBeInTheDocument();
     expect(
@@ -167,13 +169,13 @@ describe('features / setup / Users', () => {
     const onPrev = jest.fn();
     const { skipButton, completeSetupButton, prevButton } = UserSetup({ onNext, onPrev });
 
-    await userEvent.click(skipButton);
+    await user.click(skipButton);
     expect(onNext).toHaveBeenCalledTimes(1);
 
-    await userEvent.click(completeSetupButton);
+    await user.click(completeSetupButton);
     expect(onNext).toHaveBeenCalledTimes(2);
 
-    await userEvent.click(prevButton);
+    await user.click(prevButton);
     expect(onPrev).toHaveBeenCalledTimes(1);
   });
 });

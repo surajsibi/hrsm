@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo, useMemo } from 'react';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/utils';
 
@@ -23,6 +23,7 @@ export interface DescriptionProps
   className?: string;
 }
 
-export const Description: React.FC<DescriptionProps> = ({ className, size, ...props }) => (
-  <p className={cn(description({ size }), className)} {...props} />
-);
+const DescriptionMemo: React.FC<DescriptionProps> = ({ className, size, ...props }) => {
+  return <p className={cn(description({ size }), className)} {...props} />;
+};
+export const Description = memo(DescriptionMemo);

@@ -1,6 +1,6 @@
 import { cn } from '@/utils';
 import { cva, type VariantProps } from 'class-variance-authority';
-import { ReactNode } from 'react';
+import { memo, ReactNode, useMemo } from 'react';
 import { Spinner } from './Spinner';
 
 const button = cva(
@@ -38,7 +38,13 @@ const button = cva(
           'hover:bg-[#bedbfe]',
           'hover:border-transparent',
         ],
-        ghost: ['bg-transparent', 'text-[#7a8799]',"border-none", 'hover:text-[#344256]', 'hover:bg-[#bedbfe]'],
+        ghost: [
+          'bg-transparent',
+          'text-[#7a8799]',
+          'border-none',
+          'hover:text-[#344256]',
+          'hover:bg-[#bedbfe]',
+        ],
         default: [
           'bg-transparent',
           'text-[#344256]',
@@ -76,7 +82,7 @@ export interface ButtonProps
   onClick?: () => void;
 }
 
-export const Buttons: React.FC<ButtonProps> = ({
+const ButtonsMemo: React.FC<ButtonProps> = ({
   className,
   loadingChildren,
   variant,
@@ -85,21 +91,25 @@ export const Buttons: React.FC<ButtonProps> = ({
   disabled,
   onClick,
   ...props
-}) => (
-  <button
-    onClick={onClick}
-    className={cn(button({ variant, size, disabled }), className)}
-    disabled={disabled || loading}
-    {...props}
-  >
-    {loading ? (
-      loadingChildren ? (
-        <span>{loadingChildren}</span>
+}) => {
+  return (
+    <button
+      onClick={onClick}
+      className={cn(button({ variant, size, disabled: disabled || loading }), className)}
+      disabled={disabled || loading}
+      {...props}
+    >
+      {loading ? (
+        loadingChildren ? (
+          <span>{loadingChildren}</span>
+        ) : (
+          <Spinner />
+        )
       ) : (
-        <Spinner />
-      )
-    ) : (
-      <span>{props.children}</span>
-    )}
-  </button>
-);
+        <span>{props.children}</span>
+      )}
+    </button>
+  );
+};
+
+export const Buttons = memo(ButtonsMemo);

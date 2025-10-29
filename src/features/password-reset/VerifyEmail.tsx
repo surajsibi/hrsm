@@ -1,4 +1,6 @@
 'use client';
+import { type JSX, memo, useCallback } from 'react';
+
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 
@@ -9,15 +11,7 @@ import { InputComponent } from '@/components/ui/utils/InputComponent';
 import { Title } from '@/components/ui/utils/Titles';
 import { VerifyEmailSchema, type VerifyEmailType } from '@/types/passwordSetup.types';
 
-import type { JSX } from 'react';
-
-export default function VerifyEmail({
-  onNext,
-  onPrev,
-}: {
-  onNext: () => void;
-  onPrev: () => void;
-}): JSX.Element {
+function VerifyEmail({ onNext, onPrev }: { onNext: () => void; onPrev: () => void }): JSX.Element {
   const {
     register,
     handleSubmit,
@@ -25,18 +19,21 @@ export default function VerifyEmail({
     reset,
   } = useForm<VerifyEmailType>({ mode: 'all', resolver: zodResolver(VerifyEmailSchema) });
 
-  const onSubmit = async (data: VerifyEmailType) => {
-    try {
-      reset();
-      onNext();
+  const onSubmit = useCallback(
+    async (data: VerifyEmailType) => {
+      try {
+        reset();
+        onNext();
 
-      return data;
-    } catch (error) {
-      console.error('Form submission error:', error);
+        return data;
+      } catch (error) {
+        console.error('Form submission error:', error);
 
-      return null; // don’t call onNext() on error
-    }
-  };
+        return null; // don’t call onNext() on error
+      }
+    },
+    [onNext, reset]
+  );
 
   return (
     <div>
@@ -47,7 +44,7 @@ export default function VerifyEmail({
       <form onSubmit={handleSubmit(onSubmit)} className="w-full">
         <InputComponent
           maxLength={6}
-          label="Veification Code"
+          label="Verification Code"
           placeholder="Enter 6 digit code"
           id="otp"
           type="text"
@@ -78,3 +75,5 @@ export default function VerifyEmail({
     </div>
   );
 }
+
+export default memo(VerifyEmail);

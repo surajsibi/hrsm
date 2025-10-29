@@ -1,5 +1,7 @@
 'use client';
 
+import { type JSX, memo, useCallback } from 'react';
+
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
@@ -11,9 +13,7 @@ import { InputComponent } from '@/components/ui/utils/InputComponent';
 import { Title } from '@/components/ui/utils/Titles';
 import { SetNewPasswordSchema, type SetNewPasswordType } from '@/types/passwordSetup.types';
 
-import type { JSX } from 'react';
-
-export default function SetNewPassword(): JSX.Element {
+function SetNewPassword(): JSX.Element {
   const {
     register,
     handleSubmit,
@@ -23,17 +23,17 @@ export default function SetNewPassword(): JSX.Element {
 
   const router = useRouter();
 
-  const onSubmit = (data: SetNewPasswordType): void => {
-    try {
-      reset();
-
-      console.log(data);
-
-      router.push('/setup');
-    } catch (error) {
-      console.error('Form submission error:', error);
-    }
-  };
+  const onSubmit = useCallback(
+    (data: SetNewPasswordType): void => {
+      try {
+        console.log(data);
+        router.push('/setup');
+      } catch (error) {
+        console.error('Form submission error:', error);
+      }
+    },
+    [reset, router]
+  );
 
   return (
     <div className="">
@@ -55,7 +55,7 @@ export default function SetNewPassword(): JSX.Element {
         <InputComponent
           label="Confirm Password"
           placeholder="Confirm new password"
-          id="newPassword"
+          id="confirmNewPassword"
           type="password"
           {...register('confirmNewPassword')}
           error={errors.confirmNewPassword}
@@ -74,3 +74,5 @@ export default function SetNewPassword(): JSX.Element {
     </div>
   );
 }
+
+export default memo(SetNewPassword);

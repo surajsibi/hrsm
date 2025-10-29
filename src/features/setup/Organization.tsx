@@ -1,5 +1,5 @@
 'use client';
-import { type JSX, useMemo } from 'react';
+import { type JSX, memo, useCallback } from 'react';
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Controller, useForm } from 'react-hook-form';
@@ -15,7 +15,26 @@ import { Spinner } from '@/components/ui/utils/Spinner';
 import { Title } from '@/components/ui/utils/Titles';
 import { OrganizationSchema, type OrganizationType } from '@/types/form-types';
 
-export default function Organization({ onNext }: { onNext: () => void }): JSX.Element {
+const companyTypes = [
+  'Private Limited',
+  'Public Limited',
+  'Partnership',
+  'Sole Proprietorship',
+  'Limited Liability Partnership',
+  'Non-Profit Organization',
+  'Government Organization',
+  'Other',
+];
+
+const companySizes = [
+  '1-10 employees',
+  '11-50 employees',
+  '51-200 employees',
+  '201-1000 employees',
+  '1000+ employees',
+];
+
+function OrganizationMemo({ onNext }: { onNext: () => void }): JSX.Element {
   const {
     register,
     control,
@@ -23,35 +42,12 @@ export default function Organization({ onNext }: { onNext: () => void }): JSX.El
     formState: { errors, isSubmitting, isValid },
   } = useForm<OrganizationType>({ mode: 'all', resolver: zodResolver(OrganizationSchema) });
 
-  const onSubmit = (data: OrganizationType) => {
-    console.log(data);
-    onNext();
-  };
-
-  console.log(errors);
-
-  const companyTypes = useMemo(
-    () => [
-      'Private Limited',
-      'Public Limited',
-      'Partnership',
-      'Sole Proprietorship',
-      'Limited Liability Partnership',
-      'Non-Profit Organization',
-      'Government Organization',
-      'Other',
-    ],
-    []
-  );
-  const companySizes = useMemo(
-    () => [
-      '1-10 employees',
-      '11-50 employees',
-      '51-200 employees',
-      '201-1000 employees',
-      '1000+ employees',
-    ],
-    []
+  const onSubmit = useCallback(
+    (data: OrganizationType) => {
+      console.log(data);
+      onNext();
+    },
+    [onNext]
   );
 
   return (
@@ -110,11 +106,11 @@ export default function Organization({ onNext }: { onNext: () => void }): JSX.El
           <InputComponent
             label="Phone Number *"
             placeholder="+1 (234) 567 8901"
-            id="CompanyPhoneNumber"
+            id="companyPhoneNumber"
             type="text"
             parentClassName="w-1/2"
-            {...register('CompanyPhoneNumber')}
-            error={errors?.CompanyPhoneNumber}
+            {...register('companyPhoneNumber')}
+            error={errors?.companyPhoneNumber}
             icon={<Icon name="Phone" />}
           />
         </div>
@@ -197,3 +193,5 @@ export default function Organization({ onNext }: { onNext: () => void }): JSX.El
     </form>
   );
 }
+
+export const Organization = memo(OrganizationMemo);

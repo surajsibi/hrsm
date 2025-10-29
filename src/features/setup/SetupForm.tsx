@@ -5,14 +5,14 @@ import { Description } from '@/components/ui/utils/Descriptions';
 import { StepsCircle } from '@/components/ui/utils/StepsCircle';
 import { Title } from '@/components/ui/utils/Titles';
 import Complete from '@/features/setup/Complete';
-import Department from '@/features/setup/Department';
-import Designation from '@/features/setup/Designation';
-import Organization from '@/features/setup/Organization';
+import { Department } from '@/features/setup/Department';
+import { Designation } from '@/features/setup/Designation';
+import { Organization } from '@/features/setup/Organization';
 import Shifts from '@/features/setup/Shifts';
 import Users from '@/features/setup/Users';
 
 export default function SetupForm(): JSX.Element {
-  const [currentStep, setCurrentStep] = useState(1);
+  const [currentStep, setCurrentStep] = useState(5);
 
   function goNext() {
     setCurrentStep(currentStep + 1);

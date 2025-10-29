@@ -1,113 +1,74 @@
-import { type JSX, useCallback, useMemo, useState } from 'react';
+import { type JSX, memo, useCallback, useMemo } from 'react';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
+import { Controller, useForm, useWatch } from 'react-hook-form';
 
 import { Icon } from '@/components/Icons/Icon';
 import { AddedSection } from '@/components/ui/utils/AddSections';
 import { Buttons } from '@/components/ui/utils/Buttons';
+import { Chips } from '@/components/ui/utils/Chips';
 import { Description } from '@/components/ui/utils/Descriptions';
 import { InputComponent } from '@/components/ui/utils/InputComponent';
 import { LineBreak } from '@/components/ui/utils/LineBreak';
 import { Note } from '@/components/ui/utils/Note';
-import { Tab } from '@/components/ui/utils/Tabs';
 import { Title } from '@/components/ui/utils/Titles';
+import { quickAddDepartments } from '@/constants/department';
 import { DepartmentSchema, type DepartmentType } from '@/types/form-types';
 
-export default function Department({
+function DepartmentMemo({
   onNext,
   onPrev,
 }: {
   onNext: () => void;
   onPrev: () => void;
 }): JSX.Element {
-  const { setValue, getValues, handleSubmit } = useForm<DepartmentType>({
+  const { control, setValue, getValues, handleSubmit } = useForm<DepartmentType>({
     resolver: zodResolver(DepartmentSchema),
   });
 
-  const quickAddDepartments = useMemo(
-    () => [
-      'Human Resources',
-      'Information Technology',
-      'Sales & Marketing',
-      'Finance & Accounting',
-      'Operations',
-      'Customer Service',
-      'Research & Development',
-      'Legal & Compliance',
-      'Administration',
-      'Quality Assurance',
-    ],
-    []
-  );
-
-  const [tabs, setTabs] = useState(quickAddDepartments.map(name => ({ name, active: false })));
-
-  const [selectedTab, setSelectedTab] = useState<string[]>(getValues('departmentNames') ?? []);
-  const [inputValue, setInputValue] = useState('');
-
-  const toggleTab = useCallback(
-    (index: number) => {
-      const name = tabs[index].name;
-
-      setTabs(prev => prev.map((tab, i) => (i === index ? { ...tab, active: !tab.active } : tab)));
-
-      setSelectedTab(prev => {
-        if (prev.includes(name)) return prev;
-
-        const updated = [...prev, name];
-
-        setValue('departmentNames', updated);
-
-        return updated;
-      });
-    },
-    [tabs, setValue]
-  );
+  const selectedDepartments = useWatch({
+    control,
+    name: 'departmentNames',
+    defaultValue: [],
+  });
 
   const onDelete = useCallback(
     (name: string) => {
-      setSelectedTab(prev => {
-        const updated = prev.filter(dep => dep !== name);
-
-        setValue('departmentNames', updated);
-
-        return updated;
-      });
-
-      setTabs(prev => prev.map(tab => (tab.name === name ? { ...tab, active: false } : tab)));
-    },
-    [setValue]
-  );
-
-  // Add custom department(s)
-  const addCustomDepartment = useCallback(() => {
-    const entries = inputValue
-      .split(',')
-      .map(name => name.trim())
-      .filter(Boolean);
-
-    if (entries.length === 0) return;
-
-    setSelectedTab(prev => {
-      const updated = [...new Set([...prev, ...entries])];
+      const updated = selectedDepartments?.filter(dep => dep !== name);
 
       setValue('departmentNames', updated);
-
-      return updated;
-    });
-
-    setInputValue('');
-  }, [inputValue, setValue]);
+    },
+    [selectedDepartments, setValue]
+  );
 
   const onSubmit = (data: DepartmentType) => {
     console.log(data);
     onNext();
   };
 
+  const handleAddDepartment = useCallback(() => {
+    const name = getValues('customDepartment')?.trim();
+
+    if (name) {
+      const updated = [...new Set([...(selectedDepartments ?? []), name])];
+
+      setValue('departmentNames', updated);
+      setValue('customDepartment', '');
+    }
+  }, [selectedDepartments, setValue, getValues]);
+
+  const renderedDepartments = useMemo(
+    () =>
+      selectedDepartments?.map((tab, index) => (
+        <AddedSection key={index} title={tab} onDelete={() => onDelete(tab)} />
+      )),
+    [selectedDepartments, onDelete]
+  );
+
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col p-6 pt-8 gap-6">
       {/* Header */}
+
       <div className="flex flex-col gap-1 items-start">
         <Title variant="h3">Departments</Title>
         <Description>Create organizational departments</Description>
@@ -118,40 +79,58 @@ export default function Department({
       </div>
 
       {/* Quick Add Tabs */}
-      <div className="flex flex-wrap gap-2 space-y-2">
-        {tabs.map((tab, i) => (
-          <Tab key={tab.name} active={tab.active} onClick={() => toggleTab(i)}>
-            {tab.name}
-          </Tab>
-        ))}
-      </div>
+
+      <Controller
+        name="departmentNames"
+        control={control}
+        render={({ field }) => (
+          <Chips
+            options={quickAddDepartments}
+            values={selectedDepartments}
+            onChange={field.onChange}
+          />
+        )}
+      />
 
       {/* Custom Departments Input */}
+
       <Title variant="h3" className="text-start">
         Add Custom Departments
       </Title>
       <div className="flex gap-5 items-end">
-        <InputComponent
-          id="custom-department"
-          type="text"
-          placeholder="Enter department names"
-          value={inputValue}
-          onChange={e => setInputValue(e.target.value)}
-          icon={<Icon name="Briefcase" />}
+        <Controller
+          name="customDepartment"
+          control={control}
+          defaultValue=""
+          render={({ field }) => (
+            <div className="flex gap-5 items-end w-full">
+              <InputComponent
+                id="custom-department"
+                type="text"
+                className="w-full"
+                placeholder="Enter department name"
+                value={field.value}
+                onChange={field.onChange}
+                icon={<Icon name="Briefcase" />}
+              />
+
+              <Buttons
+                aria-label="Add department"
+                disabled={!field?.value?.trim()}
+                onClick={handleAddDepartment}
+                variant="primary"
+                className="h-12"
+              >
+                <Icon name="Plus" size={20} color="white" variant="normal" />
+              </Buttons>
+            </div>
+          )}
         />
-        <Buttons
-          aria-label="Add custom department"
-          disabled={inputValue === ''}
-          onClick={addCustomDepartment}
-          variant="primary"
-          className="h-12"
-        >
-          <Icon name="Plus" size={20} color="white" variant="normal" />
-        </Buttons>
       </div>
 
       {/* Selected Departments */}
-      {selectedTab.length > 0 && (
+
+      {selectedDepartments && selectedDepartments?.length > 0 && (
         <div className="flex flex-col gap-4">
           <div className="flex justify-between">
             <Title variant="h3" className="text-start">
@@ -159,24 +138,19 @@ export default function Department({
             </Title>
             <div className="bg-[#edeff2] px-2.5 py-0.5 rounded-full items-center justify-center">
               <Description size="sm" className="font-semibold">
-                {selectedTab.length} {selectedTab.length === 1 ? 'department' : 'departments'}
+                {selectedDepartments.length}{' '}
+                {selectedDepartments.length === 1 ? 'department' : 'departments'}
               </Description>
             </div>
           </div>
           <div className="shadow-md space-y-4 bg-white border-border border rounded-lg p-4">
-            {selectedTab.map((tab, index) => (
-              <AddedSection
-                key={index}
-                title={tab}
-                description="Status: ACTIVE"
-                onDelete={() => onDelete(tab)}
-              />
-            ))}
+            {renderedDepartments}
           </div>
         </div>
       )}
 
-      {/* Notes & Actions */}
+      {/* Notes */}
+
       <Note>
         &nbsp; Departments help organize your workforce into functional groups. You can add more
         departments later or modify existing ones from the dashboard
@@ -219,3 +193,5 @@ export default function Department({
     </form>
   );
 }
+
+export const Department = memo(DepartmentMemo);

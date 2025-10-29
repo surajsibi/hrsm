@@ -1,4 +1,6 @@
 'use client';
+import { type JSX, memo, useCallback } from 'react';
+
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 
@@ -9,9 +11,7 @@ import { InputComponent } from '@/components/ui/utils/InputComponent';
 import { Title } from '@/components/ui/utils/Titles';
 import { ResetPasswordSchema, type ResetPasswordType } from '@/types/passwordSetup.types';
 
-import type { JSX } from 'react';
-
-export default function ResetPassword({ onNext }: { onNext: () => void }): JSX.Element {
+function ResetEmail({ onNext }: { onNext: () => void }): JSX.Element {
   const {
     register,
     handleSubmit,
@@ -19,19 +19,22 @@ export default function ResetPassword({ onNext }: { onNext: () => void }): JSX.E
     reset,
   } = useForm<ResetPasswordType>({ mode: 'all', resolver: zodResolver(ResetPasswordSchema) });
 
-  const onSubmit = async (data: ResetPasswordType) => {
-    try {
-      reset();
+  const onSubmit = useCallback(
+    async (data: ResetPasswordType) => {
+      try {
+        reset();
+        console.log('Form Data:', data);
+        onNext();
 
-      onNext();
+        return null;
+      } catch (error) {
+        console.error('Form submission error:', error);
 
-      return data;
-    } catch (error) {
-      console.error('Form submission error:', error);
-
-      return null;
-    }
-  };
+        return null;
+      }
+    },
+    [onNext, reset]
+  );
 
   return (
     <div className="w-full">
@@ -67,3 +70,5 @@ export default function ResetPassword({ onNext }: { onNext: () => void }): JSX.E
     </div>
   );
 }
+
+export default memo(ResetEmail);
