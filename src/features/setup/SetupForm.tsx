@@ -1,5 +1,5 @@
 'use client';
-import { type JSX, useState } from 'react';
+import { type JSX, useCallback, useMemo, useState } from 'react';
 
 import { Description } from '@/components/ui/utils/Descriptions';
 import { StepsCircle } from '@/components/ui/utils/StepsCircle';
@@ -12,61 +12,55 @@ import Shifts from '@/features/setup/Shifts';
 import Users from '@/features/setup/Users';
 
 export default function SetupForm(): JSX.Element {
-  const [currentStep, setCurrentStep] = useState(5);
+  const [currentStep, setCurrentStep] = useState(1);
 
-  function goNext() {
+  const steps = useMemo(
+    () => [
+      { id: 1, component: Organization },
+      { id: 2, component: Department },
+      { id: 3, component: Designation },
+      { id: 4, component: Shifts },
+      { id: 5, component: Users },
+      { id: 6, component: Complete },
+    ],
+    []
+  );
+
+  const totalSteps = steps.length;
+  const isComplete = currentStep === totalSteps;
+
+  const goNext = useCallback(() => {
     setCurrentStep(currentStep + 1);
-  }
-  function goPrev() {
+  }, [currentStep]);
+  const goPrev = useCallback(() => {
     setCurrentStep(currentStep - 1);
-  }
+  }, [currentStep]);
 
-  const renderStep = () => {
-    switch (currentStep) {
-      case 1: {
-        return <Organization onNext={goNext} />;
-      }
-      case 2: {
-        return <Department onNext={goNext} onPrev={goPrev} />;
-      }
-      case 3: {
-        return <Designation onNext={goNext} onPrev={goPrev} />;
-      }
-      case 4: {
-        return <Shifts onNext={goNext} onPrev={goPrev} />;
-      }
-      case 5: {
-        return <Users onNext={goNext} onPrev={goPrev} />;
-      }
-      case 6: {
-        return <Complete />;
-      }
-      default: {
-        return null;
-      }
-    }
-  };
-
-  const isComplete = currentStep === 6;
+  const StepComponent = steps[currentStep - 1]?.component;
 
   return (
     <div className="max-w-4xl mx-auto pt-8">
       {!isComplete && (
-        <div>
+        <header>
           <Title variant="h1">HRMS Setup Wizard</Title>
-          <Description size="md">Let's configure your Human Resource Management System</Description>
-          <div className="flex flex-col p-6 backdrop-blur shadow-lg text-heading bg-card rounded-lg mt-6">
+          <Description size="md">
+            Let&apos;s configure your Human Resource Management System
+          </Description>
+          <section className="flex flex-col p-6 backdrop-blur shadow-lg text-heading bg-card rounded-lg mt-6">
             <div className="flex justify-between items-center mb-4">
               <Title variant="h4">Setup Progress</Title>
-              <Description size="sm">Step 1 of 6</Description>
+              <Description size="sm">
+                Step {currentStep} of {totalSteps}
+              </Description>
             </div>
             <StepsCircle currentStep={currentStep} />
-          </div>
-        </div>
+          </section>
+        </header>
       )}
-      <div className="space-y-6 backdrop-blur shadow-lg  text-heading bg-card rounded-lg mt-6">
-        {renderStep()}
-      </div>
+
+      <section className="space-y-6 backdrop-blur shadow-lg text-heading bg-card rounded-lg mt-6">
+        {StepComponent && <StepComponent onNext={goNext} onPrev={goPrev} />}
+      </section>
     </div>
   );
 }

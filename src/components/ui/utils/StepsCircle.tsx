@@ -27,6 +27,14 @@ interface StepsCircleProps extends HTMLAttributes<HTMLDivElement> {
  * - `primary`: simple circles with connectors
  * - `default`: progress bar with step labels
  */
+const defaultSecondarySteps = [
+  'Organization',
+  'Departments',
+  'Designations',
+  'Shifts',
+  'Users',
+  'Complete',
+];
 function StepsCircleMemo({
   steps,
   currentStep = 1,
@@ -34,11 +42,6 @@ function StepsCircleMemo({
   secondarySteps,
   ...props
 }: StepsCircleProps) {
-  const defaultSecondarySteps = useMemo(
-    () => ['Organization', 'Departments', 'Designations', 'Shifts', 'Users', 'Complete'],
-    []
-  );
-
   const stepToRender = secondarySteps ?? defaultSecondarySteps;
 
   if (variant === 'primary') {
