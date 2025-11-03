@@ -1,5 +1,3 @@
-import { memo } from 'react';
-
 import { type VariantProps, cva } from 'class-variance-authority';
 import {
   ArrowLeft,
@@ -112,7 +110,7 @@ const icon = cva('', {
   },
 });
 
-export function IconMemo({
+export function Icon({
   name,
   variant,
   className,
@@ -134,5 +132,3 @@ export function IconMemo({
     />
   );
 }
-
-export const Icon = memo(IconMemo);

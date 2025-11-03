@@ -169,7 +169,7 @@ function DesignationMemo({
               value={field.value ?? ''}
               parentClassName="w-1/2"
               onChange={e => field.onChange(e.target.value)}
-              icon={<Icon name="Crown" />}
+              icon="Crown"
             />
           )}
         />
@@ -223,7 +223,7 @@ function DesignationMemo({
                   key={index}
                   title={desig}
                   description={`${dep} • Status: ACTIVE`}
-                  icon={<Icon name="Crown" variant="normal" />}
+                  icon="Crown"
                   onDelete={() => {
                     setValue(
                       `designation.${dep}`,

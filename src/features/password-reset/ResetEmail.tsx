@@ -4,7 +4,6 @@ import { type JSX, memo, useCallback } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 
-import { Icon } from '@/components/Icons/Icon';
 import { Buttons } from '@/components/ui/utils/Buttons';
 import { Description } from '@/components/ui/utils/Descriptions';
 import { InputComponent } from '@/components/ui/utils/InputComponent';
@@ -50,7 +49,7 @@ function ResetEmail({ onNext }: { onNext: () => void }): JSX.Element {
           type="email"
           {...register('resetEmail')}
           error={errors.resetEmail}
-          icon={<Icon name="Mail" />}
+          icon="Mail"
         />
         <Description className="mt-5">We'll send you an email with a verification code</Description>
         <Buttons

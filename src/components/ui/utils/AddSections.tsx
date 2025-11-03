@@ -20,7 +20,28 @@ interface AddedSectionProps {
    * Custom icon element to display (e.g., SVG or `Icon` component).
    * Defaults to a blue `"Briefcase"` icon.
    */
-  icon?: React.ReactNode;
+  icon?:
+    | 'ArrowRight'
+    | 'Check'
+    | 'Building'
+    | 'Building2'
+    | 'Briefcase'
+    | 'User'
+    | 'Lock'
+    | 'Mail'
+    | 'Shield'
+    | 'ChevronDown'
+    | 'Crown'
+    | 'X'
+    | 'Plus'
+    | 'Trash2'
+    | 'Clock'
+    | 'Calendar'
+    | 'ArrowLeft'
+    | 'Phone'
+    | 'Globe'
+    | 'Users'
+    | 'MapPin';
 
   /**
    * Optional callback triggered when the delete (`Trash2`) button is clicked.
@@ -58,7 +79,7 @@ interface AddedSectionProps {
  */
 export const AddedSection = memo(function AddedSection({
   title = 'Quality Assurance',
-  icon = <Icon name="Briefcase" color="#3c83f6" size={16} variant="normal" />,
+  icon = 'Briefcase',
   description = 'Status: ACTIVE',
   onDelete,
 }: AddedSectionProps) {
@@ -66,7 +87,7 @@ export const AddedSection = memo(function AddedSection({
     <div className="p-3 bg-[#f0f2f44d]  border border-[#dfe2e74d] rounded-lg flex justify-between items-center ">
       <div className="flex gap-3 items-center">
         <div className="flex py-1 px-1 rounded-full items-center justify-center bg-[#3c83f61a]">
-          {icon}
+          <Icon name={icon} size={16} variant="normal" color="#3c83f6" />
         </div>
         <div className="flex flex-col items-start">
           <Title className="text-[16px] font-medium">{title}</Title>

@@ -1,13 +1,12 @@
 'use client';
 
-import { type JSX, memo, useCallback } from 'react';
+import { type JSX, useCallback } from 'react';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useMutation } from '@tanstack/react-query';
+// import { useMutation } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 
-import { login } from '@/actions/auth';
-import { Icon } from '@/components/Icons/Icon';
+// import { login } from '@/actions/auth';
 import { Buttons } from '@/components/ui/utils/Buttons';
 import { Description } from '@/components/ui/utils/Descriptions';
 import { HeaderLogo } from '@/components/ui/utils/HeaderLogos';
@@ -24,7 +23,7 @@ import { SignInFormSchema, type SignInFormType } from '@/types/signin-form-types
  * - Uses minimal re-renders by relying on RHF's built-in optimization
  * - Improves accessibility & semantics
  */
-function SignInFormBase(): JSX.Element {
+export function SignInForm(): JSX.Element {
   const {
     handleSubmit,
     register,
@@ -34,41 +33,35 @@ function SignInFormBase(): JSX.Element {
     mode: 'all',
   });
 
-  const { mutateAsync: loginMutation, isPending } = useMutation({
-    mutationFn: login,
-    onSuccess: data => {
-      console.log(data);
-    },
-    onError: error => {
-      console.error('Login mutation error:', error);
-    },
-  });
+  // const { mutateAsync: loginMutation, isPending } = useMutation({
+  //   mutationFn: login,
+  //   onSuccess: data => {
+  //     console.log(data);
+  //   },
+  //   onError: error => {
+  //     console.error('Login mutation error:', error);
+  //   },
+  // });
 
-  const onSubmit = useCallback(
-    async (data: SignInFormType) => {
-      try {
-        const result = await loginMutation(data);
+  const onSubmit = useCallback(async () => {
+    try {
+      // const result = await loginMutation(data);
 
-        if (!result.success) {
-          console.error(result.message);
+      // if (!result.success) {
+      //   console.error(result.message);
 
-          return;
-        }
-        console.log('Login successful');
-      } catch (error) {
-        console.error('Login mutation failed:', error);
-      }
-    },
-    [loginMutation]
-  );
+      //   return;
+      // }
+      console.log('Login successful');
+    } catch (error) {
+      console.error('Login mutation failed:', error);
+    }
+  }, []);
 
   return (
     <section className="w-full max-w-md mx-auto flex flex-col justify-center gap-8">
       <header className="flex flex-col items-center justify-center gap-4">
-        <HeaderLogo
-          variant="square"
-          icon={<Icon name="Building2" size="30" color="white" variant="normal" />}
-        />
+        <HeaderLogo variant="square" icon="Building2" />
         <Title variant="h1">HRMS Portal</Title>
         <Description size="md">Sign in to your admin dashboard</Description>
       </header>
@@ -88,7 +81,7 @@ function SignInFormBase(): JSX.Element {
             autoComplete="organization"
             {...register('tenantCode')}
             error={errors.tenantCode}
-            icon={<Icon name="Building2" />}
+            icon="Building2"
           />
 
           <InputComponent
@@ -99,7 +92,7 @@ function SignInFormBase(): JSX.Element {
             autoComplete="username"
             {...register('email')}
             error={errors.email}
-            icon={<Icon name="User" />}
+            icon="User"
           />
 
           <InputComponent
@@ -110,13 +103,13 @@ function SignInFormBase(): JSX.Element {
             autoComplete="current-password"
             {...register('password')}
             error={errors.password}
-            icon={<Icon name="Lock" />}
+            icon="Lock"
           />
 
           <Buttons
             variant="primary"
-            loading={isSubmitting || isPending}
-            disabled={isSubmitting || isPending || !isValid}
+            loading={isSubmitting}
+            disabled={isSubmitting || !isValid}
             loadingChildren={
               <span className="flex items-center gap-2">
                 <Spinner /> Signing...
@@ -131,7 +124,3 @@ function SignInFormBase(): JSX.Element {
     </section>
   );
 }
-
-const SignInForm = memo(SignInFormBase);
-
-export default SignInForm;

@@ -1,4 +1,4 @@
-import SignInForm from '@/features/sign-in/SignInForm';
+import { SignInForm } from '@/features/sign-in/SignInForm';
 
 import type { JSX } from 'react';
 

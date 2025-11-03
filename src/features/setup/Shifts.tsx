@@ -19,17 +19,9 @@ import { cn } from '@/utils';
 import type { IShiftFormType, IShiftList } from '@/types/form-types';
 
 const workTypes = ['Work From Home', 'Work From Office', 'Hybrid Work'];
-const weekDays = Object.freeze([
-  'Monday',
-  'Tuesday',
-  'Wednesday',
-  'Thursday',
-  'Friday',
-  'Saturday',
-  'Sunday',
-]);
+const weekDays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
-const ShiftTemplates = Object.freeze([
+const ShiftTemplates = [
   {
     title: 'Day Shift',
     workType: 'Work From Office',
@@ -58,9 +50,9 @@ const ShiftTemplates = Object.freeze([
     endingTime: '17:00',
     days: ['Monday'],
   },
-]);
+];
 
-const defaultShift = Object.freeze({
+const defaultShift = {
   title: '',
   workType: 'Work From Office',
   startingTime: '09:00',
@@ -69,7 +61,7 @@ const defaultShift = Object.freeze({
   workingHours: '9',
   shiftTracking: false,
   rotationalShifts: false,
-});
+};
 
 const DaySelector = memo(
   // eslint-disable-next-line no-unused-vars
@@ -205,7 +197,7 @@ export default function Shifts({
           key={shift.id}
           title={shift.title}
           description={`${shift.workType} • ${shift.startingTime} - ${shift.endingTime} • ${shift.workingHours}h`}
-          icon={<Icon name="Crown" size={16} variant="normal" />}
+          icon="Crown"
           onDelete={() => remove(index)}
         />
       )),
@@ -245,7 +237,7 @@ export default function Shifts({
               id="shiftName"
               placeholder="Enter shift name"
               parentClassName="w-1/2"
-              icon={<Icon name="Clock" />}
+              icon="Clock"
             />
           )}
         />

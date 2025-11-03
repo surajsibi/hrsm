@@ -23,7 +23,6 @@ export interface DescriptionProps
   className?: string;
 }
 
-const DescriptionMemo: React.FC<DescriptionProps> = ({ className, size, ...props }) => {
+export const Description: React.FC<DescriptionProps> = ({ className, size, ...props }) => {
   return <p className={cn(description({ size }), className)} {...props} />;
 };
-export const Description = memo(DescriptionMemo);

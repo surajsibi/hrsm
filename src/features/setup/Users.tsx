@@ -130,7 +130,7 @@ export default function Users({
                     </span>
                   }
                   onDelete={() => remove(i)}
-                  icon={<Icon name="User" size={16} variant="normal" />}
+                  icon="User"
                 />
               </div>
             ))}
@@ -167,7 +167,7 @@ export default function Users({
               id="userName"
               type="text"
               {...register('currentUser.firstName')}
-              icon={<Icon name="User" />}
+              icon="User"
             />
           </div>
           <div className="w-1/2">
@@ -189,7 +189,7 @@ export default function Users({
               id="email"
               type="email"
               {...register('currentUser.emailAddress')}
-              icon={<Icon name="Mail" />}
+              icon="Mail"
             />
           </div>
           <div className="w-1/2">
@@ -199,7 +199,7 @@ export default function Users({
               id="phoneNumber"
               type="text"
               {...register('currentUser.phoneNumber')}
-              icon={<Icon name="Phone" />}
+              icon="Phone"
             />
           </div>
         </div>
@@ -212,7 +212,7 @@ export default function Users({
             type="date"
             className="appearance-none"
             {...register('currentUser.dateOfBirth')}
-            icon={<Icon name="Calendar" />}
+            icon="Calendar"
           />
         </div>
         <div className="w-1/2">
@@ -238,7 +238,7 @@ export default function Users({
           placeholder="Enter complete address"
           type="text"
           {...register('currentUser.address')}
-          icon={<Icon name="MapPin" />}
+          icon="MapPin"
         />
       </div>
       <Title className="text-md font-medium text-start" variant="h3">
@@ -337,7 +337,7 @@ export default function Users({
               id="probationStartDate"
               type="date"
               {...register('currentUser.probationStartDate')}
-              icon={<Icon name="Calendar" />}
+              icon="Calendar"
             />
           </div>
           <div className="w-1/2">
@@ -347,7 +347,7 @@ export default function Users({
               type="date"
               className="appearance-none"
               {...register('currentUser.probationEndDate')}
-              icon={<Icon name="Calendar" />}
+              icon="Calendar"
             />
           </div>
         </div>

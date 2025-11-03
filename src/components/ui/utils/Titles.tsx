@@ -67,9 +67,7 @@ export interface TitleProps
  * <Title intents="h3" className="text-red-500">Subsection</Title>
  * ```
  */
-function TitleMemo({ className, variant = 'h1', ...props }: TitleProps) {
+export function Title({ className, variant = 'h1', ...props }: TitleProps) {
   const Component = headingMap[variant!];
   return <Component className={cn(title({ variant }), className)} {...props} />;
 }
-
-export const Title = memo(TitleMemo);

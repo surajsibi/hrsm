@@ -6,7 +6,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 
-import { Icon } from '@/components/Icons/Icon';
 import { Buttons } from '@/components/ui/utils/Buttons';
 import { Description } from '@/components/ui/utils/Descriptions';
 import { InputComponent } from '@/components/ui/utils/InputComponent';
@@ -50,7 +49,7 @@ function SetNewPassword(): JSX.Element {
           type="password"
           {...register('newPassword')}
           error={errors.newPassword}
-          icon={<Icon name="Lock" />}
+          icon="Lock"
         />
         <InputComponent
           label="Confirm Password"
@@ -59,7 +58,7 @@ function SetNewPassword(): JSX.Element {
           type="password"
           {...register('confirmNewPassword')}
           error={errors.confirmNewPassword}
-          icon={<Icon name="Lock" />}
+          icon="Lock"
         />
         <Buttons
           variant="primary"

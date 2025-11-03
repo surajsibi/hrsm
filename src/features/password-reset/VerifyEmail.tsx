@@ -50,7 +50,7 @@ function VerifyEmail({ onNext, onPrev }: { onNext: () => void; onPrev: () => voi
           type="text"
           {...register('otp')}
           error={errors.otp}
-          icon={<Icon name="Shield" />}
+          icon="Shield"
         />
         <Description className="mt-5 text-left">Code sent to surajsibi2022@gmail.com</Description>
         <div className="flex justify-between mt-5 gap-5">

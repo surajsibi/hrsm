@@ -20,6 +20,6 @@ type Story = StoryObj<typeof HeaderLogo>;
 export const Default: Story = {
   args: {
     children: 'Sign in',
-    icon: <Icon name="Building2" color="#fff" size={25} />,
+    icon: "Building2",
   },
 };

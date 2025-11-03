@@ -4,7 +4,6 @@ import { type JSX, memo, useCallback } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Controller, useForm } from 'react-hook-form';
 
-import { Icon } from '@/components/Icons/Icon';
 import { Textarea } from '@/components/ui/textarea';
 import { Buttons } from '@/components/ui/utils/Buttons';
 import { Description } from '@/components/ui/utils/Descriptions';
@@ -71,7 +70,7 @@ function OrganizationMemo({ onNext }: { onNext: () => void }): JSX.Element {
             type="text"
             {...register('companyName')}
             error={errors?.companyName}
-            icon={<Icon name="Building" />}
+            icon="Building"
           />
 
           <Controller
@@ -100,7 +99,7 @@ function OrganizationMemo({ onNext }: { onNext: () => void }): JSX.Element {
             type="email"
             {...register('companyEmail')}
             error={errors?.companyEmail}
-            icon={<Icon name="Mail" />}
+            icon="Mail"
           />
 
           <InputComponent
@@ -111,7 +110,7 @@ function OrganizationMemo({ onNext }: { onNext: () => void }): JSX.Element {
             parentClassName="w-1/2"
             {...register('companyPhoneNumber')}
             error={errors?.companyPhoneNumber}
-            icon={<Icon name="Phone" />}
+            icon="Phone"
           />
         </div>
 
@@ -124,7 +123,7 @@ function OrganizationMemo({ onNext }: { onNext: () => void }): JSX.Element {
             {...register('companyWebsite')}
             parentClassName="w-1/2"
             error={errors?.companyWebsite}
-            icon={<Icon name="Globe" />}
+            icon="Globe"
           />
 
           <Controller
@@ -138,7 +137,7 @@ function OrganizationMemo({ onNext }: { onNext: () => void }): JSX.Element {
                 id="companySize"
                 label="Company Size"
                 className="w-1/2"
-                icon={<Icon name="Users" />}
+                icon="Users"
               />
             )}
           />
@@ -150,7 +149,7 @@ function OrganizationMemo({ onNext }: { onNext: () => void }): JSX.Element {
           id="companyAddress"
           {...register('companyAddress')}
           error={errors?.companyAddress}
-          icon={<Icon name="MapPin" className={'top-[22%]'} />}
+          icon="MapPin"
         />
 
         <Textarea

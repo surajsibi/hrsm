@@ -1,10 +1,11 @@
-import { HTMLAttributes, InputHTMLAttributes, memo, ReactNode, useMemo } from 'react';
+import { InputHTMLAttributes, ReactNode } from 'react';
 import { Label } from './Label';
 import { Input } from './Input';
 import { cn } from '@/utils';
 import { Description } from './Descriptions';
 
 import type { FieldError } from 'react-hook-form';
+import { Icon } from '@/components/Icons/Icon';
 
 interface InputComponentProps extends InputHTMLAttributes<HTMLInputElement> {
   /**
@@ -28,7 +29,28 @@ interface InputComponentProps extends InputHTMLAttributes<HTMLInputElement> {
    * Optional icon element (e.g., an SVG or Icon component).
    * Rendered on the left side of the input inside the wrapper.
    */
-  icon?: ReactNode;
+  icon?:
+    | 'ArrowRight'
+    | 'Check'
+    | 'Building'
+    | 'Building2'
+    | 'Briefcase'
+    | 'User'
+    | 'Lock'
+    | 'Mail'
+    | 'Shield'
+    | 'ChevronDown'
+    | 'Crown'
+    | 'X'
+    | 'Plus'
+    | 'Trash2'
+    | 'Clock'
+    | 'Calendar'
+    | 'ArrowLeft'
+    | 'Phone'
+    | 'Globe'
+    | 'Users'
+    | 'MapPin';
 
   /**
    * Additional custom CSS classes for styling the input field.
@@ -78,7 +100,7 @@ interface InputComponentProps extends InputHTMLAttributes<HTMLInputElement> {
  * }
  * ```
  */
-function InputComponentMemo({
+export function InputComponent({
   label,
   placeholder,
   id,
@@ -106,7 +128,11 @@ function InputComponentMemo({
             : 'focus-within:border-primary ring-0 focus-within:ring-1 focus-within:ring-offset-4 focus-within:ring-primary'
         )}
       >
-        {icon && <span>{icon}</span>}
+        {icon && (
+          <span>
+            <Icon name={icon} />
+          </span>
+        )}
         <Input
           type={type}
           value={value}
@@ -124,5 +150,3 @@ function InputComponentMemo({
     </div>
   );
 }
-
-export const InputComponent = memo(InputComponentMemo);

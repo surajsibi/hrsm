@@ -1,6 +1,6 @@
 import { cn } from '@/utils';
 import { cva, type VariantProps } from 'class-variance-authority';
-import { memo, ReactNode, useMemo } from 'react';
+import { ReactNode } from 'react';
 import { Spinner } from './Spinner';
 
 const button = cva(
@@ -82,7 +82,7 @@ export interface ButtonProps
   onClick?: () => void;
 }
 
-const ButtonsMemo: React.FC<ButtonProps> = ({
+export const Buttons: React.FC<ButtonProps> = ({
   className,
   loadingChildren,
   variant,
@@ -111,5 +111,3 @@ const ButtonsMemo: React.FC<ButtonProps> = ({
     </button>
   );
 };
-
-export const Buttons = memo(ButtonsMemo);

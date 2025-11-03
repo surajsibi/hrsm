@@ -1,4 +1,4 @@
-import { type JSX, memo, useCallback, useMemo } from 'react';
+import { type JSX, memo, useCallback } from 'react';
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Controller, useForm, useWatch } from 'react-hook-form';
@@ -57,14 +57,6 @@ function DepartmentMemo({
     }
   }, [selectedDepartments, setValue, getValues]);
 
-  const renderedDepartments = useMemo(
-    () =>
-      selectedDepartments?.map((tab, index) => (
-        <AddedSection key={index} title={tab} onDelete={() => onDelete(tab)} />
-      )),
-    [selectedDepartments, onDelete]
-  );
-
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col p-6 pt-8 gap-6">
       {/* Header */}
@@ -111,7 +103,7 @@ function DepartmentMemo({
                 placeholder="Enter department name"
                 value={field.value}
                 onChange={field.onChange}
-                icon={<Icon name="Briefcase" />}
+                icon="Briefcase"
               />
 
               <Buttons
@@ -144,7 +136,9 @@ function DepartmentMemo({
             </div>
           </div>
           <div className="shadow-md space-y-4 bg-white border-border border rounded-lg p-4">
-            {renderedDepartments}
+            {selectedDepartments?.map((tab, index) => (
+              <AddedSection key={index} title={tab} onDelete={() => onDelete(tab)} />
+            ))}
           </div>
         </div>
       )}

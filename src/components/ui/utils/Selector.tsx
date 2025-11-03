@@ -50,7 +50,28 @@ interface SelectorProps {
   label?: string;
 
   // Optional icon element (e.g., an SVG or Icon component).
-  icon?: ReactNode;
+  icon?:
+    | 'ChevronDown'
+    | 'ArrowRight'
+    | 'Check'
+    | 'Building'
+    | 'Building2'
+    | 'Briefcase'
+    | 'User'
+    | 'Lock'
+    | 'Mail'
+    | 'Shield'
+    | 'Crown'
+    | 'X'
+    | 'Plus'
+    | 'Trash2'
+    | 'Clock'
+    | 'Calendar'
+    | 'ArrowLeft'
+    | 'Phone'
+    | 'Globe'
+    | 'Users'
+    | 'MapPin';
 
   error?: FieldError;
 }
@@ -187,7 +208,11 @@ export const Selector = memo(function Selector({
             }
           )}
         >
-          {icon && <span>{icon}</span>}
+          {icon && (
+            <span>
+              <Icon name={icon} />
+            </span>
+          )}
           {children}
           <p>{selected}</p>
         </div>

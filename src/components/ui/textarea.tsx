@@ -6,11 +6,33 @@ import { Description } from '@/components/ui/utils/Descriptions';
 
 import type { FieldError } from 'react-hook-form';
 import { useMemo } from 'react';
+import { Icon } from '../Icons/Icon';
 
 interface TextareaProps extends React.ComponentProps<'textarea'> {
   label?: string;
   error?: FieldError;
-  icon?: React.ReactNode;
+  icon?:
+    | 'ArrowRight'
+    | 'Check'
+    | 'Building'
+    | 'Building2'
+    | 'Briefcase'
+    | 'User'
+    | 'Lock'
+    | 'Mail'
+    | 'Shield'
+    | 'ChevronDown'
+    | 'Crown'
+    | 'X'
+    | 'Plus'
+    | 'Trash2'
+    | 'Clock'
+    | 'Calendar'
+    | 'ArrowLeft'
+    | 'Phone'
+    | 'Globe'
+    | 'Users'
+    | 'MapPin';
   id?: string;
 }
 
@@ -26,7 +48,11 @@ function Textarea({ className, label, error, icon, id, ...props }: TextareaProps
             : 'focus-within:border-primary ring-0 focus-within:ring-1 focus-within:ring-offset-4 focus-within:ring-primary'
         )}
       >
-        {icon && <span>{icon}</span>}
+        {icon && (
+          <span>
+            <Icon name={icon} className={'top-[22%]'} />
+          </span>
+        )}
         <textarea
           data-slot="textarea"
           id={id}
