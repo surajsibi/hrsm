@@ -2,26 +2,10 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
-import Department from '@/features/setup/Department';
-
-jest.mock('@/components/ui/utils/Tabs', () => ({
-  __esModule: true,
-  Tab: ({
-    children,
-    active,
-    onClick,
-  }: {
-    children: string;
-    active?: boolean;
-    onClick?: () => void;
-  }) => (
-    <button onClick={onClick} aria-pressed={active} data-testid={`mock-tab-${children}`}>
-      {children}
-    </button>
-  ),
-}));
+import { Department } from '@/features/setup/Department';
 
 describe('features / setup / Department', () => {
+  const user = userEvent.setup();
   const DepartmentSetup = (props = {}) => {
     const defaultProps = {
       onNext: jest.fn(),
@@ -35,14 +19,14 @@ describe('features / setup / Department', () => {
     });
 
     const addCustomDepartmentButton = screen.getByRole('button', {
-      name: /Add custom department/i,
+      name: /Add department/i,
     });
 
+    const hrDeparmentButton = screen.getByRole('button', { name: /Human Resources/i });
     const skipButton = screen.getByRole('button', { name: /Skip This Step/i });
     const prevButton = screen.getByRole('button', { name: /Previous Step/i });
     const continueButton = screen.getByRole('button', { name: /Continue/i });
     const lineBreak = screen.getAllByRole('separator');
-    const hrDeparmentButton = screen.getByTestId('mock-tab-Human Resources');
 
     return {
       customDeparmentNameInput,
@@ -72,6 +56,7 @@ describe('features / setup / Department', () => {
     expect(screen.getByRole('heading', { name: 'Add Custom Departments', level: 3 }));
     expect(customDeparmentNameInput).toBeInTheDocument();
     expect(addCustomDepartmentButton).toBeInTheDocument();
+    expect(addCustomDepartmentButton).toBeDisabled();
     expect(
       screen.queryByRole('heading', { name: 'Added Departments', level: 3 })
     ).not.toBeInTheDocument();
@@ -96,7 +81,7 @@ describe('features / setup / Department', () => {
 
     expect(hrDeparmentButton).toBeInTheDocument();
 
-    await userEvent.click(hrDeparmentButton);
+    await user.click(hrDeparmentButton);
 
     expect(
       screen.getByRole('heading', { name: /Added Departments/i, level: 3 })
@@ -120,11 +105,11 @@ describe('features / setup / Department', () => {
 
     expect(addCustomDepartmentButton).toBeDisabled();
 
-    await userEvent.type(customDeparmentNameInput, 'custom department');
+    await user.type(customDeparmentNameInput, 'custom department');
 
     expect(addCustomDepartmentButton).not.toBeDisabled();
 
-    await userEvent.click(addCustomDepartmentButton);
+    await user.click(addCustomDepartmentButton);
 
     expect(
       screen.getByRole('heading', { name: /Added Departments/i, level: 3 })
@@ -141,7 +126,7 @@ describe('features / setup / Department', () => {
     ).toBeInTheDocument();
     expect(screen.getByText(/1 department/i)).toBeInTheDocument();
 
-    await userEvent.click(deleteCustomDepartmentButton);
+    await user.click(deleteCustomDepartmentButton);
 
     expect(
       screen.queryByRole('heading', { name: /custom department/i, level: 1 })
@@ -165,11 +150,16 @@ describe('features / setup / Department', () => {
 
     expect(addCustomDepartmentButton).toBeDisabled();
 
-    await userEvent.type(customDeparmentNameInput, 'custom department 1, custom department 2');
+    await user.type(customDeparmentNameInput, 'custom department 1');
 
     expect(addCustomDepartmentButton).not.toBeDisabled();
 
-    await userEvent.click(addCustomDepartmentButton);
+    await user.click(addCustomDepartmentButton);
+    await user.type(customDeparmentNameInput, 'custom department 2');
+
+    expect(addCustomDepartmentButton).not.toBeDisabled();
+
+    await user.click(addCustomDepartmentButton);
 
     expect(
       screen.getByRole('heading', { name: /Added Departments/i, level: 3 })
@@ -189,7 +179,7 @@ describe('features / setup / Department', () => {
     ).toBeInTheDocument();
     expect(screen.getByText(/2 departments/i)).toBeInTheDocument();
 
-    await userEvent.click(deleteCustomDepartmentButton[0]);
+    await user.click(deleteCustomDepartmentButton[0]);
 
     expect(
       screen.queryByRole('heading', { name: /custom department 1/i, level: 1 })
@@ -197,7 +187,7 @@ describe('features / setup / Department', () => {
 
     expect(screen.getByText(/1 department/i)).toBeInTheDocument();
 
-    await userEvent.click(deleteCustomDepartmentButton[0]);
+    await user.click(deleteCustomDepartmentButton[0]);
 
     expect(
       screen.queryByRole('heading', { name: /custom department 2/i, level: 1 })
@@ -221,13 +211,13 @@ describe('features / setup / Department', () => {
     expect(prevButton).toBeInTheDocument();
     expect(continueButton).toBeInTheDocument();
 
-    await userEvent.click(skipButton);
+    await user.click(skipButton);
     expect(onNext).toHaveBeenCalledTimes(1);
 
-    await userEvent.click(continueButton);
+    await user.click(continueButton);
     expect(onNext).toHaveBeenCalledTimes(2);
 
-    await userEvent.click(prevButton);
+    await user.click(prevButton);
     expect(onPrev).toHaveBeenCalledTimes(1);
   });
 });

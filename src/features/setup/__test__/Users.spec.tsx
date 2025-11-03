@@ -1,19 +1,7 @@
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
-import Users from '@/features/setup/Users';
-
-jest.mock('@/components/ui/utils/AddSections', () => ({
-  AddedSection: ({ title, description, onDelete }: never) => (
-    <div data-testid="mock-added-section">
-      <h4>{title}</h4>
-      <p>{description}</p>
-      <button data-testid="Delete section" onClick={onDelete}>
-        Delete
-      </button>
-    </div>
-  ),
-}));
+import { Users } from '@/features/setup/Users';
 
 describe('features / setup / Users', () => {
   const user = userEvent.setup();
@@ -115,54 +103,52 @@ describe('features / setup / Users', () => {
   it('add and remove custom user ', async () => {
     const { firstNameInput, lastNameInput, emailInput, phoneInput, addUserButton } = UserSetup();
 
-    expect(screen.queryByTestId('mock-added-section')).not.toBeInTheDocument();
+    expect(screen.queryByText('Added Users')).not.toBeInTheDocument();
 
     expect(addUserButton).toBeDisabled();
 
-    await user.type(firstNameInput, 'firstName');
-    await user.type(lastNameInput, 'lastName');
-    await user.type(emailInput, 'test@example.com');
-    await user.type(phoneInput, '1234567890');
-    await user.click(addUserButton);
+    fireEvent.change(firstNameInput, { target: { value: 'firstName' } });
+    fireEvent.change(lastNameInput, { target: { value: 'lastName' } });
+    fireEvent.change(emailInput, { target: { value: 'test@example.com' } });
+    fireEvent.change(phoneInput, { target: { value: '1234567890' } });
+    fireEvent.click(addUserButton);
 
-    expect(screen.getByTestId('mock-added-section')).toBeInTheDocument();
+    expect(screen.queryByText('Added Users')).toBeInTheDocument();
     expect(
-      screen.getByRole('heading', { name: /firstName lastname/i, level: 4 })
+      screen.getByRole('heading', { name: /firstName lastName/i, level: 1 })
     ).toBeInTheDocument();
     expect(screen.getByText(/test@example.com • EMPLOYEE/i)).toBeInTheDocument();
 
     expect(addUserButton).toBeDisabled();
 
-    await user.type(firstNameInput, 'firstName2');
-    await user.type(lastNameInput, 'lastName2');
-    await user.type(emailInput, 'test2@example.com');
-    await user.type(phoneInput, '1234567890');
-    await user.click(addUserButton);
+    fireEvent.change(firstNameInput, { target: { value: 'firstName2' } });
+    fireEvent.change(lastNameInput, { target: { value: 'lastName2' } });
+    fireEvent.change(emailInput, { target: { value: 'test2@example.com' } });
+    fireEvent.change(phoneInput, { target: { value: '1234567890' } });
+    fireEvent.click(addUserButton);
 
-    expect(screen.getAllByTestId('mock-added-section').length).toBe(2);
     expect(
-      screen.getByRole('heading', { name: /firstName2 lastname2/i, level: 4 })
+      screen.getByRole('heading', { name: /firstName2 lastName2/i, level: 1 })
     ).toBeInTheDocument();
     expect(screen.getByText(/test2@example.com • EMPLOYEE/i)).toBeInTheDocument();
 
-    const deleteButtons = screen.getAllByTestId('Delete section');
+    const deleteButtons = screen.getAllByRole('button', { name: /Delete Section/i });
 
     expect(deleteButtons.length).toBe(2);
 
-    await user.click(deleteButtons[0]);
+    fireEvent.click(deleteButtons[0]);
 
-    expect(screen.getAllByTestId('mock-added-section').length).toBe(1);
     expect(
-      screen.queryByRole('heading', { name: /firstName lastname/i, level: 4 })
+      screen.queryByRole('heading', { name: /firstName lastName/i, level: 1 })
     ).not.toBeInTheDocument();
 
-    await user.click(deleteButtons[0]);
+    fireEvent.click(deleteButtons[0]);
+    expect(screen.queryByText('Added Users')).not.toBeInTheDocument();
 
-    expect(screen.queryByTestId('mock-added-section')).not.toBeInTheDocument();
     expect(
-      screen.queryByRole('heading', { name: /firstName2 lastname2/i, level: 4 })
+      screen.queryByRole('heading', { name: /firstName2 lastName2/i, level: 1 })
     ).not.toBeInTheDocument();
-  }, 9000);
+  });
 
   it('test case for skip ,complete and prev button', async () => {
     const onNext = jest.fn();

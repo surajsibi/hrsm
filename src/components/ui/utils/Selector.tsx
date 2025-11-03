@@ -102,7 +102,7 @@ interface SelectorProps {
  *   <span>🍎</span>
  * </Selector>
  */
-export const Selector = memo(function Selector({
+export function Selector({
   children,
   className,
   placeholder = 'Select...',
@@ -258,4 +258,4 @@ export const Selector = memo(function Selector({
       )}
     </div>
   );
-});
+}

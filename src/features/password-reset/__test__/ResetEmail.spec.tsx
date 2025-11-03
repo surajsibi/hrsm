@@ -25,7 +25,7 @@ describe('features / password-reset / ResetPassword', () => {
     expect(sendButton).toBeInTheDocument();
   });
 
-  it('show error if email is not valid and button disabled and enable if valid ', async () => {
+  it('show error if email is not valid with button disabled ; and enable if valid ', async () => {
     const { emailInput, sendButton } = ResetPasswordSetup();
 
     await userEvent.click(emailInput);

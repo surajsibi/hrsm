@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
-import Organization from '@/features/setup/Organization';
+import { Organization } from '@/features/setup/Organization';
 
 describe('features / setup / Organization  ', () => {
   const OrganizationSetup = (props = {}) => {

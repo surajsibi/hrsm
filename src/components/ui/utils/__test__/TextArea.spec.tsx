@@ -5,7 +5,6 @@ describe('TextArea', () => {
   it('should render the component', () => {
     render(<TextArea />);
     expect(screen.getByRole('textbox')).toBeInTheDocument();
-    screen.debug();
   });
   it('should render with icon', () => {
     render(<TextArea icon={<div>Icon</div>} />);

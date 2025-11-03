@@ -63,13 +63,7 @@ const generatePassword = (length = 12): string => {
   );
 };
 
-export default function Users({
-  onNext,
-  onPrev,
-}: {
-  onNext: () => void;
-  onPrev: () => void;
-}): JSX.Element {
+export function Users({ onNext, onPrev }: { onNext: () => void; onPrev: () => void }): JSX.Element {
   const { register, handleSubmit, watch, setValue, control } = useForm<IUserFormType>({
     defaultValues: {
       currentUser: DEFAULT_USER,
@@ -104,6 +98,7 @@ export default function Users({
   }, [currentUser, append, setValue]);
 
   function onSubmit() {
+    console.log(users);
     onNext();
   }
 

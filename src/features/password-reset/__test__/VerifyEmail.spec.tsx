@@ -12,7 +12,7 @@ describe('features / password-reset / VerifyEmail', () => {
 
     render(<VerifyEmail {...defaultProps} {...props} />);
 
-    const otpInput = screen.getByRole('textbox', { name: /Veification Code/i });
+    const otpInput = screen.getByRole('textbox', { name: /Verification Code/i });
     const backButton = screen.getByRole('button', { name: /Back/i });
     const verifyButton = screen.getByRole('button', { name: /Verify OTP/i });
 

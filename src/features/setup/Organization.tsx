@@ -1,5 +1,5 @@
 'use client';
-import { type JSX, memo, useCallback } from 'react';
+import { type JSX, useCallback } from 'react';
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Controller, useForm } from 'react-hook-form';
@@ -33,7 +33,7 @@ const companySizes = [
   '1000+ employees',
 ];
 
-function OrganizationMemo({ onNext }: { onNext: () => void }): JSX.Element {
+export function Organization({ onNext }: { onNext: () => void }): JSX.Element {
   const {
     register,
     control,
@@ -192,5 +192,3 @@ function OrganizationMemo({ onNext }: { onNext: () => void }): JSX.Element {
     </form>
   );
 }
-
-export const Organization = memo(OrganizationMemo);

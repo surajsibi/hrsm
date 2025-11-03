@@ -77,7 +77,7 @@ interface AddedSectionProps {
  *   data-testid="added-section"
  * />
  */
-export const AddedSection = memo(function AddedSection({
+export function AddedSection({
   title = 'Quality Assurance',
   icon = 'Briefcase',
   description = 'Status: ACTIVE',
@@ -100,4 +100,4 @@ export const AddedSection = memo(function AddedSection({
       </button>
     </div>
   );
-});
+}

@@ -6,7 +6,7 @@ interface LabelProps extends LabelHTMLAttributes<HTMLLabelElement> {
   className?: string;
 }
 
-function LabelMemo({ children, htmlFor, className, ...props }: LabelProps) {
+export function Label({ children, htmlFor, className, ...props }: LabelProps) {
   return (
     <label
       htmlFor={htmlFor}
@@ -17,5 +17,3 @@ function LabelMemo({ children, htmlFor, className, ...props }: LabelProps) {
     </label>
   );
 }
-
-export const Label = memo(LabelMemo);

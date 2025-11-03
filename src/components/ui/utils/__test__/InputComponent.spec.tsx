@@ -24,7 +24,7 @@ describe('InputComponent', () => {
     expect(screen.getByText('Label')).toHaveAttribute('for', 'label');
   });
   it('should render with icon', () => {
-    render(<InputComponent icon={<div>Icon</div>} placeholder="Input" />);
-    expect(screen.getByText('Icon')).toBeInTheDocument();
+    render(<InputComponent icon="ArrowLeft" placeholder="Input" />);
+    expect(screen.getByLabelText('ArrowLeft')).toBeInTheDocument();
   });
 });

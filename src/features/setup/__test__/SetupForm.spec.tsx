@@ -1,14 +1,12 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
-import SetupForm from '@/features/setup/SetupForm';
-
 import type { ReactNode } from 'react';
 
-// --- Mocking all step components ---
+// Step components
 jest.mock('@/features/setup/Organization', () => ({
   __esModule: true,
-  default: ({ onNext }: { onNext: () => void }) => (
+  Organization: ({ onNext }: { onNext: () => void }) => (
     <div>
       <p>Organization Step</p>
       <button onClick={onNext}>Next</button>
@@ -19,7 +17,7 @@ jest.mock('@/features/setup/Organization', () => ({
 
 jest.mock('@/features/setup/Department', () => ({
   __esModule: true,
-  default: ({ onNext, onPrev }: { onNext: () => void; onPrev: () => void }) => (
+  Department: ({ onNext, onPrev }: { onNext: () => void; onPrev: () => void }) => (
     <div>
       <p>Department Step</p>
       <button onClick={onPrev}>Back</button>
@@ -30,7 +28,7 @@ jest.mock('@/features/setup/Department', () => ({
 
 jest.mock('@/features/setup/Designation', () => ({
   __esModule: true,
-  default: ({ onNext, onPrev }: { onNext: () => void; onPrev: () => void }) => (
+  Designation: ({ onNext, onPrev }: { onNext: () => void; onPrev: () => void }) => (
     <div>
       <p>Designation Step</p>
       <button onClick={onPrev}>Back</button>
@@ -41,7 +39,7 @@ jest.mock('@/features/setup/Designation', () => ({
 
 jest.mock('@/features/setup/Shifts', () => ({
   __esModule: true,
-  default: ({ onNext, onPrev }: { onNext: () => void; onPrev: () => void }) => (
+  Shifts: ({ onNext, onPrev }: { onNext: () => void; onPrev: () => void }) => (
     <div>
       <p>Shifts Step</p>
       <button onClick={onPrev}>Back</button>
@@ -52,7 +50,7 @@ jest.mock('@/features/setup/Shifts', () => ({
 
 jest.mock('@/features/setup/Users', () => ({
   __esModule: true,
-  default: ({ onNext, onPrev }: { onNext: () => void; onPrev: () => void }) => (
+  Users: ({ onNext, onPrev }: { onNext: () => void; onPrev: () => void }) => (
     <div>
       <p>Users Step</p>
       <button onClick={onPrev}>Back</button>
@@ -66,33 +64,33 @@ jest.mock('@/features/setup/Complete', () => ({
   default: () => <p>Complete Step</p>,
 }));
 
-// --- Mock UI utility components ---
+// Utility components
 jest.mock('@/components/ui/utils/Titles', () => ({
   Title: ({ children }: { children: ReactNode }) => <h2>{children}</h2>,
 }));
-
 jest.mock('@/components/ui/utils/Descriptions', () => ({
   Description: ({ children }: { children: ReactNode }) => <p>{children}</p>,
 }));
-
 jest.mock('@/components/ui/utils/StepsCircle', () => ({
   StepsCircle: ({ currentStep }: { currentStep: number }) => (
     <div data-testid="step-indicator">Step {currentStep}</div>
   ),
 }));
 
-describe('SetupForm', () => {
-  const SetupFormSetup = () => {
-    render(<SetupForm />);
+// eslint-disable-next-line import/order
+import SetupForm from '@/features/setup/SetupForm';
 
+describe('SetupForm', () => {
+  const setup = () => {
+    render(<SetupForm />);
     const heading = screen.getByRole('heading', { name: /HRMS Setup Wizard/i });
     const description = screen.getByText(/Let's configure your Human Resource Management System/i);
 
     return { heading, description };
   };
 
-  it('renders the first step (Organization) by default', () => {
-    const { heading, description } = SetupFormSetup();
+  it('renders Organization step by default', () => {
+    const { heading, description } = setup();
 
     expect(heading).toBeInTheDocument();
     expect(description).toBeInTheDocument();
@@ -100,31 +98,33 @@ describe('SetupForm', () => {
     expect(screen.getByTestId('step-indicator')).toHaveTextContent('Step 1');
   });
 
-  it('navigates to Department on Next from step 1', async () => {
-    SetupFormSetup();
-    await userEvent.click(screen.getByText(/Next/i));
+  it('moves to Department when clicking Next from Organization', async () => {
+    setup();
+    await userEvent.click(screen.getByRole('button', { name: /Next/i }));
+
     expect(await screen.findByText(/Department Step/i)).toBeInTheDocument();
     expect(screen.getByTestId('step-indicator')).toHaveTextContent('Step 2');
   });
 
-  it('navigates backward and forward correctly through steps', async () => {
-    SetupFormSetup();
-    await userEvent.click(screen.getByText(/Next/i));
-    expect(screen.getByTestId('step-indicator')).toHaveTextContent('Step 2');
-    await userEvent.click(screen.getByText(/Next/i));
-    expect(screen.getByTestId('step-indicator')).toHaveTextContent('Step 3');
-    await userEvent.click(screen.getByText(/Back/i));
-    expect(screen.getByTestId('step-indicator')).toHaveTextContent('Step 2');
+  it('navigates forward and backward correctly', async () => {
+    setup();
+    // Step 1 -> 2 -> 3 -> back -> 2
+    await userEvent.click(screen.getByRole('button', { name: /Next/i })); // Org → Dept
+    await userEvent.click(screen.getByRole('button', { name: /Next/i })); // Dept → Desig
+    expect(await screen.findByText(/Designation Step/i)).toBeInTheDocument();
+
+    await userEvent.click(screen.getByRole('button', { name: /Back/i })); // Desig → Dept
     expect(await screen.findByText(/Department Step/i)).toBeInTheDocument();
+    expect(screen.getByTestId('step-indicator')).toHaveTextContent('Step 2');
   });
 
-  it('navigates through all steps up to Complete', async () => {
+  it('goes through all steps and reaches Complete', async () => {
     render(<SetupForm />);
-    await userEvent.click(screen.getByText(/Next/i));
-    await userEvent.click(screen.getByText(/Next/i));
-    await userEvent.click(screen.getByText(/Next/i));
-    await userEvent.click(screen.getByText(/Next/i));
-    await userEvent.click(screen.getByText(/Next/i));
+
+    // eslint-disable-next-line no-restricted-syntax
+    for (let i = 0; i < 5; i++) {
+      await userEvent.click(screen.getByRole('button', { name: /Next/i }));
+    }
 
     expect(await screen.findByText(/Complete Step/i)).toBeInTheDocument();
   });

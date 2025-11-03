@@ -1,4 +1,3 @@
-import React, { memo } from 'react';
 import { Title } from './Titles';
 import { Description } from './Descriptions';
 import { Icon } from '@/components/Icons/Icon';
@@ -35,7 +34,7 @@ function formatTime(hour: number): string {
  * - List of days
  * - "Add Shift" button
  */
-export const AddShift = memo(function AddShift({
+export function AddShift({
   title,
   workType,
   startingTime,
@@ -74,6 +73,7 @@ export const AddShift = memo(function AddShift({
 
         {/* Action Button */}
         <Buttons
+          aria-label={`Add Shift-${title}`}
           type="button"
           variant="default"
           size="sm"
@@ -86,4 +86,4 @@ export const AddShift = memo(function AddShift({
       </div>
     </div>
   );
-});
+}

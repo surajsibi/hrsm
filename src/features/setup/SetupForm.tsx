@@ -8,8 +8,8 @@ import Complete from '@/features/setup/Complete';
 import { Department } from '@/features/setup/Department';
 import { Designation } from '@/features/setup/Designation';
 import { Organization } from '@/features/setup/Organization';
-import Shifts from '@/features/setup/Shifts';
-import Users from '@/features/setup/Users';
+import { Shifts } from '@/features/setup/Shifts';
+import { Users } from '@/features/setup/Users';
 
 export default function SetupForm(): JSX.Element {
   const [currentStep, setCurrentStep] = useState(1);

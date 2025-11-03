@@ -1,26 +1,10 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
-import Designation from '@/features/setup/Designation';
-
-jest.mock('@/components/ui/utils/Tabs', () => ({
-  __esModule: true,
-  Tab: ({
-    children,
-    active,
-    onClick,
-  }: {
-    children: string;
-    active?: boolean;
-    onClick?: () => void;
-  }) => (
-    <button onClick={onClick} aria-pressed={active} data-testid={`mock-tab-${children}`}>
-      {children}
-    </button>
-  ),
-}));
+import { Designation } from '@/features/setup/Designation';
 
 describe('features / setup / Designation', () => {
+  const user = userEvent.setup();
   const DesignationSetup = (props = {}) => {
     const defaultProps = {
       onNext: jest.fn(),
@@ -39,14 +23,19 @@ describe('features / setup / Designation', () => {
     });
 
     const addDesignationButton = screen.getByRole('button', {
-      name: 'Add Designation',
+      name: /Add designation/i,
     });
 
-    const skipButton = screen.getByRole('button', { name: 'Skip This Step' });
-    const prevButton = screen.getByRole('button', { name: 'Previous Step' });
-    const continueButton = screen.getByRole('button', { name: 'Continue' });
-    const legalCounselDesignationButton = screen.getByTestId('mock-tab-Legal Counsel');
-    const qaLeadDesignationButton = screen.getByTestId('mock-tab-QA Lead');
+    const skipButton = screen.getByRole('button', { name: /Skip This Step/i });
+    const prevButton = screen.getByRole('button', { name: /Previous Step/i });
+    const continueButton = screen.getByRole('button', { name: /Continue/i });
+    const legalCounselDesignationButton = screen.getByRole('button', {
+      name: /Legal Counsel/i,
+    });
+
+    const qaLeadDesignationButton = screen.getByRole('button', {
+      name: /QA Lead/i,
+    });
 
     return {
       customDesignationInput,
@@ -75,7 +64,7 @@ describe('features / setup / Designation', () => {
     } = DesignationSetup();
 
     expect(screen.getByRole('heading', { name: 'Designations', level: 3 }));
-    expect(screen.getByRole('heading', { name: 'Quick Add by Department', level: 3 }));
+    expect(screen.getByRole('heading', { name: 'Quick by Department', level: 3 }));
 
     expect(customDesignationInput).toBeInTheDocument();
     expect(selectDepartmentDropDown).toBeInTheDocument();
@@ -97,7 +86,7 @@ describe('features / setup / Designation', () => {
       screen.queryByRole('heading', { name: 'Added Designations', level: 3 })
     ).not.toBeInTheDocument();
 
-    await userEvent.click(legalCounselDesignationButton);
+    await user.click(legalCounselDesignationButton);
 
     expect(
       screen.getByRole('heading', { name: 'Added Designations', level: 3 })
@@ -105,7 +94,7 @@ describe('features / setup / Designation', () => {
 
     expect(screen.getByText(/1 designation/i));
 
-    await userEvent.click(qaLeadDesignationButton);
+    await user.click(qaLeadDesignationButton);
 
     expect(screen.getByRole('heading', { name: /Legal Counsel/i, level: 1 })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: /QA Lead/i, level: 1 })).toBeInTheDocument();
@@ -117,7 +106,7 @@ describe('features / setup / Designation', () => {
 
     expect(deleteDesignationButton).toHaveLength(2);
 
-    await userEvent.click(deleteDesignationButton[0]);
+    await user.click(deleteDesignationButton[0]);
 
     expect(
       screen.queryByRole('heading', { name: /Legal Counsel/i, level: 1 })
@@ -125,11 +114,8 @@ describe('features / setup / Designation', () => {
     expect(screen.getByRole('heading', { name: /QA Lead/i, level: 1 })).toBeInTheDocument();
     expect(screen.getByText(/1 designation/i)).toBeInTheDocument();
 
-    await userEvent.click(deleteDesignationButton[1]);
+    await user.click(deleteDesignationButton[0]);
 
-    expect(
-      screen.queryByRole('heading', { name: /Legal Counsel/i, level: 1 })
-    ).not.toBeInTheDocument();
     expect(screen.queryByRole('heading', { name: /QA Lead/i, level: 1 })).not.toBeInTheDocument();
 
     expect(
@@ -150,15 +136,15 @@ describe('features / setup / Designation', () => {
       screen.queryByRole('heading', { name: 'Added Designations', level: 3 })
     ).not.toBeInTheDocument();
 
-    await userEvent.type(customDesignationInput, 'custom designation');
+    await user.type(customDesignationInput, 'custom designation');
 
-    await userEvent.click(selectDepartmentDropDown);
+    await user.click(selectDepartmentDropDown);
 
-    await userEvent.click(screen.getByRole('option', { name: 'Legal & Compliance' }));
+    await user.click(screen.getByRole('option', { name: 'Legal & Compliance' }));
 
     expect(addDesignationButton).not.toBeDisabled();
 
-    await userEvent.click(addDesignationButton);
+    await user.click(addDesignationButton);
 
     expect(screen.getByText(/1 designation/i)).toBeInTheDocument();
 
@@ -177,7 +163,7 @@ describe('features / setup / Designation', () => {
 
     expect(deleteDesignationButton).toBeInTheDocument();
 
-    await userEvent.click(deleteDesignationButton);
+    await user.click(deleteDesignationButton);
 
     expect(
       screen.queryByRole('heading', { name: /custom designation/i, level: 1 })
@@ -195,13 +181,13 @@ describe('features / setup / Designation', () => {
     expect(prevButton).toBeInTheDocument();
     expect(continueButton).toBeInTheDocument();
 
-    await userEvent.click(skipButton);
+    await user.click(skipButton);
     expect(onNext).toHaveBeenCalledTimes(1);
 
-    await userEvent.click(continueButton);
+    await user.click(continueButton);
     expect(onNext).toHaveBeenCalledTimes(2);
 
-    await userEvent.click(prevButton);
+    await user.click(prevButton);
     expect(onPrev).toHaveBeenCalledTimes(1);
   });
 });

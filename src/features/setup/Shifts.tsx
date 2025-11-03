@@ -1,4 +1,4 @@
-import { type JSX, memo, useCallback, useEffect, useMemo } from 'react';
+import { type JSX, memo, useCallback, useEffect } from 'react';
 
 import { Controller, useFieldArray, useForm } from 'react-hook-form';
 
@@ -86,14 +86,14 @@ const DaySelector = memo(
   )
 );
 
-export default function Shifts({
+export function Shifts({
   onNext,
   onPrev,
 }: {
   onNext: () => void;
   onPrev: () => void;
 }): JSX.Element {
-  const { control, handleSubmit, setValue, getValues, watch } = useForm<IShiftFormType>({
+  const { control, handleSubmit, setValue, watch } = useForm<IShiftFormType>({
     defaultValues: {
       currentShift: {
         title: '',
@@ -140,15 +140,16 @@ export default function Shifts({
     return Math.round(((endMinutes - startMinutes) / 60) * 100) / 100;
   }, []);
 
-  const handleAddShift = useCallback(() => {
+  const handleAddShift = () => {
     append({
       ...currentShift,
       workingHours:
         currentShift.workingHours ||
         calculateWorkHours(currentShift.startingTime, currentShift.endingTime).toString(),
     });
+
     setValue('currentShift', defaultShift);
-  }, [append, calculateWorkHours, getValues, setValue]);
+  };
 
   useEffect(() => {
     const hours = calculateWorkHours(currentShift.startingTime, currentShift.endingTime);
@@ -163,45 +164,7 @@ export default function Shifts({
 
       setValue('currentShift.days', updated);
     },
-    [days, setValue]
-  );
-
-  const templateCards = useMemo(
-    () =>
-      ShiftTemplates.map(shift => (
-        <AddShift
-          key={shift.title}
-          title={shift.title}
-          workType={shift.workType}
-          startingTime={Number.parseInt(shift.startingTime.split(':')[0], 10)}
-          endingTime={Number.parseInt(shift.endingTime.split(':')[0], 10)}
-          days={shift.days}
-          disabled={shifts.some(s => s.title === shift.title)}
-          handleAddShift={() =>
-            append({
-              ...shift,
-              workingHours: calculateWorkHours(shift.startingTime, shift.endingTime).toString(),
-              shiftTracking: false,
-              rotationalShifts: false,
-            })
-          }
-        />
-      )),
-    [append, calculateWorkHours, shifts]
-  );
-
-  const addedShiftSection = useMemo(
-    () =>
-      shifts.map((shift, index) => (
-        <AddedSection
-          key={shift.id}
-          title={shift.title}
-          description={`${shift.workType} • ${shift.startingTime} - ${shift.endingTime} • ${shift.workingHours}h`}
-          icon="Crown"
-          onDelete={() => remove(index)}
-        />
-      )),
-    [remove, shifts]
+    [days, setValue, currentShift]
   );
 
   return (
@@ -218,7 +181,27 @@ export default function Shifts({
         </Title>
         <Description>Click on common shifts patterns to add them quickly</Description>
       </div>
-      <div className="grid grid-cols-2 gap-4 w-full">{templateCards}</div>
+      <div className="grid grid-cols-2 gap-4 w-full">
+        {ShiftTemplates.map(shift => (
+          <AddShift
+            key={shift.title}
+            title={shift.title}
+            workType={shift.workType}
+            startingTime={Number.parseInt(shift.startingTime.split(':')[0], 10)}
+            endingTime={Number.parseInt(shift.endingTime.split(':')[0], 10)}
+            days={shift.days}
+            disabled={shifts.some(s => s.title === shift.title)}
+            handleAddShift={() =>
+              append({
+                ...shift,
+                workingHours: calculateWorkHours(shift.startingTime, shift.endingTime).toString(),
+                shiftTracking: false,
+                rotationalShifts: false,
+              })
+            }
+          />
+        ))}
+      </div>
 
       {/* Custom Shift */}
       <Title variant="h3" className="font-medium text-start">
@@ -334,7 +317,7 @@ export default function Shifts({
       </div>
 
       <Buttons
-        data-testid="add-shift"
+        aria-label="add custom shifts"
         type="button"
         disabled={
           currentShift.workingHours === '0' ||
@@ -362,7 +345,15 @@ export default function Shifts({
             Added Shifts
           </Title>
           <div className="shadow-md space-y-4 bg-white border border-border rounded-lg p-4 text-primary">
-            {addedShiftSection}
+            {shifts.map((shift, index) => (
+              <AddedSection
+                key={shift.id}
+                title={shift.title}
+                description={`${shift.workType} • ${shift.startingTime} - ${shift.endingTime} • ${shift.workingHours}h`}
+                icon="Crown"
+                onDelete={() => remove(index)}
+              />
+            ))}
           </div>
         </div>
       )}

@@ -1,4 +1,4 @@
-import { type JSX, memo, useCallback } from 'react';
+import { type JSX, useCallback } from 'react';
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Controller, useForm, useWatch } from 'react-hook-form';
@@ -15,7 +15,7 @@ import { Title } from '@/components/ui/utils/Titles';
 import { quickAddDepartments } from '@/constants/department';
 import { DepartmentSchema, type DepartmentType } from '@/types/form-types';
 
-function DepartmentMemo({
+export function Department({
   onNext,
   onPrev,
 }: {
@@ -187,5 +187,3 @@ function DepartmentMemo({
     </form>
   );
 }
-
-export const Department = memo(DepartmentMemo);

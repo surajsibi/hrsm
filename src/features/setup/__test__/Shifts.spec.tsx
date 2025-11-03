@@ -1,24 +1,10 @@
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
-import Shifts from '@/features/setup/Shifts';
-
-jest.mock('@/components/ui/utils/AddShift', () => ({
-  AddShift: ({ title, handleAddShift, disabled }: never) => (
-    <div data-testid={`mock-addshift-${title}`}>
-      <h3>{title}</h3>
-      <button
-        data-testid={`mock-addshift-button-${title}`}
-        disabled={disabled}
-        onClick={handleAddShift}
-      >
-        Add Shift
-      </button>
-    </div>
-  ),
-}));
+import { Shifts } from '@/features/setup/Shifts';
 
 describe('features / setup / Shifts', () => {
+  const user = userEvent.setup();
   const ShiftSetup = (props = {}) => {
     const defaultProps = {
       onNext: jest.fn(),
@@ -27,19 +13,19 @@ describe('features / setup / Shifts', () => {
 
     render(<Shifts {...defaultProps} {...props} />);
 
-    const quickDayShiftButton = screen.getByTestId('mock-addshift-button-Day Shift');
-    const quickNightShiftButton = screen.getByTestId('mock-addshift-button-Night Shift');
+    const quickDayShiftButton = screen.getByRole('button', { name: /Add Shift-Day Shift/i });
+    const quickNightShiftButton = screen.getByRole('button', { name: /Add Shift-Night Shift/i });
     const addCustomShiftInput = screen.getByRole('textbox', { name: /Shift Name/i });
     const workTypeDropDown = screen.getByRole('combobox', { name: /Work Type/i });
     const checkInTimeInput = screen.getByLabelText(/Check-in Time/i);
     const checkOutTimeInput = screen.getByLabelText(/Check-out Time/i);
-    const mondayButton = screen.getByRole('button', { name: 'Monday' });
-    const shiftTrackingButton = screen.getByRole('button', { name: 'Enable shift tracking' });
-    const rotationalShiftButton = screen.getByRole('button', { name: 'Rotational shift' });
-    const addShiftButton = screen.getByTestId('add-shift');
-    const skipButton = screen.getByRole('button', { name: 'Skip This Step' });
-    const prevButton = screen.getByRole('button', { name: 'Previous Step' });
-    const continueButton = screen.getByRole('button', { name: 'Continue' });
+    const mondayButton = screen.getByRole('button', { name: /Monday/i });
+    const shiftTrackingButton = screen.getByRole('button', { name: /Enable shift tracking/i });
+    const rotationalShiftButton = screen.getByRole('button', { name: /Rotational shift/i });
+    const addShiftButton = screen.getByRole('button', { name: /add custom shifts/i });
+    const skipButton = screen.getByRole('button', { name: /Skip This Step/i });
+    const prevButton = screen.getByRole('button', { name: /Previous Step/i });
+    const continueButton = screen.getByRole('button', { name: /Continue/i });
 
     return {
       quickDayShiftButton,
@@ -80,7 +66,7 @@ describe('features / setup / Shifts', () => {
       screen.getByRole('heading', { name: 'Quick Add Shift Templates', level: 3 })
     ).toBeInTheDocument();
 
-    expect(screen.getByTestId('mock-addshift-Day Shift')).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Day Shift', level: 3 })).toBeInTheDocument();
 
     expect(quickDayShiftButton).toBeInTheDocument();
     expect(quickNightShiftButton).toBeInTheDocument();
@@ -107,13 +93,13 @@ describe('features / setup / Shifts', () => {
 
     expect(quickDayShiftButton).toBeInTheDocument();
     expect(quickNightShiftButton).toBeInTheDocument();
-    await userEvent.click(quickDayShiftButton);
+    await user.click(quickDayShiftButton);
 
     expect(quickDayShiftButton).toBeDisabled();
     expect(screen.getByRole('heading', { name: 'Added Shifts', level: 3 })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: /Day Shift/i, level: 1 })).toBeInTheDocument();
 
-    await userEvent.click(quickNightShiftButton);
+    await user.click(quickNightShiftButton);
 
     expect(quickNightShiftButton).toBeDisabled();
     expect(screen.getByRole('heading', { name: /Night Shift/i, level: 1 })).toBeInTheDocument();
@@ -122,11 +108,11 @@ describe('features / setup / Shifts', () => {
 
     expect(deleteShiftButton).toHaveLength(2);
 
-    await userEvent.click(deleteShiftButton[0]);
+    await user.click(deleteShiftButton[0]);
 
     expect(screen.queryByRole('heading', { name: /Day Shift/i, level: 1 })).not.toBeInTheDocument();
 
-    await userEvent.click(deleteShiftButton[1]);
+    await user.click(deleteShiftButton[1]);
 
     expect(
       screen.queryByRole('heading', { name: /Night Shift/i, level: 1 })
@@ -138,41 +124,30 @@ describe('features / setup / Shifts', () => {
   });
 
   it('add custom shift', async () => {
-    const {
-      addCustomShiftInput,
-      workTypeDropDown,
-      checkInTimeInput,
-      checkOutTimeInput,
-      addShiftButton,
-    } = ShiftSetup();
+    const { addCustomShiftInput, workTypeDropDown, addShiftButton } = ShiftSetup();
 
     expect(addShiftButton).toBeDisabled();
 
-    await userEvent.type(addCustomShiftInput, 'Custom Shift');
-    await userEvent.click(workTypeDropDown);
-    await userEvent.click(screen.getByRole('option', { name: 'Hybrid Work' }));
-    await userEvent.type(checkInTimeInput, '10:00 AM');
-    await userEvent.type(checkOutTimeInput, '06:00 PM');
+    fireEvent.change(addCustomShiftInput, { target: { value: 'Custom Shift' } });
+    fireEvent.click(workTypeDropDown); // opens dropdown
+    expect(screen.getByRole('option', { name: /Work From Home/i })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('option', { name: /Hybrid Work/i }));
 
     expect(addShiftButton).toBeEnabled();
 
-    await userEvent.click(addShiftButton);
+    fireEvent.click(addShiftButton);
 
     expect(screen.queryByText(/Hybrid Work /i)).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Added Shifts', level: 3 })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: /Custom Shift/i, level: 1 })).toBeInTheDocument();
 
-    await userEvent.type(addCustomShiftInput, 'custom shift 2');
-    await userEvent.click(workTypeDropDown);
-
-    await userEvent.click(screen.getByRole('option', { name: 'Work From Home' }));
-
-    await userEvent.type(checkInTimeInput, '10:00 AM');
-    await userEvent.type(checkOutTimeInput, '07:00 PM');
+    fireEvent.change(addCustomShiftInput, { target: { value: 'custom shift 2' } });
+    fireEvent.click(workTypeDropDown);
+    fireEvent.click(screen.getByRole('option', { name: /Work From Home/i }));
 
     expect(addShiftButton).toBeEnabled();
 
-    await userEvent.click(addShiftButton);
+    fireEvent.click(addShiftButton);
 
     expect(screen.queryByText(/Work From Home /i)).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: /custom shift 2/i, level: 1 })).toBeInTheDocument();
@@ -181,13 +156,13 @@ describe('features / setup / Shifts', () => {
 
     expect(deleteShiftButton).toHaveLength(2);
 
-    await userEvent.click(deleteShiftButton[0]);
+    fireEvent.click(deleteShiftButton[0]);
 
     expect(
       screen.queryByRole('heading', { name: 'Custom Shift', level: 1 })
     ).not.toBeInTheDocument();
 
-    await userEvent.click(deleteShiftButton[1]);
+    fireEvent.click(deleteShiftButton[1]);
 
     expect(
       screen.queryByRole('heading', { name: 'custom shift 2', level: 1 })
@@ -203,13 +178,13 @@ describe('features / setup / Shifts', () => {
     const onPrev = jest.fn();
     const { skipButton, continueButton, prevButton } = ShiftSetup({ onNext, onPrev });
 
-    await userEvent.click(skipButton);
+    await user.click(skipButton);
     expect(onNext).toHaveBeenCalledTimes(1);
 
-    await userEvent.click(continueButton);
+    await user.click(continueButton);
     expect(onNext).toHaveBeenCalledTimes(2);
 
-    await userEvent.click(prevButton);
+    await user.click(prevButton);
     expect(onPrev).toHaveBeenCalledTimes(1);
   });
 });

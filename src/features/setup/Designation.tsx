@@ -1,4 +1,4 @@
-import { type JSX, memo } from 'react';
+import { type JSX, memo, useCallback } from 'react';
 
 import { type Control, Controller, useForm } from 'react-hook-form';
 
@@ -93,7 +93,7 @@ const DepartmentSection = memo(({ dep, control }: DepartmentSectionProps) => (
   </div>
 ));
 
-function DesignationMemo({
+export function Designation({
   onNext,
   onPrev,
   apiDepartments = ['Legal & Compliance', 'Quality Assurance', 'Research & Development'],
@@ -102,7 +102,7 @@ function DesignationMemo({
 
   const designations = watch('designation');
 
-  const cleanDesignationData = () => {
+  const cleanDesignationData = useCallback(() => {
     const cleanedDesignation = Object.fromEntries(
       Object.entries(designations ?? {}).filter(
         ([, desigs]) => Array.isArray(desigs) && desigs.length > 0
@@ -115,9 +115,9 @@ function DesignationMemo({
       cleanDesignation: cleanedDesignation,
       totalCount,
     };
-  };
+  }, [designations]);
 
-  const handleAddCustom = () => {
+  const handleAddCustom = useCallback(() => {
     const { customDesignationName, customDesignationDepartment, designation = {} } = getValues();
 
     if (!customDesignationName || !customDesignationDepartment) return;
@@ -130,7 +130,7 @@ function DesignationMemo({
 
     setValue('customDesignationName', '');
     setValue('customDesignationDepartment', '');
-  };
+  }, [getValues, setValue]);
 
   const { cleanDesignation, totalCount } = cleanDesignationData();
 
@@ -146,6 +146,14 @@ function DesignationMemo({
         <Title variant="h3">Designations</Title>
         <Description>Define job roles and positions</Description>
       </div>
+      {apiDepartments && (
+        <div className="flex flex-col gap-1 items-start">
+          <Title variant="h3">Quick by Department</Title>
+          <Description>
+            Click on common designations to add them quickly to each department
+          </Description>
+        </div>
+      )}
 
       {/* Quick Add */}
       {apiDepartments.map(dep =>
@@ -192,6 +200,7 @@ function DesignationMemo({
       </div>
 
       <Buttons
+        aria-label="Add designation"
         type="button"
         onClick={handleAddCustom}
         variant="primary"
@@ -266,20 +275,18 @@ function DesignationMemo({
 
       <div className="flex justify-start items-center gap-4 w-fit px-2">
         <Buttons
-          type="button"
           onClick={onPrev}
           variant="secondary"
+          type="button"
           size="sm"
           className="text-black font-medium"
         >
-          <div className="flex items-center justify-center gap-3 font-medium">
+          <p className="flex items-center justify-center gap-4">
             <Icon name="ArrowLeft" variant="normal" />
             <span className="font-medium text-center">Previous Step</span>
-          </div>
+          </p>
         </Buttons>
       </div>
     </form>
   );
 }
-
-export const Designation = memo(DesignationMemo);

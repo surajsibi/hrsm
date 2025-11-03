@@ -8,7 +8,7 @@ type LineBreakProps = HTMLAttributes<HTMLDivElement> & {
 /**
  * A simple horizontal divider.
  */
-export function LineBreakMemo({ className, ...props }: LineBreakProps) {
+export function LineBreak({ className, ...props }: LineBreakProps) {
   return (
     <div
       role="separator"
@@ -18,5 +18,3 @@ export function LineBreakMemo({ className, ...props }: LineBreakProps) {
     />
   );
 }
-
-export const LineBreak = memo(LineBreakMemo);

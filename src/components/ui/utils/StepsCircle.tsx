@@ -35,7 +35,7 @@ const defaultSecondarySteps = [
   'Users',
   'Complete',
 ];
-function StepsCircleMemo({
+export function StepsCircle({
   steps,
   currentStep = 1,
   variant = 'default',
@@ -110,5 +110,3 @@ function StepsCircleMemo({
     </div>
   );
 }
-
-export const StepsCircle = memo(StepsCircleMemo);
