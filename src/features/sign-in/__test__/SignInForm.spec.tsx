@@ -6,13 +6,13 @@ import { SignInForm } from '@/features/sign-in/SignInForm';
 describe('features / sign-in / SignInForm', () => {
   const user = userEvent.setup();
   const SignInFormSetup = (props = {}) => {
-    render(<SignInForm {...props} />);
+    const renderComponent = render(<SignInForm {...props} />);
     const tenantCodeInput = screen.getByRole('textbox', { name: /tenant code/i });
     const emailInput = screen.getByRole('textbox', { name: /Email/i });
     const passwordInput = screen.getByLabelText(/password/i);
     const signInButton = screen.getByRole('button', { name: /sign in to dashboard/i });
 
-    return { tenantCodeInput, emailInput, passwordInput, signInButton };
+    return { tenantCodeInput, emailInput, passwordInput, signInButton, ...renderComponent };
   };
 
   it('renders all UI elements correctly', () => {

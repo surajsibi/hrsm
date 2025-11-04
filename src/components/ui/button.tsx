@@ -1,56 +1,219 @@
-import * as React from 'react';
-import { Slot } from '@radix-ui/react-slot';
-import { cva, type VariantProps } from 'class-variance-authority';
+'use client';
 
 import { cn } from '@/utils';
+import { cva, type VariantProps } from 'class-variance-authority';
+import {
+  ReactNode,
+  MouseEvent,
+  forwardRef,
+  MouseEventHandler,
+  ComponentProps,
+  ButtonHTMLAttributes,
+} from 'react';
+import { Spinner } from './Spinner';
+import { useRouter } from 'next/navigation';
+import { Icon, IconName } from '@/components/Icons/Icon';
+import Link from 'next/link';
+import { ref } from 'process';
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
+  [
+    'flex items-center justify-center gap-2 rounded-lg font-medium cursor-pointer transition-all duration-300 px-4 py-2 w-full',
+  ],
   {
     variants: {
       variant: {
-        default: 'bg-primary text-primary-foreground shadow-xs hover:bg-primary/90',
-        destructive:
-          'bg-destructive text-white shadow-xs hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60',
-        outline:
-          'border bg-background shadow-xs hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50',
-        secondary: 'bg-secondary text-secondary-foreground shadow-xs hover:bg-secondary/80',
-        ghost: 'hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50',
-        link: 'text-primary underline-offset-4 hover:underline',
+        primary:
+          'bg-gradient-primary text-white shadow-md hover:shadow-lg hover:bg-gradient-primary-hover focus:outline-blue-600',
+        secondary:
+          'bg-transparent text-[#7a8799] border border-[#dfe2e7] hover:text-[#3c83f6] hover:bg-[#bedbfe] hover:border-transparent',
+        ghost: 'bg-transparent text-[#7a8799] hover:text-[#344256] hover:bg-[#bedbfe]',
+        default:
+          'bg-transparent text-[#344256] border border-[#dfe2e7] hover:text-blue-500 hover:bg-[#bedbfe] hover:border-transparent',
       },
       size: {
-        default: 'h-9 px-4 py-2 has-[>svg]:px-3',
-        sm: 'h-8 rounded-md gap-1.5 px-3 has-[>svg]:px-2.5',
-        lg: 'h-10 rounded-md px-6 has-[>svg]:px-4',
-        icon: 'size-9',
+        sm: 'text-sm py-1 px-2 min-h-9 min-w-15',
+        md: 'text-base py-2 px-4 h-9 w-24',
+        lg: 'text-lg py-3 px-6 h-11 w-32',
+      },
+      disabled: {
+        true: 'opacity-50 cursor-not-allowed',
       },
     },
     defaultVariants: {
       variant: 'default',
-      size: 'default',
+      size: 'lg',
+      disabled: false,
     },
   }
 );
 
-function Button({
-  className,
-  variant,
-  size,
-  asChild = false,
-  ...props
-}: React.ComponentProps<'button'> &
-  VariantProps<typeof buttonVariants> & {
-    asChild?: boolean;
-  }) {
-  const Comp = asChild ? Slot : 'button';
+interface ContentWithLoadingProps {
+  loading?: boolean;
+  loadingChildren?: ReactNode;
+  startIcon?: IconName;
+  endIcon?: IconName;
+  iconColor?: string;
+  children?: ReactNode;
+}
 
+function ContentWithLoading({
+  loading,
+  loadingChildren,
+  startIcon,
+  endIcon,
+  iconColor,
+  children,
+}: ContentWithLoadingProps) {
   return (
-    <Comp
-      data-slot="button"
-      className={cn(buttonVariants({ variant, size, className }))}
-      {...props}
-    />
+    <>
+      {loading ? (
+        loadingChildren ? (
+          <span>{loadingChildren}</span>
+        ) : (
+          <Spinner />
+        )
+      ) : (
+        <>
+          {startIcon && <Icon name={startIcon} size={16} color={iconColor} />}
+          <span>{children}</span>
+          {endIcon && <Icon name={endIcon} size={16} color={iconColor} />}
+        </>
+      )}
+    </>
   );
 }
 
-export { Button, buttonVariants };
+export interface ButtonProps
+  extends ButtonHTMLAttributes<HTMLButtonElement>,
+    VariantProps<typeof buttonVariants> {
+  className?: string;
+  loading?: boolean;
+  disabled?: boolean;
+  loadingChildren?: ReactNode;
+  startIcon?: IconName;
+  endIcon?: IconName;
+  iconColor?: string;
+  children?: ReactNode;
+}
+
+const Button = forwardRef<HTMLButtonElement, ButtonProps>(
+  (
+    {
+      className,
+      variant,
+      size,
+      disabled,
+      loading,
+      loadingChildren,
+      startIcon,
+      endIcon,
+      children,
+      iconColor,
+      ...props
+    },
+    ref
+  ) => {
+    const isDisabled = disabled || loading;
+
+    return (
+      <button
+        disabled={isDisabled}
+        className={cn(buttonVariants({ variant, size, disabled: isDisabled }), className)}
+        {...props}
+      >
+        <ContentWithLoading
+          loading={loading}
+          loadingChildren={loadingChildren}
+          startIcon={startIcon}
+          endIcon={endIcon}
+          iconColor={iconColor}
+        >
+          {children}
+        </ContentWithLoading>
+      </button>
+    );
+  }
+);
+
+Button.displayName = 'Button';
+
+type SharedButtonProps = Pick<
+  ButtonProps,
+  | 'variant'
+  | 'size'
+  | 'startIcon'
+  | 'endIcon'
+  | 'loading'
+  | 'className'
+  | 'children'
+  | 'loadingChildren'
+  | 'iconColor'
+>;
+
+/**
+ * Shared props for ButtonLink component.
+ */
+type NextLinkBaseProps = Omit<
+  ComponentProps<typeof Link>,
+  'onClick' | 'children' | 'href' | 'className'
+> & {
+  href: ComponentProps<typeof Link>['href'];
+};
+
+type ButtonLinkProps = SharedButtonProps & NextLinkBaseProps;
+
+const ButtonLink = forwardRef<HTMLAnchorElement, ButtonLinkProps>(
+  (
+    {
+      className,
+      variant,
+      size,
+      loading,
+      loadingChildren,
+      href,
+      startIcon,
+      endIcon,
+      children,
+      iconColor,
+      ...linkProps
+    },
+    ref
+  ) => {
+    const isDisabled = loading;
+
+    return (
+      <Link
+        ref={ref}
+        href={href}
+        className={cn(
+          buttonVariants({ variant, size }),
+          'relative',
+          className,
+          isDisabled && 'pointer-events-none opacity-50'
+        )}
+        aria-disabled={isDisabled}
+        tabIndex={isDisabled ? -1 : undefined}
+        {...linkProps}
+      >
+        <ContentWithLoading
+          loading={loading}
+          loadingChildren={loadingChildren}
+          startIcon={startIcon}
+          endIcon={endIcon}
+          iconColor={iconColor}
+        >
+          {children}
+        </ContentWithLoading>
+      </Link>
+    );
+  }
+);
+
+ButtonLink.displayName = 'Button.Link';
+
+const CompoundButton = Button as typeof Button & { Link: typeof ButtonLink };
+
+CompoundButton.Link = ButtonLink;
+
+export { CompoundButton as Button, buttonVariants };

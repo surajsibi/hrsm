@@ -202,7 +202,7 @@ describe('features / setup / Department', () => {
     expect(addCustomDepartmentButton).toBeDisabled();
   });
 
-  it('testing all buttons ', async () => {
+  it('testing all Button ', async () => {
     const onNext = jest.fn();
     const onPrev = jest.fn();
     const { skipButton, prevButton, continueButton } = DepartmentSetup({ onNext, onPrev });

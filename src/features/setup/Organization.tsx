@@ -4,14 +4,14 @@ import { type JSX, useCallback } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Controller, useForm } from 'react-hook-form';
 
-import { Textarea } from '@/components/ui/textarea';
-import { Buttons } from '@/components/ui/utils/Buttons';
-import { Description } from '@/components/ui/utils/Descriptions';
-import { InputComponent } from '@/components/ui/utils/InputComponent';
-import { LineBreak } from '@/components/ui/utils/LineBreak';
-import { Selector } from '@/components/ui/utils/Selector';
-import { Spinner } from '@/components/ui/utils/Spinner';
-import { Title } from '@/components/ui/utils/Titles';
+import { Button } from '@/components/ui/Button';
+import { Description } from '@/components/ui/Descriptions';
+import { InputComponent } from '@/components/ui/InputComponent';
+import { LineBreak } from '@/components/ui/LineBreak';
+import { Selector } from '@/components/ui/Selector';
+import { Spinner } from '@/components/ui/Spinner';
+import { TextArea } from '@/components/ui/TextArea';
+import { Title } from '@/components/ui/Titles';
 import { OrganizationSchema, type OrganizationType } from '@/types/form-types';
 
 const companyTypes = [
@@ -143,7 +143,7 @@ export function Organization({ onNext }: { onNext: () => void }): JSX.Element {
           />
         </div>
 
-        <Textarea
+        <TextArea
           label="Company Address *"
           placeholder="Enter company address"
           id="companyAddress"
@@ -152,7 +152,7 @@ export function Organization({ onNext }: { onNext: () => void }): JSX.Element {
           icon="MapPin"
         />
 
-        <Textarea
+        <TextArea
           label="Company Description"
           placeholder="Brief description about your company"
           id="companyDescription"
@@ -161,9 +161,9 @@ export function Organization({ onNext }: { onNext: () => void }): JSX.Element {
 
         <LineBreak />
 
-        {/* Buttons */}
+        {/* Button */}
         <div className="flex gap-4">
-          <Buttons
+          <Button
             size="sm"
             className="w-1/2 font-medium "
             variant="secondary"
@@ -171,8 +171,8 @@ export function Organization({ onNext }: { onNext: () => void }): JSX.Element {
             onClick={onNext}
           >
             Skip This Step
-          </Buttons>
-          <Buttons
+          </Button>
+          <Button
             size="sm"
             className="w-1/2 font-medium "
             variant="primary"
@@ -186,7 +186,7 @@ export function Organization({ onNext }: { onNext: () => void }): JSX.Element {
             }
           >
             Create Organization
-          </Buttons>
+          </Button>
         </div>
       </div>
     </form>

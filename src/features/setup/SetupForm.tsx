@@ -1,9 +1,9 @@
 'use client';
 import { type JSX, useCallback, useMemo, useState } from 'react';
 
-import { Description } from '@/components/ui/utils/Descriptions';
-import { StepsCircle } from '@/components/ui/utils/StepsCircle';
-import { Title } from '@/components/ui/utils/Titles';
+import { Description } from '@/components/ui/Descriptions';
+import { StepsCircle } from '@/components/ui/StepsCircle';
+import { Title } from '@/components/ui/Titles';
 import Complete from '@/features/setup/Complete';
 import { Department } from '@/features/setup/Department';
 import { Designation } from '@/features/setup/Designation';

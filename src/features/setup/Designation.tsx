@@ -2,16 +2,15 @@ import { type JSX, useCallback } from 'react';
 
 import { type Control, Controller, useForm } from 'react-hook-form';
 
-import { Icon } from '@/components/Icons/Icon';
-import { AddedSection } from '@/components/ui/utils/AddSections';
-import { Buttons } from '@/components/ui/utils/Buttons';
-import { Chips } from '@/components/ui/utils/Chips';
-import { Description } from '@/components/ui/utils/Descriptions';
-import { InputComponent } from '@/components/ui/utils/InputComponent';
-import { LineBreak } from '@/components/ui/utils/LineBreak';
-import { Note } from '@/components/ui/utils/Note';
-import { Selector } from '@/components/ui/utils/Selector';
-import { Title } from '@/components/ui/utils/Titles';
+import { AddedSection } from '@/components/ui/AddSections';
+import { Button } from '@/components/ui/Button';
+import { Chips } from '@/components/ui/Chips';
+import { Description } from '@/components/ui/Descriptions';
+import { InputComponent } from '@/components/ui/InputComponent';
+import { LineBreak } from '@/components/ui/LineBreak';
+import { Note } from '@/components/ui/Note';
+import { Selector } from '@/components/ui/Selector';
+import { Title } from '@/components/ui/Titles';
 
 import type { DesignationType } from '@/types/form-types';
 
@@ -199,7 +198,7 @@ export function Designation({
         />
       </div>
 
-      <Buttons
+      <Button
         aria-label="Add designation"
         type="button"
         onClick={handleAddCustom}
@@ -207,11 +206,11 @@ export function Designation({
         size="sm"
         className="w-1/4"
         disabled={!watch('customDesignationName') || !watch('customDesignationDepartment')}
+        startIcon="Plus"
+        iconColor="white"
       >
-        <div className="flex gap-2 items-center justify-center">
-          <Icon name="Plus" variant="normal" /> Add Designation
-        </div>
-      </Buttons>
+        Add Designation
+      </Button>
 
       {totalCount > 0 && (
         <div className="flex flex-col gap-4">
@@ -254,7 +253,7 @@ export function Designation({
       <LineBreak />
 
       <div className="w-full flex justify-between gap-4 items-center">
-        <Buttons
+        <Button
           type="button"
           onClick={onNext}
           variant="secondary"
@@ -262,30 +261,35 @@ export function Designation({
           className="w-1/2 font-medium text-black"
         >
           Skip This Step
-        </Buttons>
-
-        <Buttons type="submit" variant="primary" size="sm" className="w-1/2 font-medium">
-          <div className="flex items-center justify-center gap-3 font-medium">
-            Continue <Icon name="ArrowRight" color="white" size={16} variant="normal" />
-          </div>
-        </Buttons>
+        </Button>
+        <Button
+          type="submit"
+          variant="primary"
+          size="sm"
+          className="w-1/2 font-medium"
+          endIcon="ArrowRight"
+          iconColor="white"
+        >
+          <p className="flex items-center justify-center gap-4">
+            <span className="font-semibold text-center">Continue</span>
+          </p>
+        </Button>
       </div>
 
       <LineBreak />
-
       <div className="flex justify-start items-center gap-4 w-fit px-2">
-        <Buttons
+        <Button
           onClick={onPrev}
           variant="secondary"
           type="button"
           size="sm"
           className="text-black font-medium"
+          startIcon="ArrowLeft"
         >
           <p className="flex items-center justify-center gap-4">
-            <Icon name="ArrowLeft" variant="normal" />
             <span className="font-medium text-center">Previous Step</span>
           </p>
-        </Buttons>
+        </Button>
       </div>
     </form>
   );

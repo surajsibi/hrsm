@@ -132,17 +132,17 @@ describe('features / setup / Users', () => {
     ).toBeInTheDocument();
     expect(screen.getByText(/test2@example.com • EMPLOYEE/i)).toBeInTheDocument();
 
-    const deleteButtons = screen.getAllByRole('button', { name: /Delete Section/i });
+    const deleteButton = screen.getAllByRole('button', { name: /Delete Section/i });
 
-    expect(deleteButtons.length).toBe(2);
+    expect(deleteButton.length).toBe(2);
 
-    fireEvent.click(deleteButtons[0]);
+    fireEvent.click(deleteButton[0]);
 
     expect(
       screen.queryByRole('heading', { name: /firstName lastName/i, level: 1 })
     ).not.toBeInTheDocument();
 
-    fireEvent.click(deleteButtons[0]);
+    fireEvent.click(deleteButton[0]);
     expect(screen.queryByText('Added Users')).not.toBeInTheDocument();
 
     expect(

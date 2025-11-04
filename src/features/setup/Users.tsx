@@ -2,16 +2,16 @@ import { type JSX, useCallback } from 'react';
 
 import { Controller, useFieldArray, useForm } from 'react-hook-form';
 
-import { Icon } from '@/components/Icons/Icon';
-import { AddedSection } from '@/components/ui/utils/AddSections';
-import { Buttons } from '@/components/ui/utils/Buttons';
-import { Description } from '@/components/ui/utils/Descriptions';
-import { InputComponent } from '@/components/ui/utils/InputComponent';
-import { LineBreak } from '@/components/ui/utils/LineBreak';
-import { Note } from '@/components/ui/utils/Note';
-import { Selector } from '@/components/ui/utils/Selector';
-import { TickLabel } from '@/components/ui/utils/TickLabel';
-import { Title } from '@/components/ui/utils/Titles';
+import { AddedSection } from '@/components/ui/AddSections';
+import { Button } from '@/components/ui/Button';
+import { Description } from '@/components/ui/Descriptions';
+import { InputComponent } from '@/components/ui/InputComponent';
+import { LineBreak } from '@/components/ui/LineBreak';
+import { Note } from '@/components/ui/Note';
+import { Selector } from '@/components/ui/Selector';
+import { TickLabel } from '@/components/ui/TickLabel';
+import { Title } from '@/components/ui/Titles';
+import { generatePassword } from '@/utils/generateRandomPassword';
 
 import type { IUserFormType, IUsers } from '@/types/form-types';
 
@@ -32,35 +32,6 @@ const DEFAULT_USER: IUsers = {
   password: '',
   probationStartDate: '',
   probationEndDate: '',
-};
-
-const generatePassword = (length = 12): string => {
-  const upper = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-  const lower = 'abcdefghijklmnopqrstuvwxyz';
-  const numbers = '0123456789';
-  const symbols = '!@#$%^&*()-_=+[]{};:,.<>?';
-  const all = upper + lower + numbers + symbols;
-
-  let newPassword = '';
-
-  newPassword += upper[Math.floor(Math.random() * upper.length)];
-  newPassword += lower[Math.floor(Math.random() * lower.length)];
-  newPassword += numbers[Math.floor(Math.random() * numbers.length)];
-  newPassword += symbols[Math.floor(Math.random() * symbols.length)];
-
-  // eslint-disable-next-line no-restricted-syntax
-  for (let i = newPassword.length; i < length; i++) {
-    newPassword += all[Math.floor(Math.random() * all.length)];
-  }
-
-  return (
-    newPassword
-      // eslint-disable-next-line unicorn/prefer-spread
-      .split('')
-      // eslint-disable-next-line unicorn/no-array-sort
-      .sort(() => Math.random() - 0.5)
-      .join('')
-  );
 };
 
 export function Users({ onNext, onPrev }: { onNext: () => void; onPrev: () => void }): JSX.Element {
@@ -266,14 +237,14 @@ export function Users({ onNext, onPrev }: { onNext: () => void; onPrev: () => vo
             {...register('currentUser.password')}
           />
 
-          <Buttons
+          <Button
             type="button"
             className="h-11.5"
             onClick={() => setValue('currentUser.password', generatePassword())}
             variant="default"
           >
             Generate
-          </Buttons>
+          </Button>
         </div>
       </div>
 
@@ -314,8 +285,9 @@ export function Users({ onNext, onPrev }: { onNext: () => void; onPrev: () => vo
           </div>
         </div>
       )}
-      <Buttons
+      <Button
         className="w-fit"
+        size="md"
         variant="primary"
         type="button"
         disabled={
@@ -325,12 +297,10 @@ export function Users({ onNext, onPrev }: { onNext: () => void; onPrev: () => vo
           !watch('currentUser.phoneNumber')
         }
         onClick={handleAddUser}
+        startIcon="Plus"
       >
-        <div className="text-white flex justify-center items-center">
-          <Icon name="Plus" size={16} color="white" variant="normal" />
-          <span className="ml-2">Add User</span>
-        </div>
-      </Buttons>
+        Add User
+      </Button>
 
       {users?.length > 0 && (
         <div>
@@ -369,7 +339,7 @@ export function Users({ onNext, onPrev }: { onNext: () => void; onPrev: () => vo
       <LineBreak />
 
       <div className="flex justify-between gap-4">
-        <Buttons
+        <Button
           variant="secondary"
           type="button"
           size="sm"
@@ -377,29 +347,31 @@ export function Users({ onNext, onPrev }: { onNext: () => void; onPrev: () => vo
           onClick={onNext}
         >
           Skip This Step
-        </Buttons>
-        <Buttons variant="primary" size="sm" type="submit" className="w-1/2 font-medium">
-          <p className="flex items-center justify-center gap-4">
-            <span className="font-semibold text-center">Complete Setup</span>
-            <Icon name="ArrowRight" size={16} color="white" variant="normal" />
-          </p>
-        </Buttons>
+        </Button>
+        <Button
+          endIcon="ArrowRight"
+          iconColor="white"
+          variant="primary"
+          size="sm"
+          type="submit"
+          className="w-1/2 font-medium"
+        >
+          Complete Setup
+        </Button>
       </div>
 
       <LineBreak />
       <div className="flex justify-start items-center gap-4 w-fit px-2">
-        <Buttons
+        <Button
           onClick={onPrev}
           variant="secondary"
           type="button"
           size="sm"
           className="text-black font-medium"
+          startIcon="ArrowLeft"
         >
-          <p className="flex items-center justify-center gap-4">
-            <Icon name="ArrowLeft" size={16} variant="normal" />
-            <span className="font-medium text-center">Previous Step</span>
-          </p>
-        </Buttons>
+          Previous Step
+        </Button>
       </div>
     </form>
   );

@@ -7,12 +7,13 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 
 // import { login } from '@/actions/auth';
-import { Buttons } from '@/components/ui/utils/Buttons';
-import { Description } from '@/components/ui/utils/Descriptions';
-import { HeaderLogo } from '@/components/ui/utils/HeaderLogos';
-import { InputComponent } from '@/components/ui/utils/InputComponent';
-import { Spinner } from '@/components/ui/utils/Spinner';
-import { Title } from '@/components/ui/utils/Titles';
+
+import { Button } from '@/components/ui/Button';
+import { Description } from '@/components/ui/Descriptions';
+import { HeaderLogo } from '@/components/ui/HeaderLogos';
+import { InputComponent } from '@/components/ui/InputComponent';
+import { Spinner } from '@/components/ui/Spinner';
+import { Title } from '@/components/ui/Titles';
 import { SignInFormSchema, type SignInFormType } from '@/types/signin-form-types';
 
 /**
@@ -27,32 +28,23 @@ export function SignInForm(): JSX.Element {
   const {
     handleSubmit,
     register,
+    reset,
     formState: { errors, isSubmitting, isValid },
   } = useForm<SignInFormType>({
     resolver: zodResolver(SignInFormSchema),
     mode: 'all',
   });
 
-  // const { mutateAsync: loginMutation, isPending } = useMutation({
-  //   mutationFn: login,
-  //   onSuccess: data => {
-  //     console.log(data);
-  //   },
-  //   onError: error => {
-  //     console.error('Login mutation error:', error);
-  //   },
-  // });
-
-  const onSubmit = useCallback(async () => {
+  const onSubmit = useCallback(async (data: SignInFormType) => {
     try {
-      // const result = await loginMutation(data);
+      await new Promise((resolve, _reject) => {
+        setTimeout(() => {
+          resolve('Resolved after 2 seconds');
+        }, 2000);
+      });
 
-      // if (!result.success) {
-      //   console.error(result.message);
-
-      //   return;
-      // }
-      console.log('Login successful');
+      console.log(data);
+      reset();
     } catch (error) {
       console.error('Login mutation failed:', error);
     }
@@ -106,7 +98,7 @@ export function SignInForm(): JSX.Element {
             icon="Lock"
           />
 
-          <Buttons
+          <Button
             variant="primary"
             loading={isSubmitting}
             disabled={isSubmitting || !isValid}
@@ -118,7 +110,7 @@ export function SignInForm(): JSX.Element {
             className="w-full text-white"
           >
             Sign In to Dashboard
-          </Buttons>
+          </Button>
         </form>
       </article>
     </section>

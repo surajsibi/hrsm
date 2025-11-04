@@ -1,18 +1,14 @@
-import { Icon } from '@/components/Icons/Icon';
-import { Buttons } from '@/components/ui/utils/Buttons';
-import { Description } from '@/components/ui/utils/Descriptions';
-import { HeaderLogo } from '@/components/ui/utils/HeaderLogos';
-import { Title } from '@/components/ui/utils/Titles';
+import { Button } from '@/components/ui/Button';
+import { Description } from '@/components/ui/Descriptions';
+import { HeaderLogo } from '@/components/ui/HeaderLogos';
+import { Title } from '@/components/ui/Titles';
 
 import type { JSX } from 'react';
 
 export default function Complete(): JSX.Element {
   return (
     <div className="flex flex-col items-center justify-center gap-4 my-[30%] p-5">
-      <HeaderLogo
-        icon='Check'
-        variant="rounded"
-      />
+      <HeaderLogo icon="Check" variant="rounded" />
       <Title variant="h1">Setup Completed</Title>
       <Description>
         Your HRMS system has been successfully congigured. you can now start managing your
@@ -28,9 +24,9 @@ export default function Complete(): JSX.Element {
           <Description>✓ Users: 0 added</Description>
         </div>
       </div>
-      <Buttons className="w-fit" variant="primary">
+      <Button className="w-fit" variant="primary">
         Go to Dashboard
-      </Buttons>
+      </Button>
     </div>
   );
 }

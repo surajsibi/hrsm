@@ -2,9 +2,9 @@
 
 import { type JSX, useCallback, useState } from 'react';
 
-import { Description } from '@/components/ui/utils/Descriptions';
-import { StepsCircle } from '@/components/ui/utils/StepsCircle';
-import { Title } from '@/components/ui/utils/Titles';
+import { Description } from '@/components/ui/Descriptions';
+import { StepsCircle } from '@/components/ui/StepsCircle';
+import { Title } from '@/components/ui/Titles';
 import ResetEmail from '@/features/password-reset/ResetEmail';
 import SetNewPassword from '@/features/password-reset/SetNewPassword';
 import VerifyEmail from '@/features/password-reset/VerifyEmail';

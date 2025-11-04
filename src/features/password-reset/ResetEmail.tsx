@@ -4,10 +4,10 @@ import { type JSX, memo, useCallback } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 
-import { Buttons } from '@/components/ui/utils/Buttons';
-import { Description } from '@/components/ui/utils/Descriptions';
-import { InputComponent } from '@/components/ui/utils/InputComponent';
-import { Title } from '@/components/ui/utils/Titles';
+import { Button } from '@/components/ui/Button';
+import { Description } from '@/components/ui/Descriptions';
+import { InputComponent } from '@/components/ui/InputComponent';
+import { Title } from '@/components/ui/Titles';
 import { ResetPasswordSchema, type ResetPasswordType } from '@/types/passwordSetup.types';
 
 function ResetEmail({ onNext }: { onNext: () => void }): JSX.Element {
@@ -52,7 +52,7 @@ function ResetEmail({ onNext }: { onNext: () => void }): JSX.Element {
           icon="Mail"
         />
         <Description className="mt-5">We'll send you an email with a verification code</Description>
-        <Buttons
+        <Button
           disabled={isSubmitting || !isValid}
           variant="primary"
           loading={isSubmitting}
@@ -61,11 +61,11 @@ function ResetEmail({ onNext }: { onNext: () => void }): JSX.Element {
           className="w-full mt-6"
         >
           Send OTP
-        </Buttons>
+        </Button>
       </form>
-      <Buttons type="button" variant="ghost" className="mt-4 w-full">
+      <Button type="button" variant="ghost" className="mt-4 w-full">
         Skip for now
-      </Buttons>
+      </Button>
     </div>
   );
 }

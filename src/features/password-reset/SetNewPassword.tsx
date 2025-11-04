@@ -6,10 +6,10 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 
-import { Buttons } from '@/components/ui/utils/Buttons';
-import { Description } from '@/components/ui/utils/Descriptions';
-import { InputComponent } from '@/components/ui/utils/InputComponent';
-import { Title } from '@/components/ui/utils/Titles';
+import { Button } from '@/components/ui/Button';
+import { Description } from '@/components/ui/Descriptions';
+import { InputComponent } from '@/components/ui/InputComponent';
+import { Title } from '@/components/ui/Titles';
 import { SetNewPasswordSchema, type SetNewPasswordType } from '@/types/passwordSetup.types';
 
 function SetNewPassword(): JSX.Element {
@@ -23,10 +23,10 @@ function SetNewPassword(): JSX.Element {
   const router = useRouter();
 
   const onSubmit = useCallback(
-    (data: SetNewPasswordType): void => {
+    async (data: SetNewPasswordType): Promise<void> => {
       try {
+        await new Promise(resolve => setTimeout(resolve, 1000));
         console.log(data);
-        router.push('/setup');
       } catch (error) {
         console.error('Form submission error:', error);
       }
@@ -60,7 +60,7 @@ function SetNewPassword(): JSX.Element {
           error={errors.confirmNewPassword}
           icon="Lock"
         />
-        <Buttons
+        <Button
           variant="primary"
           disabled={isSubmitting || !isValid}
           loadingChildren="Updating..."
@@ -68,7 +68,7 @@ function SetNewPassword(): JSX.Element {
           className="w-full"
         >
           Update Password
-        </Buttons>
+        </Button>
       </form>
     </div>
   );

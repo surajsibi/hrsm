@@ -65,13 +65,13 @@ jest.mock('@/features/setup/Complete', () => ({
 }));
 
 // Utility components
-jest.mock('@/components/ui/utils/Titles', () => ({
+jest.mock('@/components/ui/Titles', () => ({
   Title: ({ children }: { children: ReactNode }) => <h2>{children}</h2>,
 }));
-jest.mock('@/components/ui/utils/Descriptions', () => ({
+jest.mock('@/components/ui/Descriptions', () => ({
   Description: ({ children }: { children: ReactNode }) => <p>{children}</p>,
 }));
-jest.mock('@/components/ui/utils/StepsCircle', () => ({
+jest.mock('@/components/ui/StepsCircle', () => ({
   StepsCircle: ({ currentStep }: { currentStep: number }) => (
     <div data-testid="step-indicator">Step {currentStep}</div>
   ),

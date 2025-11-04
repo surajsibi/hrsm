@@ -172,7 +172,7 @@ describe('features / setup / Designation', () => {
     expect(screen.queryByText(/1 designation/i)).not.toBeInTheDocument();
   });
 
-  it('test case for buttons', async () => {
+  it('test case for Button', async () => {
     const onNext = jest.fn();
     const onPrev = jest.fn();
     const { skipButton, prevButton, continueButton } = DesignationSetup({ onNext, onPrev });

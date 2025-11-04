@@ -1,21 +1,19 @@
-'use client';
-
-import * as React from 'react';
-import * as LabelPrimitive from '@radix-ui/react-label';
-
+import { LabelHTMLAttributes, memo, ReactNode, useMemo } from 'react';
 import { cn } from '@/utils';
 
-function Label({ className, ...props }: React.ComponentProps<typeof LabelPrimitive.Root>) {
-  return (
-    <LabelPrimitive.Root
-      data-slot="label"
-      className={cn(
-        'flex items-center gap-2 text-sm leading-none font-medium select-none group-data-[disabled=true]:pointer-events-none group-data-[disabled=true]:opacity-50 peer-disabled:cursor-not-allowed peer-disabled:opacity-50',
-        className
-      )}
-      {...props}
-    />
-  );
+interface LabelProps extends LabelHTMLAttributes<HTMLLabelElement> {
+  children: ReactNode;
+  className?: string;
 }
 
-export { Label };
+export function Label({ children, htmlFor, className, ...props }: LabelProps) {
+  return (
+    <label
+      htmlFor={htmlFor}
+      className={cn('text-sm font-medium leading-none text-[#344256] ', className)}
+      {...props}
+    >
+      {children}
+    </label>
+  );
+}

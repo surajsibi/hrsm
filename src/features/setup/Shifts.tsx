@@ -2,18 +2,17 @@ import { type JSX, useCallback, useEffect } from 'react';
 
 import { Controller, useFieldArray, useForm } from 'react-hook-form';
 
-import { Icon } from '@/components/Icons/Icon';
-import { AddedSection } from '@/components/ui/utils/AddSections';
-import { AddShift } from '@/components/ui/utils/AddShift';
-import { Buttons } from '@/components/ui/utils/Buttons';
-import { Description } from '@/components/ui/utils/Descriptions';
-import { InputComponent } from '@/components/ui/utils/InputComponent';
-import { Label } from '@/components/ui/utils/Label';
-import { LineBreak } from '@/components/ui/utils/LineBreak';
-import { Note } from '@/components/ui/utils/Note';
-import { Selector } from '@/components/ui/utils/Selector';
-import { TickLabel } from '@/components/ui/utils/TickLabel';
-import { Title } from '@/components/ui/utils/Titles';
+import { AddedSection } from '@/components/ui/AddSections';
+import { AddShift } from '@/components/ui/AddShift';
+import { Button } from '@/components/ui/Button';
+import { Description } from '@/components/ui/Descriptions';
+import { InputComponent } from '@/components/ui/InputComponent';
+import { Label } from '@/components/ui/Label';
+import { LineBreak } from '@/components/ui/LineBreak';
+import { Note } from '@/components/ui/Note';
+import { Selector } from '@/components/ui/Selector';
+import { TickLabel } from '@/components/ui/TickLabel';
+import { Title } from '@/components/ui/Titles';
 import { cn } from '@/utils';
 
 import type { IShiftFormType, IShiftList } from '@/types/form-types';
@@ -315,7 +314,7 @@ export function Shifts({
         />
       </div>
 
-      <Buttons
+      <Button
         aria-label="add custom shifts"
         type="button"
         disabled={
@@ -330,12 +329,11 @@ export function Shifts({
         className="w-fit"
         variant="primary"
         size="md"
+        startIcon="ArrowLeft"
+        iconColor="white"
       >
-        <div className="flex gap-2 items-center justify-center">
-          <Icon name="ArrowLeft" size={16} color="white" variant="normal" />
-          Add Shift
-        </div>
-      </Buttons>
+        Add Shift
+      </Button>
 
       {/* Added shifts list */}
       {shifts.length > 0 && (
@@ -366,7 +364,7 @@ export function Shifts({
 
       {/* Footer actions */}
       <div className="w-full flex justify-between gap-4 items-center">
-        <Buttons
+        <Button
           type="button"
           variant="secondary"
           onClick={onNext}
@@ -374,29 +372,35 @@ export function Shifts({
           className="w-1/2 font-medium text-black"
         >
           Skip This Step
-        </Buttons>
-        <Buttons type="submit" variant="primary" size="sm" className="w-1/2 font-medium ">
-          <div className="flex items-center justify-center gap-3 font-medium ">
-            Continue <Icon name="ArrowRight" color="white" size={16} variant="normal" />
-          </div>
-        </Buttons>
+        </Button>
+        <Button
+          type="submit"
+          variant="primary"
+          size="sm"
+          className="w-1/2 font-medium"
+          endIcon="ArrowRight"
+          iconColor="white"
+        >
+          <p className="flex items-center justify-center gap-4">
+            <span className="font-semibold text-center">Continue</span>
+          </p>
+        </Button>
       </div>
 
       <LineBreak />
-
       <div className="flex justify-start items-center gap-4 w-fit px-2">
-        <Buttons
-          type="button"
+        <Button
           onClick={onPrev}
           variant="secondary"
+          type="button"
           size="sm"
-          className="text-black font-medium "
+          className="text-black font-medium"
+          startIcon="ArrowLeft"
         >
-          <div className="flex items-center justify-center gap-3 font-medium">
-            <Icon name="ArrowLeft" size={16} variant="normal" />
+          <p className="flex items-center justify-center gap-4">
             <span className="font-medium text-center">Previous Step</span>
-          </div>
-        </Buttons>
+          </p>
+        </Button>
       </div>
     </form>
   );
