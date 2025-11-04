@@ -1,4 +1,4 @@
-import { type JSX, memo, useCallback, useEffect } from 'react';
+import { type JSX, useCallback, useEffect } from 'react';
 
 import { Controller, useFieldArray, useForm } from 'react-hook-form';
 
@@ -63,7 +63,7 @@ const defaultShift = {
   rotationalShifts: false,
 };
 
-const DaySelector = memo(
+const DaySelector =
   // eslint-disable-next-line no-unused-vars
   ({ days, toggleDay }: { days: string[]; toggleDay: (day: string) => void }) => (
     <div className="flex gap-2 flex-wrap">
@@ -83,8 +83,7 @@ const DaySelector = memo(
         </button>
       ))}
     </div>
-  )
-);
+  );
 
 export function Shifts({
   onNext,

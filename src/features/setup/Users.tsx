@@ -1,4 +1,4 @@
-import { type JSX, useCallback, useMemo } from 'react';
+import { type JSX, useCallback } from 'react';
 
 import { Controller, useFieldArray, useForm } from 'react-hook-form';
 
@@ -101,39 +101,6 @@ export function Users({ onNext, onPrev }: { onNext: () => void; onPrev: () => vo
     console.log(users);
     onNext();
   }
-
-  const addedUserSection = useMemo(
-    () =>
-      users?.length > 0 && (
-        <div>
-          <Title className="text-md font-medium text-start" variant="h3">
-            Added Users
-          </Title>
-          <div className="shadow-md space-y-4 bg-white border border-border rounded-lg p-4 text-primary">
-            {users.map((user, i) => (
-              <div key={i}>
-                <AddedSection
-                  title={`${user.firstName}  ${user.lastName}`}
-                  description={
-                    <span>
-                      {`${user.emailAddress} • ${user.userRole}`}
-                      {user.isOnProbation ? (
-                        <span className="text-yellow"> • On Probation</span>
-                      ) : (
-                        ''
-                      )}
-                    </span>
-                  }
-                  onDelete={() => remove(i)}
-                  icon="User"
-                />
-              </div>
-            ))}
-          </div>
-        </div>
-      ),
-    [users, remove]
-  );
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col p-6 pt-8 gap-6">
@@ -365,7 +332,34 @@ export function Users({ onNext, onPrev }: { onNext: () => void; onPrev: () => vo
         </div>
       </Buttons>
 
-      {addedUserSection}
+      {users?.length > 0 && (
+        <div>
+          <Title className="text-md font-medium text-start" variant="h3">
+            Added Users
+          </Title>
+          <div className="shadow-md space-y-4 bg-white border border-border rounded-lg p-4 text-primary">
+            {users.map((user, i) => (
+              <div key={i}>
+                <AddedSection
+                  title={`${user.firstName}  ${user.lastName}`}
+                  description={
+                    <span>
+                      {`${user.emailAddress} • ${user.userRole}`}
+                      {user.isOnProbation ? (
+                        <span className="text-yellow"> • On Probation</span>
+                      ) : (
+                        ''
+                      )}
+                    </span>
+                  }
+                  onDelete={() => remove(i)}
+                  icon="User"
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       <Note>
         User accounts will be created with the provided information. If no password is specified, a

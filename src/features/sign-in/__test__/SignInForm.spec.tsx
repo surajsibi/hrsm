@@ -6,13 +6,13 @@ import { SignInForm } from '@/features/sign-in/SignInForm';
 describe('features / sign-in / SignInForm', () => {
   const user = userEvent.setup();
   const SignInFormSetup = (props = {}) => {
-    const { debug } = render(<SignInForm {...props} />);
+    render(<SignInForm {...props} />);
     const tenantCodeInput = screen.getByRole('textbox', { name: /tenant code/i });
     const emailInput = screen.getByRole('textbox', { name: /Email/i });
     const passwordInput = screen.getByLabelText(/password/i);
     const signInButton = screen.getByRole('button', { name: /sign in to dashboard/i });
 
-    return { tenantCodeInput, emailInput, passwordInput, signInButton, debug };
+    return { tenantCodeInput, emailInput, passwordInput, signInButton };
   };
 
   it('renders all UI elements correctly', () => {
@@ -30,12 +30,10 @@ describe('features / sign-in / SignInForm', () => {
   it('shows validation error messages properly', async () => {
     const { tenantCodeInput, emailInput, passwordInput, signInButton } = SignInFormSetup();
 
-    // tenant validation
     await user.click(tenantCodeInput);
     await user.tab();
     expect(await screen.findByText(/Tenant Code is required/i)).toBeInTheDocument();
 
-    // Email validation
     await user.click(emailInput);
     await user.tab();
     expect(await screen.findByText(/email is required/i)).toBeInTheDocument();
@@ -44,7 +42,6 @@ describe('features / sign-in / SignInForm', () => {
     await user.tab();
     expect(await screen.findByText(/invalid email address/i)).toBeInTheDocument();
 
-    // Password validation
     await user.click(passwordInput);
     await user.tab();
     expect(await screen.findByText(/password is required/i)).toBeInTheDocument();
@@ -55,7 +52,6 @@ describe('features / sign-in / SignInForm', () => {
       await screen.findByText(/password should be at least 6 characters/i)
     ).toBeInTheDocument();
 
-    // Empty form submission
     await user.clear(emailInput);
     await user.clear(passwordInput);
 

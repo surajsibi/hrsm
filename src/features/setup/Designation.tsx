@@ -1,4 +1,4 @@
-import { type JSX, memo, useCallback } from 'react';
+import { type JSX, useCallback } from 'react';
 
 import { type Control, Controller, useForm } from 'react-hook-form';
 
@@ -69,7 +69,7 @@ interface DepartmentSectionProps {
   control: Control<DesignationType>;
 }
 
-const DepartmentSection = memo(({ dep, control }: DepartmentSectionProps) => (
+const DepartmentSection = ({ dep, control }: DepartmentSectionProps) => (
   <div
     key={dep}
     className="shadow-md bg-white border border-border rounded-lg p-4 flex flex-col gap-3"
@@ -91,7 +91,7 @@ const DepartmentSection = memo(({ dep, control }: DepartmentSectionProps) => (
       )}
     />
   </div>
-));
+);
 
 export function Designation({
   onNext,
