@@ -27,7 +27,7 @@ const buttonVariants = cva(
           'bg-gradient-primary text-white shadow-md hover:shadow-lg hover:bg-gradient-primary-hover focus:outline-blue-600',
         secondary:
           'bg-transparent text-[#7a8799] border border-[#dfe2e7] hover:text-[#3c83f6] hover:bg-[#bedbfe] hover:border-transparent',
-        ghost: 'bg-transparent text-[#7a8799] hover:text-[#344256] hover:bg-[#bedbfe]',
+        ghost: 'bg-transparent text-[#7a8799] hover:text-[#344256] hover:bg-[#bedbfe] border-none',
         default:
           'bg-transparent text-[#344256] border border-[#dfe2e7] hover:text-blue-500 hover:bg-[#bedbfe] hover:border-transparent',
       },

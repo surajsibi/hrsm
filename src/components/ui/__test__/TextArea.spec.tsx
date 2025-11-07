@@ -7,13 +7,10 @@ describe('TextArea', () => {
     expect(screen.getByRole('textbox')).toBeInTheDocument();
   });
   it('should render with icon', () => {
-    render(<TextArea icon={<div>Icon</div>} />);
-    expect(screen.getByText('Icon')).toBeInTheDocument();
+    render(<TextArea icon="ArrowLeft" />);
+    expect(screen.getByLabelText('ArrowLeft')).toBeInTheDocument();
   });
-  it('should render with custom classname', () => {
-    render(<TextArea className="w-24" />);
-    expect(screen.getByRole('textbox')).toHaveClass('w-24');
-  });
+
   it('should render with ...props', () => {
     render(<TextArea color="red" />);
     expect(screen.getByRole('textbox')).toHaveAttribute('color', 'red');

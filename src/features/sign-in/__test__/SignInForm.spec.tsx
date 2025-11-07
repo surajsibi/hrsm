@@ -71,6 +71,10 @@ describe('features / sign-in / SignInForm', () => {
     await waitFor(() => {
       expect(consoleSpy).toHaveBeenCalled();
     });
-    expect(consoleSpy).toHaveBeenCalledWith('Login successful');
+    expect(consoleSpy).toHaveBeenCalledWith({
+      email: 'test@gmail.com',
+      password: 'testasas',
+      tenantCode: 'test',
+    });
   });
 });

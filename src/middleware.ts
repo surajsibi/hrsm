@@ -1,8 +1,8 @@
 import { NextResponse } from 'next/server';
 import createMiddleware from 'next-intl/middleware';
 
+import { auth as middleware } from '@/auth';
 import { routing } from '@/i18n/routing';
-import { auth as middleware } from '@/lib/auth';
 
 const intlMiddleware = createMiddleware(routing);
 

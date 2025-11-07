@@ -9,6 +9,6 @@ export const SignInFormSchema = z.object({
   password: z
     .string()
     .refine((value: string) => value, { message: 'Password is required' })
-    .min(6, 'Password should be at least 6 characters'),
+    .min(1, 'Password is required'),
 });
 export type SignInFormType = z.infer<typeof SignInFormSchema>;

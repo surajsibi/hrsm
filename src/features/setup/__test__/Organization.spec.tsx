@@ -17,10 +17,10 @@ describe('features / setup / Organization  ', () => {
     const companyPhoneInput = screen.getByRole('textbox', { name: /Phone Number/i });
     const companyWebsiteInput = screen.getByRole('textbox', { name: /website/i });
     const companySizeDropDown = screen.getByRole('combobox', { name: /company size/i });
-    const companyAddressInput = screen.getByRole('textbox', { name: /company address/i });
-    const companyDescriptionInput = screen.getByRole('textbox', {
-      name: /company description/i,
-    });
+    const companyAddressInput = screen.getByPlaceholderText(/Enter company address/i);
+    const companyDescriptionInput = screen.getByPlaceholderText(
+      /Brief description about your company/i
+    );
     const createButton = screen.getByRole('button', { name: /Create Organization/i });
     const skipButton = screen.getByRole('button', { name: /Skip This Step/i });
 

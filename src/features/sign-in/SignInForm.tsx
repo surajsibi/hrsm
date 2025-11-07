@@ -4,6 +4,9 @@ import { type JSX, useCallback } from 'react';
 
 import { zodResolver } from '@hookform/resolvers/zod';
 // import { useMutation } from '@tanstack/react-query';
+import { setCookie } from 'cookies-next';
+import { useRouter } from 'next/navigation';
+import { getSession, signIn } from 'next-auth/react';
 import { useForm } from 'react-hook-form';
 
 // import { login } from '@/actions/auth';
@@ -35,18 +38,30 @@ export function SignInForm(): JSX.Element {
     mode: 'all',
   });
 
+  const router = useRouter();
+
   const onSubmit = useCallback(async (data: SignInFormType) => {
     try {
-      await new Promise((resolve, _reject) => {
-        setTimeout(() => {
-          resolve('Resolved after 2 seconds');
-        }, 2000);
+      const res = await signIn('credentials', {
+        redirect: false,
+        ...data,
       });
 
-      console.log(data);
-      reset();
+      if (res?.ok) {
+        const session = await getSession();
+
+        const { accessToken, refreshToken } = session?.user as never;
+
+        setCookie('accessToken', accessToken, { path: '/', maxAge: 60 * 15 });
+        setCookie('refreshToken', refreshToken, { path: '/', maxAge: 60 * 60 * 15 });
+
+        router.replace('/password-reset');
+        reset();
+      } else {
+        console.error('Login failed:', res);
+      }
     } catch (error) {
-      console.error('Login mutation failed:', error);
+      console.error('Form submission error:', error);
     }
   }, []);
 
