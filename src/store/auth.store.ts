@@ -4,28 +4,28 @@ import { immer } from 'zustand/middleware/immer';
 
 export interface IUser {
   id: string;
+  email: string;
+  name: string;
   role: string;
-  accessToken: string;
-  refreshToken: string;
-  organizationId: string | null;
-  organizationName: string | null;
+  organizationId?: string | null;
+  organizationName?: string | null;
 }
-interface IAuthStore {
-  session: string | null;
-  jwtToken: string | null;
+export interface IAuthStore {
   user: IUser | null;
   hydrate: boolean;
   setHydrate: () => void;
+  setUser: (user: IUser) => void;
+  clearUser: () => void;
 }
 
 export const useAuthStore = create<IAuthStore>()(
   persist(
     immer(set => ({
-      session: null,
-      jwtToken: null,
       user: null,
       hydrate: false,
       setHydrate: () => set({ hydrate: true }),
+      setUser: (user: IUser) => set({ user }),
+      clearUser: () => set({ user: null }),
     })),
     {
       name: 'auth',

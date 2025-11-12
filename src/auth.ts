@@ -23,55 +23,32 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         organizationId: { type: 'string' },
         organizationName: { type: 'string' },
       },
-      authorize: async (credentials: any) => {
+      authorize: async (credentials: any): Promise<any> => {
         if (!credentials) {
           throw new Error('Invalid credentials');
         }
 
-        const {
-          id,
-          email,
-          name,
-          role,
-          accessToken,
-          refreshToken,
-          organizationId,
-          organizationName,
-        } = credentials;
+        const { accessToken, refreshToken } = credentials;
 
         return {
-          id: id || '',
-          email: email || '',
-          name: name || '',
-          role: role || null,
           accessToken: accessToken || '',
           refreshToken: refreshToken || '',
-          organizationId: organizationId || null,
-          organizationName: organizationName || null,
         };
       },
     }),
   ],
   callbacks: {
-    async jwt({ token, trigger, user, session }) {
-      if (trigger === 'update') {
-        if (session?.accessToken) {
-          token.accessToken = session.accessToken;
-        }
-
-        return { ...token, ...user };
+    async jwt({ token, user }) {
+      if (user?.accessToken) {
+        token.accessToken = user.accessToken;
+        token.refreshToken = user.refreshToken;
       }
-
-      return { ...token, ...user };
+      return token;
     },
     async session({ session, token }) {
-      return {
-        ...session,
-        user: {
-          ...session.user,
-          ...token,
-        },
-      };
+      session.accessToken = token.accessToken as string;
+      session.refreshToken = token.refreshToken as string;
+      return session;
     },
   },
 });

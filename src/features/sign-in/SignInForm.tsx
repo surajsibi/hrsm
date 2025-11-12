@@ -2,7 +2,6 @@
 
 import { type JSX, useCallback } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { setCookie } from 'cookies-next';
 import { useRouter } from 'next/navigation';
 import { getSession, signIn } from 'next-auth/react';
 import { useForm } from 'react-hook-form';
@@ -14,6 +13,7 @@ import { Spinner } from '@/components/ui/Spinner';
 import { Title } from '@/components/ui/Titles';
 import { SignInFormSchema, type SignInFormType } from '@/types/signin-form-types';
 import { login } from '@/actions/login';
+import { useAuthStore } from '@/store/auth.store';
 
 export function SignInForm(): JSX.Element {
   const {
@@ -27,15 +27,17 @@ export function SignInForm(): JSX.Element {
   });
 
   const router = useRouter();
+  const setUser = useAuthStore(state => state.setUser);
 
   const onSubmit = useCallback(async (data: SignInFormType) => {
     try {
       const res = await login(data);
       if (res.success) {
         console.log('success');
+        setUser(res.user);
+
         await signIn('credentials', {
           redirect: false,
-          ...res.user,
           ...res.tokens,
         });
       } else {
@@ -45,6 +47,10 @@ export function SignInForm(): JSX.Element {
       console.log('Form submission error:', error);
     }
   }, []);
+
+  const { user } = useAuthStore();
+
+  console.log('uswerrr', user);
 
   return (
     <section className="w-full max-w-md mx-auto flex flex-col justify-center gap-8">

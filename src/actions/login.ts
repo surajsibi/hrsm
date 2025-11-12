@@ -46,8 +46,6 @@ export const login = async (formData: {
     const userResponse = data.userResponse;
     const firstAccessLevel = data.accessLevels?.[0];
 
-    console.log('refresh token', data.refreshToken);
-    console.log('access token', data.accessToken);
     return {
       success: true,
       user: {

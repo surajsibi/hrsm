@@ -8,26 +8,11 @@ interface ISetting {
 }
 declare module 'next-auth' {
   interface User {
-    id: string;
-    role: string | null;
     accessToken: string;
     refreshToken: string;
-    organizationId: string | null;
-    organizationName: string | null;
-    exp?: number;
   }
   interface Session {
-    user: User & {
-      id: string;
-      role: string | null;
-      accessToken: string;
-      refreshToken: string;
-      organizationId: string | null;
-      organizationName: string | null;
-    };
-    token: {
-      id: string;
-      role: string | null;
-    };
+    accessToken: string;
+    refreshToken: string;
   }
 }
