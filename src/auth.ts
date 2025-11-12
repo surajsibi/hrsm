@@ -1,10 +1,6 @@
 import NextAuth from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
 
-import { login } from '@/actions/login';
-
-import type { SignInFormType } from '@/types/signin-form-types';
-
 export const { handlers, signIn, signOut, auth } = NextAuth({
   pages: {
     signIn: '/sign-in',
@@ -13,33 +9,45 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     strategy: 'jwt',
     maxAge: 30 * 24 * 60 * 60,
   },
+  secret: process.env.NEXTAUTH_SECRET,
   providers: [
     Credentials({
       name: 'Credentials',
       credentials: {
-        email: { label: 'Email', type: 'email' },
-        password: { label: 'Password', type: 'password' },
-        tenantCode: { label: 'Tenant Code', type: 'text' },
+        id: { type: 'string' },
+        email: { type: 'string' },
+        name: { type: 'string' },
+        role: { type: 'string' },
+        accessToken: { type: 'string' },
+        refreshToken: { type: 'string' },
+        organizationId: { type: 'string' },
+        organizationName: { type: 'string' },
       },
-      authorize: async credentials => {
-        const { email, password, tenantCode } = credentials as SignInFormType;
-
-        const result = await login({ email, password, tenantCode });
-
-        if (!result.success || !result.user || !result.tokens) {
-          // Returning null tells Auth.js to reject login (no session created)
-          return null;
+      authorize: async (credentials: any) => {
+        if (!credentials) {
+          throw new Error('Invalid credentials');
         }
 
+        const {
+          id,
+          email,
+          name,
+          role,
+          accessToken,
+          refreshToken,
+          organizationId,
+          organizationName,
+        } = credentials;
+
         return {
-          id: result.user.id,
-          email: result.user.email,
-          name: result.user.name,
-          role: result.user.role,
-          organizationId: result.user.organizationId ?? null,
-          organizationName: result.user.organizationName ?? null,
-          accessToken: result.tokens.accessToken,
-          refreshToken: result.tokens.refreshToken,
+          id: id || '',
+          email: email || '',
+          name: name || '',
+          role: role || null,
+          accessToken: accessToken || '',
+          refreshToken: refreshToken || '',
+          organizationId: organizationId || null,
+          organizationName: organizationName || null,
         };
       },
     }),
@@ -48,7 +56,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     async jwt({ token, trigger, user, session }) {
       if (trigger === 'update') {
         if (session?.accessToken) {
-          // eslint-disable-next-line no-param-reassign
           token.accessToken = session.accessToken;
         }
 

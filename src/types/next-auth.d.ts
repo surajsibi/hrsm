@@ -22,8 +22,8 @@ declare module 'next-auth' {
       role: string | null;
       accessToken: string;
       refreshToken: string;
-      organizationId: string;
-      organizationName: string;
+      organizationId: string | null;
+      organizationName: string | null;
     };
     token: {
       id: string;

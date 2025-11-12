@@ -75,9 +75,9 @@ function ContentWithLoading({
         )
       ) : (
         <>
-          {startIcon && <Icon name={startIcon} size={16} color={iconColor} />}
+          {startIcon && <Icon name={startIcon} variant='normal' size={16} color={iconColor} />}
           <span>{children}</span>
-          {endIcon && <Icon name={endIcon} size={16} color={iconColor} />}
+          {endIcon && <Icon name={endIcon} size={16} variant='normal' color={iconColor} />}
         </>
       )}
     </>

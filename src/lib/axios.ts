@@ -102,3 +102,20 @@ axiosProtected.interceptors.response.use(
     throw error;
   }
 );
+
+axiosPublic.interceptors.response.use(
+  res => res,
+  error => {
+    const message =
+      error.response?.data?.message ||
+      error.response?.data?.error ||
+      error.message ||
+      'Unexpected error occurred';
+
+    return Promise.reject({
+      message,
+      status: error.response?.status,
+      data: error.response?.data,
+    });
+  }
+);

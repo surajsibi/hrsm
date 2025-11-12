@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import { TextArea } from '@/components/ui/TextArea';
+import { TextArea } from '@/components/ui/Textarea';
 
 describe('TextArea', () => {
   it('should render the component', () => {

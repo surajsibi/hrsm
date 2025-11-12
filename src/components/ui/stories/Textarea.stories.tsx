@@ -1,4 +1,4 @@
-import { TextArea } from '@/components/ui/TextArea';
+import { TextArea } from '@/components/ui/Textarea';
 
 import type { Meta, StoryObj } from '@storybook/nextjs';
 

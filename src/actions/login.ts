@@ -2,8 +2,8 @@
 
 import { axiosPublic } from '@/lib/axios';
 
-interface ILoginResult {
-  success: boolean;
+interface LoginSuccess {
+  success: true;
   user: {
     id: string;
     email: string;
@@ -12,17 +12,24 @@ interface ILoginResult {
     organizationId?: string | null;
     organizationName?: string | null;
   };
-  tokens?: {
+  tokens: {
     accessToken: string;
     refreshToken: string;
   };
 }
 
+interface LoginFailure {
+  success: false;
+  message: string;
+}
+
+export type LoginResult = LoginSuccess | LoginFailure;
+
 export const login = async (formData: {
   email: string;
   password: string;
   tenantCode?: string;
-}): Promise<ILoginResult | { success: false; message: string }> => {
+}): Promise<LoginResult> => {
   try {
     const { data } = await axiosPublic.post('/login', {
       credential: formData.email,
@@ -39,10 +46,12 @@ export const login = async (formData: {
     const userResponse = data.userResponse;
     const firstAccessLevel = data.accessLevels?.[0];
 
+    console.log('refresh token', data.refreshToken);
+    console.log('access token', data.accessToken);
     return {
       success: true,
       user: {
-        id: userResponse.authId ?? userResponse.email,
+        id: userResponse.authId,
         email: userResponse.email,
         name: `${userResponse.firstName} ${userResponse.lastName}`.trim(),
         role: userResponse.role,
@@ -54,9 +63,8 @@ export const login = async (formData: {
         refreshToken: data.refreshToken,
       },
     };
-  } catch (error) {
-    console.error('Login failed:', error);
-
-    return { success: false, message: 'Invalid credentials or server error' };
+  } catch (error: any) {
+    const message = error.data.detail || error.data || error.message || 'Unexpected server error';
+    return { success: false, message };
   }
 };

@@ -1,6 +1,6 @@
 import { InputHTMLAttributes, ReactNode } from 'react';
-import { Label } from './Label';
-import { Input } from './Input';
+import { Label } from '@/components/ui/Label';
+import { Input } from '@/components/ui/Input';
 import { cn } from '@/utils';
 import { Description } from './Descriptions';
 

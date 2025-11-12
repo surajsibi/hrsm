@@ -1,16 +1,11 @@
 'use client';
 
 import { type JSX, useCallback } from 'react';
-
 import { zodResolver } from '@hookform/resolvers/zod';
-// import { useMutation } from '@tanstack/react-query';
 import { setCookie } from 'cookies-next';
 import { useRouter } from 'next/navigation';
 import { getSession, signIn } from 'next-auth/react';
 import { useForm } from 'react-hook-form';
-
-// import { login } from '@/actions/auth';
-
 import { Button } from '@/components/ui/Button';
 import { Description } from '@/components/ui/Descriptions';
 import { HeaderLogo } from '@/components/ui/HeaderLogos';
@@ -18,15 +13,8 @@ import { InputComponent } from '@/components/ui/InputComponent';
 import { Spinner } from '@/components/ui/Spinner';
 import { Title } from '@/components/ui/Titles';
 import { SignInFormSchema, type SignInFormType } from '@/types/signin-form-types';
+import { login } from '@/actions/login';
 
-/**
- * Optimized SignInForm
- * - Uses `useCallback` to memoize submit handler
- * - Uses `memo` to avoid unnecessary re-renders
- * - Removes unnecessary wrapping div nesting
- * - Uses minimal re-renders by relying on RHF's built-in optimization
- * - Improves accessibility & semantics
- */
 export function SignInForm(): JSX.Element {
   const {
     handleSubmit,
@@ -42,26 +30,19 @@ export function SignInForm(): JSX.Element {
 
   const onSubmit = useCallback(async (data: SignInFormType) => {
     try {
-      const res = await signIn('credentials', {
-        redirect: false,
-        ...data,
-      });
-
-      if (res?.ok) {
-        const session = await getSession();
-
-        const { accessToken, refreshToken } = session?.user as never;
-
-        setCookie('accessToken', accessToken, { path: '/', maxAge: 60 * 15 });
-        setCookie('refreshToken', refreshToken, { path: '/', maxAge: 60 * 60 * 15 });
-
-        router.replace('/password-reset');
-        reset();
+      const res = await login(data);
+      if (res.success) {
+        console.log('success');
+        await signIn('credentials', {
+          redirect: false,
+          ...res.user,
+          ...res.tokens,
+        });
       } else {
-        console.error('Login failed:', res);
+        console.log('failed', res.message);
       }
     } catch (error) {
-      console.error('Form submission error:', error);
+      console.log('Form submission error:', error);
     }
   }, []);
 

@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import { Input } from '@/components/ui/input';
+import { Input } from '@/components/ui/Input';
 
 describe('Input', () => {
   it('should render the component', () => {

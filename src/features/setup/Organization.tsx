@@ -10,7 +10,7 @@ import { InputComponent } from '@/components/ui/InputComponent';
 import { LineBreak } from '@/components/ui/LineBreak';
 import { Selector } from '@/components/ui/Selector';
 import { Spinner } from '@/components/ui/Spinner';
-import { TextArea } from '@/components/ui/TextArea';
+import { TextArea } from '@/components/ui/Textarea';
 import { Title } from '@/components/ui/Titles';
 import { OrganizationSchema, type OrganizationType } from '@/types/form-types';
 
