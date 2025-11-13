@@ -10,13 +10,16 @@ import {
   ChevronDown,
   Clock,
   Crown,
+  Database,
   Globe,
+  KeyRound,
   Lock,
   type LucideProps,
   Mail,
   MapPin,
   Phone,
   Plus,
+  Share2,
   Shield,
   Trash2,
   User,
@@ -53,6 +56,9 @@ const ICONS = {
   Globe,
   Users,
   MapPin,
+  Share2,
+  Database,
+  KeyRound,
 } as const;
 
 /**

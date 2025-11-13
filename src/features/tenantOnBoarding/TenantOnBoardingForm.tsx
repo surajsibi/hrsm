@@ -2,23 +2,23 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Controller, useForm } from 'react-hook-form';
 
+import { Icon, type IconName } from '@/components/Icons/Icon';
 import { Button } from '@/components/ui/Button';
 import { Description } from '@/components/ui/Descriptions';
 import { InputComponent } from '@/components/ui/InputComponent';
 import { LineBreak } from '@/components/ui/LineBreak';
-import { Icon } from '@/components/Icons/Icon';
 import { Title } from '@/components/ui/Titles';
 import { TenantOnBoardingSchema, type TenantOnBoardingType } from '@/types/tenantOnBoarding';
 import { cn } from '@/utils';
 
 import type { JSX } from 'react';
 
-const databaseTypeOptions: Array<{
+const databaseTypeOptions: {
   value: TenantOnBoardingType['databaseType'];
   label: string;
   description: string;
-  icon: Parameters<typeof Icon>[0]['name'];
-}> = [
+  icon: IconName;
+}[] = [
   {
     value: 'shared',
     label: 'Shared Database',
@@ -29,13 +29,13 @@ const databaseTypeOptions: Array<{
     value: 'private',
     label: 'Private Database',
     description: 'Bring your own database credentials and retain full control of data policies.',
-    icon: 'Shield',
+    icon: 'KeyRound',
   },
   {
     value: 'dedicated',
     label: 'Dedicated Database',
     description: 'Isolated infrastructure tuned for performance and enterprise compliance.',
-    icon: 'Building',
+    icon: 'Database',
   },
 ];
 
@@ -143,7 +143,7 @@ export function TenantOnBoardingForm(): JSX.Element {
   return (
     <section className="mx-auto max-w-5xl space-y-6 pt-10">
       <header className="space-y-2 text-center md:text-left">
-      <Title variant="h1" className="text-left text-3xl font-semibold leading-tight md:text-4xl">
+        <Title variant="h1" className="text-left text-3xl font-semibold leading-tight md:text-4xl">
           Welcome!
         </Title>
         <Description size="lg" className="text-left ">
@@ -158,7 +158,8 @@ export function TenantOnBoardingForm(): JSX.Element {
                 Primary Contact
               </Title>
               <Description size="md" className="text-left ">
-                Please provide the details below so we can keep you informed about onboarding progress.
+                Please provide the details below so we can keep you informed about onboarding
+                progress.
               </Description>
             </div>
 
@@ -198,8 +199,8 @@ export function TenantOnBoardingForm(): JSX.Element {
                 Database Setup
               </Title>
               <Description size="md" className="text-left ">
-                Choose how you would like us to provision your HRMS database. You can change this choice
-                during onboarding.
+                Choose how you would like us to provision your HRMS database. You can change this
+                choice during onboarding.
               </Description>
             </div>
 
@@ -215,6 +216,7 @@ export function TenantOnBoardingForm(): JSX.Element {
                   >
                     {databaseTypeOptions.map(option => {
                       const isSelected = field.value === option.value;
+
                       return (
                         <button
                           key={option.value}
@@ -274,8 +276,8 @@ export function TenantOnBoardingForm(): JSX.Element {
                     Private Database Credentials
                   </Title>
                   <Description size="sm" className="text-left ">
-                    We will create a secure connection using the credentials you provide. Make sure these
-                    details are accurate and have the required permissions.
+                    We will create a secure connection using the credentials you provide. Make sure
+                    these details are accurate and have the required permissions.
                   </Description>
                 </div>
                 <div className="grid gap-6 md:grid-cols-2">
@@ -312,7 +314,7 @@ export function TenantOnBoardingForm(): JSX.Element {
             <Button size="lg" className="w-full md:w-auto" variant="primary" type="submit">
               Complete Setup
             </Button>
-            <Description size="sm" className="text-left ">
+            <Description size="sm" className="text-left px-2 ">
               You can always revisit onboarding settings later from your admin dashboard.
             </Description>
           </div>

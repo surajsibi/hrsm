@@ -51,10 +51,6 @@ export function SignInForm(): JSX.Element {
     }
   }, []);
 
-  const { user } = useAuthStore();
-
-  console.log('uswerrr', user);
-
   return (
     <section className="w-full max-w-md mx-auto flex flex-col justify-center gap-8">
       <header className="flex flex-col items-center justify-center gap-4">

@@ -10,6 +10,7 @@ import { Designation } from '@/features/setup/Designation';
 import { Organization } from '@/features/setup/Organization';
 import { Shifts } from '@/features/setup/Shifts';
 import { Users } from '@/features/setup/Users';
+import { useAuthStore } from '@/store/auth.store';
 
 export default function SetupForm(): JSX.Element {
   const [currentStep, setCurrentStep] = useState(1);
@@ -37,6 +38,10 @@ export default function SetupForm(): JSX.Element {
   }, [currentStep]);
 
   const StepComponent = steps[currentStep - 1]?.component;
+
+  const { user } = useAuthStore();
+
+  console.log('uswerrr', user);
 
   return (
     <div className="max-w-4xl mx-auto pt-8">
