@@ -61,8 +61,11 @@ export const login = async (formData: {
         refreshToken: data.refreshToken,
       },
     };
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
-    const message = error.data.detail || error.data || error.message || 'Unexpected server error';
+    const message =
+      error?.data?.detail ?? error?.data ?? error?.message ?? 'Unexpected server error';
+
     return { success: false, message };
   }
 };

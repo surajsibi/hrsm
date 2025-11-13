@@ -1,19 +1,21 @@
 'use client';
 
 import { type JSX, useCallback } from 'react';
+
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
-import { getSession, signIn } from 'next-auth/react';
+import { signIn } from 'next-auth/react';
 import { useForm } from 'react-hook-form';
+
+import { login } from '@/actions/login';
 import { Button } from '@/components/ui/Button';
 import { Description } from '@/components/ui/Descriptions';
 import { HeaderLogo } from '@/components/ui/HeaderLogos';
 import { InputComponent } from '@/components/ui/InputComponent';
 import { Spinner } from '@/components/ui/Spinner';
 import { Title } from '@/components/ui/Titles';
-import { SignInFormSchema, type SignInFormType } from '@/types/signin-form-types';
-import { login } from '@/actions/login';
 import { useAuthStore } from '@/store/auth.store';
+import { SignInFormSchema, type SignInFormType } from '@/types/signin-form-types';
 
 export function SignInForm(): JSX.Element {
   const {
@@ -32,6 +34,7 @@ export function SignInForm(): JSX.Element {
   const onSubmit = useCallback(async (data: SignInFormType) => {
     try {
       const res = await login(data);
+
       if (res.success) {
         console.log('success');
         setUser(res.user);

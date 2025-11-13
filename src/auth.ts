@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */
 import NextAuth from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
 
@@ -31,8 +32,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         const { accessToken, refreshToken } = credentials;
 
         return {
-          accessToken: accessToken || '',
-          refreshToken: refreshToken || '',
+          accessToken: accessToken ?? '',
+          refreshToken: refreshToken ?? '',
         };
       },
     }),
@@ -43,11 +44,13 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         token.accessToken = user.accessToken;
         token.refreshToken = user.refreshToken;
       }
+
       return token;
     },
     async session({ session, token }) {
       session.accessToken = token.accessToken as string;
       session.refreshToken = token.refreshToken as string;
+
       return session;
     },
   },

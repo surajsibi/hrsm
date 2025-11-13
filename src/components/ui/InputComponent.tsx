@@ -138,7 +138,7 @@ export function InputComponent({
           value={value}
           placeholder={placeholder}
           id={id}
-          className={cn(icon ? 'pl-9' : '', className)}
+          className={cn(icon ? 'pl-9' : 'pl-2', className)}
           {...props}
         />
       </div>
