@@ -5,7 +5,7 @@ import { cn } from '@/utils';
 import { Description } from './Descriptions';
 
 import type { FieldError } from 'react-hook-form';
-import { Icon } from '@/components/Icons/Icon';
+import { Icon, IconName } from '@/components/Icons/Icon';
 
 interface InputComponentProps extends InputHTMLAttributes<HTMLInputElement> {
   /**
@@ -29,28 +29,7 @@ interface InputComponentProps extends InputHTMLAttributes<HTMLInputElement> {
    * Optional icon element (e.g., an SVG or Icon component).
    * Rendered on the left side of the input inside the wrapper.
    */
-  icon?:
-    | 'ArrowRight'
-    | 'Check'
-    | 'Building'
-    | 'Building2'
-    | 'Briefcase'
-    | 'User'
-    | 'Lock'
-    | 'Mail'
-    | 'Shield'
-    | 'ChevronDown'
-    | 'Crown'
-    | 'X'
-    | 'Plus'
-    | 'Trash2'
-    | 'Clock'
-    | 'Calendar'
-    | 'ArrowLeft'
-    | 'Phone'
-    | 'Globe'
-    | 'Users'
-    | 'MapPin';
+  icon?: IconName;
 
   /**
    * Additional custom CSS classes for styling the input field.

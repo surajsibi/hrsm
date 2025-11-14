@@ -1,5 +1,5 @@
 'use client';
-// import { useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { signIn } from 'next-auth/react';
 
 import { login } from '@/actions/login';
@@ -10,7 +10,7 @@ import type { SignInFormType } from '@/types/signin-form-types';
 import type { JSX } from 'react';
 
 export function SignInPage(): JSX.Element {
-  // const router = useRouter();
+  const router = useRouter();
   const setUser = useAuthStore(state => state.setUser);
 
   const handleSubmit = async (data: SignInFormType) => {
@@ -24,7 +24,7 @@ export function SignInPage(): JSX.Element {
           redirect: false,
           ...res.tokens,
         });
-        // router.push('/dashboard');
+        router.push('/dashboard');
       } else {
         console.log('failed', res.message);
       }

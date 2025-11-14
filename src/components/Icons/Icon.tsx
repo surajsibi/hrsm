@@ -17,6 +17,7 @@ import {
   type LucideProps,
   Mail,
   MapPin,
+  Palette,
   Phone,
   Plus,
   Share2,
@@ -59,6 +60,7 @@ const ICONS = {
   Share2,
   Database,
   KeyRound,
+  Palette,
 } as const;
 
 /**

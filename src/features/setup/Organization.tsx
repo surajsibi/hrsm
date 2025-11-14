@@ -1,8 +1,9 @@
 'use client';
-import { type JSX, useCallback } from 'react';
+import { type JSX, useCallback, useState } from 'react';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Controller, useForm } from 'react-hook-form';
+import Image from 'next/image';
+import { Controller, type FieldError, useForm } from 'react-hook-form';
 
 import { Button } from '@/components/ui/Button';
 import { Description } from '@/components/ui/Descriptions';
@@ -38,6 +39,7 @@ export function Organization({ onNext }: { onNext: () => void }): JSX.Element {
     register,
     control,
     handleSubmit,
+    watch,
     formState: { errors, isSubmitting, isValid },
   } = useForm<OrganizationType>({ mode: 'all', resolver: zodResolver(OrganizationSchema) });
 
@@ -48,6 +50,19 @@ export function Organization({ onNext }: { onNext: () => void }): JSX.Element {
     },
     [onNext]
   );
+
+  const image = watch('companyLogo');
+
+  console.log(!!(image instanceof File), 'image instanceof File');
+  const file = image instanceof File ? image : image?.[0];
+
+  console.log(file, 'file instanceof File');
+
+  const preview = file ? URL.createObjectURL(file) : null;
+
+  console.log(preview);
+
+  const [open, setOpen] = useState(false);
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col p-6 gap-6">
@@ -90,6 +105,17 @@ export function Organization({ onNext }: { onNext: () => void }): JSX.Element {
           />
         </div>
 
+        <InputComponent
+          parentClassName="w-[75%]"
+          label="Brand Color Theme *"
+          id="themeColor"
+          type="color"
+          {...register('themeColor', {
+            onChange: e => e.target.value,
+          })}
+          icon="Palette"
+          error={errors?.themeColor}
+        />
         <div className="flex gap-9 w-full">
           <InputComponent
             parentClassName="w-1/2"
@@ -142,6 +168,55 @@ export function Organization({ onNext }: { onNext: () => void }): JSX.Element {
             )}
           />
         </div>
+
+        <div className="flex gap-9 w-full items-center ">
+          <InputComponent
+            parentClassName="w-full flex "
+            label="Company Logo *"
+            accept="image/*"
+            id="logo"
+            type="file"
+            {...register('companyLogo', {
+              onChange: e => e.target.files?.[0],
+            })}
+            className=" flex  file:bg-primary file:py-2 file:mr-6 file:text-sm file:font-medium file:px-2 mb-2 file:border-none file:rounded-md file:text-white "
+            error={errors?.companyLogo as FieldError | undefined}
+          />
+          {preview && (
+            <Image
+              src={preview}
+              alt="Company Logo"
+              className="h-13 w-15 object-cover rounded-md mt-7"
+              layout="fixed"
+              width={128}
+              height={128}
+              unoptimized
+              onClick={() => setOpen(true)}
+            />
+          )}
+        </div>
+
+        {open && preview && (
+          <div className="fixed inset-0 bg-black/60 flex items-center justify-center top-[50%] translate-y-[-50%] z-[999] backdrop-blur-sm w-[50vw] h-[50vh]">
+            <Button
+              size="md"
+              className="absolute z-[1000] right-3 top-3 bg-white text-black  w-2 "
+              onClick={() => setOpen(false)}
+            >
+              X
+            </Button>
+            <div className="relative ">
+              <Image
+                src={preview}
+                alt="Large Company Logo"
+                width={500}
+                height={500}
+                className="rounded-xl object-contain max-w-[25vw] max-h-[25vh]"
+                unoptimized
+              />
+            </div>
+          </div>
+        )}
 
         <TextArea
           label="Company Address *"

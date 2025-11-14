@@ -48,6 +48,20 @@ export const OrganizationSchema = z.object({
     .min(1, 'Company Email is required')
     .regex(/^[^\s@]+@[^\s@]+\.[^\s@]+$/, 'Invalid email address'),
   companyPhoneNumber: z.string().min(1, 'Company Phone Number is required'),
+  companyLogo: z
+    .any()
+    .optional()
+    .refine(file => file === undefined || file === null || file?.[0] instanceof File, {
+      message: 'Invalid file',
+    })
+    .refine(file => !file || (file?.[0] instanceof File && file?.[0].type.startsWith('image/')), {
+      message: 'Only image files allowed',
+    })
+    .refine(file => !file || (file?.[0] instanceof File && file?.[0].size <= 10 * 1024 * 1024), {
+      message: 'Max file size is 10MB',
+    }),
+
+  themeColor: z.string().min(1, 'Theme Color is required'),
   companyWebsite: z.preprocess(
     val => (val === '' ? undefined : val),
     z
