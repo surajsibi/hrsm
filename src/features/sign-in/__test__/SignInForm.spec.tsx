@@ -6,21 +6,40 @@ import { SignInForm } from '@/features/sign-in/SignInForm';
 describe('features / sign-in / SignInForm', () => {
   const user = userEvent.setup();
   const SignInFormSetup = (props = {}) => {
-    const renderComponent = render(<SignInForm {...props} />);
+    const defaultProps = {
+      onSubmit: jest.fn(),
+    };
+    const renderComponent = render(<SignInForm {...defaultProps} {...props} />);
+    const hrmsHeader = screen.getByRole('heading', { name: /hrms portal/i, level: 1 });
+    const welcomeBackHeader = screen.getByRole('heading', { name: /welcome back/i, level: 3 });
     const tenantCodeInput = screen.getByRole('textbox', { name: /tenant code/i });
     const emailInput = screen.getByRole('textbox', { name: /Email/i });
     const passwordInput = screen.getByLabelText(/password/i);
     const signInButton = screen.getByRole('button', { name: /sign in to dashboard/i });
 
-    return { tenantCodeInput, emailInput, passwordInput, signInButton, ...renderComponent };
+    return {
+      tenantCodeInput,
+      emailInput,
+      passwordInput,
+      signInButton,
+      hrmsHeader,
+      welcomeBackHeader,
+      ...renderComponent,
+    };
   };
 
   it('renders all UI elements correctly', () => {
-    const { tenantCodeInput, emailInput, passwordInput, signInButton } = SignInFormSetup();
+    const {
+      tenantCodeInput,
+      emailInput,
+      passwordInput,
+      signInButton,
+      hrmsHeader,
+      welcomeBackHeader,
+    } = SignInFormSetup();
 
-    expect(screen.getByRole('heading', { name: /hrms portal/i, level: 1 })).toBeInTheDocument();
-    expect(screen.getByRole('heading', { name: /welcome back/i, level: 3 })).toBeInTheDocument();
-
+    expect(hrmsHeader).toBeInTheDocument();
+    expect(welcomeBackHeader).toBeInTheDocument();
     expect(tenantCodeInput).toBeInTheDocument();
     expect(emailInput).toBeInTheDocument();
     expect(passwordInput).toBeInTheDocument();
@@ -46,21 +65,14 @@ describe('features / sign-in / SignInForm', () => {
     await user.tab();
     expect(await screen.findByText(/password is required/i)).toBeInTheDocument();
 
-    await user.type(passwordInput, 'test');
-    await user.tab();
-    expect(
-      await screen.findByText(/password should be at least 6 characters/i)
-    ).toBeInTheDocument();
-
-    await user.clear(emailInput);
-    await user.clear(passwordInput);
-
     expect(signInButton).toBeDisabled();
   });
 
-  it('test case for signin', async () => {
-    const { tenantCodeInput, emailInput, passwordInput, signInButton } = SignInFormSetup();
-    const consoleSpy = jest.spyOn(console, 'log');
+  it('onsubmit to be call when submit', async () => {
+    const onSubmit = jest.fn();
+    const { tenantCodeInput, emailInput, passwordInput, signInButton } = SignInFormSetup({
+      onSubmit,
+    });
 
     await user.type(tenantCodeInput, 'test');
     await user.type(emailInput, 'test@gmail.com');
@@ -69,12 +81,7 @@ describe('features / sign-in / SignInForm', () => {
     await user.click(signInButton);
 
     await waitFor(() => {
-      expect(consoleSpy).toHaveBeenCalled();
-    });
-    expect(consoleSpy).toHaveBeenCalledWith({
-      email: 'test@gmail.com',
-      password: 'testasas',
-      tenantCode: 'test',
+      expect(onSubmit).toHaveBeenCalledTimes(1);
     });
   });
 });

@@ -45,7 +45,8 @@ export function TenantOnBoardingForm(): JSX.Element {
     control,
     watch,
     handleSubmit,
-    formState: { errors },
+
+    formState: { errors, isValid, isSubmitting },
   } = useForm<TenantOnBoardingType>({ mode: 'all', resolver: zodResolver(TenantOnBoardingSchema) });
 
   const databaseType = watch('databaseType');
@@ -311,7 +312,13 @@ export function TenantOnBoardingForm(): JSX.Element {
           </section>
 
           <div className="flex flex-col gap-5">
-            <Button size="lg" className="w-full md:w-auto" variant="primary" type="submit">
+            <Button
+              disabled={isSubmitting || !isValid}
+              size="lg"
+              className="w-full md:w-auto"
+              variant="primary"
+              type="submit"
+            >
               Complete Setup
             </Button>
             <Description size="sm" className="text-left px-2 ">

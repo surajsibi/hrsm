@@ -3,7 +3,7 @@ import { SignInForm } from '@/features/sign-in/SignInForm';
 import type { Meta, StoryObj } from '@storybook/nextjs';
 
 const meta: Meta = {
-  title: 'features / SignInForm',
+  title: 'features/ sign-in / SignInForm',
   component: SignInForm,
   parameters: {
     layout: 'centered',

@@ -1,55 +1,31 @@
 'use client';
 
-import { type JSX, useCallback } from 'react';
+import { type JSX } from 'react';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useRouter } from 'next/navigation';
-import { signIn } from 'next-auth/react';
 import { useForm } from 'react-hook-form';
 
-import { login } from '@/actions/login';
 import { Button } from '@/components/ui/Button';
 import { Description } from '@/components/ui/Descriptions';
 import { HeaderLogo } from '@/components/ui/HeaderLogos';
 import { InputComponent } from '@/components/ui/InputComponent';
 import { Spinner } from '@/components/ui/Spinner';
 import { Title } from '@/components/ui/Titles';
-import { useAuthStore } from '@/store/auth.store';
 import { SignInFormSchema, type SignInFormType } from '@/types/signin-form-types';
 
-export function SignInForm(): JSX.Element {
+interface SignInFormProps {
+  onSubmit: (_data: SignInFormType) => void | Promise<void>;
+}
+
+export function SignInForm({ onSubmit }: SignInFormProps): JSX.Element {
   const {
     handleSubmit,
     register,
-    reset,
     formState: { errors, isSubmitting, isValid },
   } = useForm<SignInFormType>({
     resolver: zodResolver(SignInFormSchema),
     mode: 'all',
   });
-
-  const router = useRouter();
-  const setUser = useAuthStore(state => state.setUser);
-
-  const onSubmit = useCallback(async (data: SignInFormType) => {
-    try {
-      const res = await login(data);
-
-      if (res.success) {
-        console.log('success');
-        setUser(res.user);
-
-        await signIn('credentials', {
-          redirect: false,
-          ...res.tokens,
-        });
-      } else {
-        console.log('failed', res.message);
-      }
-    } catch (error) {
-      console.log('Form submission error:', error);
-    }
-  }, []);
 
   return (
     <section className="w-full max-w-md mx-auto flex flex-col justify-center gap-8">
@@ -71,7 +47,6 @@ export function SignInForm(): JSX.Element {
             placeholder="Enter your tenant code"
             id="tenantCode"
             type="text"
-            autoComplete="organization"
             {...register('tenantCode')}
             error={errors.tenantCode}
             icon="Building2"
@@ -82,7 +57,6 @@ export function SignInForm(): JSX.Element {
             placeholder="admin@company.com"
             id="email"
             type="email"
-            autoComplete="username"
             {...register('email')}
             error={errors.email}
             icon="User"
@@ -93,7 +67,6 @@ export function SignInForm(): JSX.Element {
             placeholder="Enter your password"
             id="password"
             type="password"
-            autoComplete="current-password"
             {...register('password')}
             error={errors.password}
             icon="Lock"
