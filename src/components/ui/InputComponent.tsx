@@ -126,7 +126,7 @@ export function InputComponent({
         />
       </div>
       {error && (
-        <Description className="text-destructive text-xs mt-1 absolute top-[100%]">
+        <Description className="text-destructive text-xs mt-1 absolute top-full">
           *{error.message}*
         </Description>
       )}

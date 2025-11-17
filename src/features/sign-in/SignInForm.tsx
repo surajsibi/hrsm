@@ -24,7 +24,7 @@ export function SignInForm({ onSubmit }: SignInFormProps): JSX.Element {
     formState: { errors, isSubmitting, isValid },
   } = useForm<SignInFormType>({
     resolver: zodResolver(SignInFormSchema),
-    mode: 'all',
+    mode: 'onChange',
   });
 
   return (
