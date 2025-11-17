@@ -15,7 +15,7 @@ describe('StepsCircle', () => {
     it('applies active style to current step', () => {
       render(<StepsCircle steps={steps} variant="primary" currentStep={2} />);
       const activeStep = screen.getByText('2').parentElement;
-      expect(activeStep).toHaveClass('bg-gradient-primary');
+      expect(activeStep).toHaveClass('bg-(--gradient-primary)');
     });
 
     it('applies completed style to previous steps', () => {
@@ -45,7 +45,7 @@ describe('StepsCircle', () => {
     it('applies active style to current step', () => {
       render(<StepsCircle secondarySteps={labels} currentStep={2} />);
       const activeStep = screen.getByText('2').parentElement;
-      expect(activeStep).toHaveClass('bg-gradient-primary');
+      expect(activeStep).toHaveClass('bg-(--gradient-primary)');
     });
 
     it('applies pending style to future step', () => {

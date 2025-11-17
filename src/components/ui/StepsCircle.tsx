@@ -52,7 +52,7 @@ export function StepsCircle({
             <div
               className={cn(
                 'w-8 h-8 flex-none rounded-full flex items-center justify-center',
-                currentStep === (step as number) && 'bg-gradient-primary text-white',
+                currentStep === (step as number) && 'bg-(--gradient-primary) text-white',
                 currentStep > (step as number) && 'bg-green-500 text-white',
                 currentStep < (step as number) && 'bg-gray-200 text-gray-500'
               )}
@@ -90,7 +90,7 @@ export function StepsCircle({
             <div
               className={cn(
                 'w-8 h-8 flex-none rounded-full flex items-center justify-center',
-                currentStep === index + 1 && 'bg-gradient-primary text-white',
+                currentStep === index + 1 && 'bg-(--gradient-primary) text-white',
                 currentStep > index + 1 && 'bg-green-500 text-white',
                 currentStep < index + 1 && 'bg-gray-200 text-gray-500'
               )}

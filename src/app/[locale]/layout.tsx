@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation';
 import { hasLocale } from 'next-intl';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 
+import { ThemeApply } from '@/hooks/theme-component';
 import { routing } from '@/i18n/routing';
 import RootProvider from '@/provider/root-provider';
 import '@/styles/globals.css';
@@ -60,7 +61,10 @@ export default async function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         suppressHydrationWarning
       >
-        <RootProvider>{children}</RootProvider>
+        <RootProvider>
+          <ThemeApply />
+          {children}
+        </RootProvider>
       </body>
     </html>
   );

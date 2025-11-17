@@ -24,12 +24,13 @@ const buttonVariants = cva(
     variants: {
       variant: {
         primary:
-          'bg-gradient-primary text-white shadow-md hover:shadow-lg hover:bg-gradient-primary-hover focus:outline-blue-600',
+          'bg-(--gradient-primary) text-white shadow-md hover:shadow-lg hover:bg-(--gradient-primary)/80 focus:outline-blue-600',
         secondary:
-          'bg-transparent text-[#7a8799] border border-[#dfe2e7] hover:text-[#3c83f6] hover:bg-[#bedbfe] hover:border-transparent',
-        ghost: 'bg-transparent text-[#7a8799] hover:text-[#344256] hover:bg-[#bedbfe] border-none',
+          'bg-transparent text-[#7a8799] border border-[#dfe2e7] hover:text-white hover:bg-(--gradient-primary)/20 hover:border-transparent',
+        ghost:
+          'bg-transparent text-[#7a8799] hover:text-white hover:bg-(--gradient-primary)/20 border-none',
         default:
-          'bg-transparent text-[#344256] border border-[#dfe2e7] hover:text-blue-500 hover:bg-[#bedbfe] hover:border-transparent',
+          'bg-transparent text-[#344256] border border-[#dfe2e7] hover:text-white hover:bg-(--gradient-primary)/20 hover:border-transparent',
       },
       size: {
         sm: 'text-sm py-1 px-2 min-h-9 min-w-15',
@@ -75,9 +76,9 @@ function ContentWithLoading({
         )
       ) : (
         <>
-          {startIcon && <Icon name={startIcon} variant='normal' size={16} color={iconColor} />}
+          {startIcon && <Icon name={startIcon} variant="normal" size={16} color={iconColor} />}
           <span>{children}</span>
-          {endIcon && <Icon name={endIcon} size={16} variant='normal' color={iconColor} />}
+          {endIcon && <Icon name={endIcon} size={16} variant="normal" color={iconColor} />}
         </>
       )}
     </>

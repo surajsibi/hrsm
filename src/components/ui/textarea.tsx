@@ -50,7 +50,7 @@ export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
             rows={4}
             placeholder={placeholder}
             className={cn(
-              'flex justify-center items-center border border-[#dfe2e799] rounded-md w-full transition-all duration-300 z-20 mt-1 pl-3 outline-none resize-none ',
+              'flex justify-center items-center border border-[#dfe2e799] rounded-md w-full transition-all duration-300 z-20 mt-1 pl-3 outline-none resize-none autofill:bg-white autofill:text-black text-black caret-black ',
               error
                 ? 'border-destructive  ring-1 ring-offset-4 ring-destructive  '
                 : 'focus-within:border-primary  ring-0 focus-within:ring-1 focus-within:ring-offset-4 focus-within:ring-primary ',

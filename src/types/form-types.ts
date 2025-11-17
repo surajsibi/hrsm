@@ -51,9 +51,14 @@ export const OrganizationSchema = z.object({
   companyLogo: z
     .any()
     .optional()
-    .refine(file => file === undefined || file === null || file?.[0] instanceof File, {
-      message: 'Invalid file',
-    })
+
+    .refine(
+      file =>
+        file === undefined || file === null || file instanceof File || file?.[0] instanceof File,
+      {
+        message: 'Invalid file',
+      }
+    )
     .refine(file => !file || (file?.[0] instanceof File && file?.[0].type.startsWith('image/')), {
       message: 'Only image files allowed',
     })
@@ -61,7 +66,7 @@ export const OrganizationSchema = z.object({
       message: 'Max file size is 10MB',
     }),
 
-  themeColor: z.string().min(1, 'Theme Color is required'),
+  themeColor: z.string().optional(),
   companyWebsite: z.preprocess(
     val => (val === '' ? undefined : val),
     z

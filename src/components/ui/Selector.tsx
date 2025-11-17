@@ -216,7 +216,7 @@ export function Selector({
           {children}
           <p>{selected}</p>
         </div>
-        <Icon name="ChevronDown" />
+        <Icon variant="normal" name="ChevronDown" />
       </button>
 
       <div

@@ -20,10 +20,10 @@ describe('Button', () => {
         <Button variant="default">Default</Button>
       </>
     );
-    expect(screen.getByRole('button', { name: /primary/i })).toHaveClass('bg-gradient-primary');
+    expect(screen.getByRole('button', { name: /primary/i })).toHaveClass('bg-(--gradient-primary)');
     expect(screen.getByRole('button', { name: /secondary/i })).toHaveClass('bg-transparent');
     expect(screen.getByRole('button', { name: /ghost/i })).toHaveClass('border-none');
-    expect(screen.getByRole('button', { name: /default/i })).toHaveClass('hover:text-blue-500');
+    expect(screen.getByRole('button', { name: /default/i })).toHaveClass('hover:text-white');
   });
 
   it('should render with size', () => {

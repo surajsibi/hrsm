@@ -1,10 +1,33 @@
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 import { Organization } from '@/features/setup/Organization';
 
+const setThemeMock = jest.fn();
+
+// Mock Zustand store
+jest.mock('@/store/auth.store', () => ({
+  useAuthStore: jest.fn(() => ({
+    setTheme: setThemeMock,
+  })),
+}));
+
+// Mock next/image
+jest.mock('next/image', () => (props:any ) => {
+  return <img {...props} />;
+});
+
+// Mock URL.createObjectURL
+const createObjectURLMock = jest.fn(() => 'mock-preview-url');
+globalThis.URL.createObjectURL = createObjectURLMock;
+globalThis.URL.revokeObjectURL = jest.fn();
+
 describe('features / setup / Organization  ', () => {
-  const OrganizationSetup = (props = {}) => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  const OrganizationSetup = (props: Partial<{ onNext: () => void }> = {}) => {
     const defaultProps = {
       onNext: jest.fn(),
     };
@@ -157,50 +180,37 @@ describe('features / setup / Organization  ', () => {
     await userEvent.click(skipButton);
     expect(onNext).toHaveBeenCalledTimes(1);
   });
-  //   const onNext = jest.fn();
 
-  //   render(<Organization onNext={onNext} />);
-  //   const companyName = screen.getByPlaceholderText(/Enter company name/i);
+  it('updates theme color input and calls setTheme when changed', () => {
+    const { createButton } = OrganizationSetup();
+    const themeColorInput = screen.getByLabelText(/brand color theme/i);
 
-  //   await userEvent.type(companyName, 'companyName');
+    expect(themeColorInput).toHaveValue('#367df6');
+    fireEvent.change(themeColorInput, { target: { value: '#123abc' } });
 
-  //   const companyType = screen.getByRole('button', { name: /Company Type/i });
+    expect(themeColorInput).toHaveValue('#123abc');
+    expect(screen.getByText('#123abc')).toBeInTheDocument();
+    expect(setThemeMock).toHaveBeenCalledWith('#123abc');
+    expect(createButton).toBeDisabled();
+  });
 
-  //   expect(companyType).toBeInTheDocument();
+  it('shows logo preview and modal when a file is uploaded', async () => {
+    OrganizationSetup();
+    const logoInput = screen.getByLabelText(/company logo/i);
+    const mockFile = new File(['(⌐□_□)'], 'logo.png', { type: 'image/png' });
 
-  //   await userEvent.click(companyType);
-  //   await userEvent.click(screen.getByRole('option', { name: 'Private Limited' }));
+    await userEvent.upload(logoInput, mockFile);
 
-  //   const companyEmail = screen.getByPlaceholderText(/company@example.com/);
+    expect(createObjectURLMock).toHaveBeenCalledWith(mockFile);
+    const previewImage = await screen.findByAltText(/company logo/i);
+    expect(previewImage).toBeVisible();
 
-  //   expect(companyEmail).toBeInTheDocument();
+    await userEvent.click(previewImage);
 
-  //   await userEvent.type(companyEmail, 'company@example.com');
+    const modalImage = await screen.findByAltText(/large company logo/i);
+    expect(modalImage).toBeVisible();
 
-  //   const phoneNumber = screen.getByPlaceholderText('+1 (234) 567 8901');
-
-  //   expect(phoneNumber).toBeInTheDocument();
-
-  //   await userEvent.type(phoneNumber, '1234567890');
-
-  //   const Address = screen.getByPlaceholderText(/Enter company address/i);
-
-  //   expect(Address).toBeInTheDocument();
-
-  //   await userEvent.type(Address, 'company address');
-
-  //   const button = screen.getByRole('button', { name: /Create Organization/i });
-
-  //   expect(button).toBeInTheDocument();
-  //   expect(button).toBeEnabled();
-
-  //   await userEvent.click(button);
-
-  //   const skip = screen.getByRole('button', { name: /Skip This Step/i });
-
-  //   expect(skip).toBeInTheDocument();
-  //   await userEvent.click(skip);
-
-  //   expect(onNext).toHaveBeenCalledTimes(2);
-  // });
+    await userEvent.click(screen.getByRole('button', { name: 'X' }));
+    expect(screen.queryByAltText(/large company logo/i)).not.toBeInTheDocument();
+  });
 });

@@ -29,7 +29,7 @@
   --foreground: oklch(1 0 0);
   --card-foreground: #344256;
   --card: #ffffff80;
-  --gradient-primary: linear-gradient(135deg, hsl(217 91% 60%), hsl(217 84% 54%));
+  --gradient-primary: '#367df6';
   --gradient-primary-hover: linear-gradient(135deg, hsl(217, 86%, 60%), hsl(217 84% 60%));
   --primary: #3c83f6;
   --heading: #344256;
@@ -48,6 +48,12 @@
     box-shadow: 0 0 0px 1000px theme('colors.white') inset !important;
     -webkit-text-fill-color: theme('colors.black') !important;
   }
+  textarea:-webkit-autofill {
+    box-shadow: 0 0 0px 1000px theme('colors.white') inset !important;
+    -webkit-text-fill-color: theme('colors.black') !important;
+  }
+}
+@layer base {
 }
 
 @layer base {

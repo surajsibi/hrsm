@@ -23,7 +23,7 @@ interface TabProps {
 }
 
 const BASE_CLASSES =
-  'text-[#344256] text-sm flex font-medium items-center justify-center gap-2 py-2 px-3 border border-gray-700/20 rounded-md hover:bg-[#3c83f61a] hover:text-[#3c83f6] transition-colors duration-300 bg-[#fcfcfc] h-9';
+  'text-[#344256] text-sm flex font-medium items-center justify-center gap-2 py-2 px-3 border border-gray-700/20 rounded-md hover:bg-(--gradient-primary) hover:text-white transition-colors duration-300 bg-[#fcfcfc] h-9';
 const ACTIVE_CLASSES = 'opacity-50 bg-[#edeff2] pointer-events-none border-0 text-gray-500';
 
 /**
@@ -38,7 +38,7 @@ export function Chip({
   active = false,
   onClick,
   activeIcon = <Icon name="X" size={16} variant="normal" />,
-  inactiveIcon = <Icon name="Plus" size={16} variant="normal" />,
+  inactiveIcon = <Icon name="Plus" size={16} variant="normal" color='#367df6' />,
 }: TabProps) {
   return (
     <button

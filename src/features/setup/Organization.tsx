@@ -1,9 +1,9 @@
 'use client';
-import { type JSX, useCallback, useState } from 'react';
+import { type JSX, useCallback, useEffect, useMemo, useState } from 'react';
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import Image from 'next/image';
-import { Controller, type FieldError, useForm } from 'react-hook-form';
+import { Controller, useController, useForm } from 'react-hook-form';
 
 import { Button } from '@/components/ui/Button';
 import { Description } from '@/components/ui/Descriptions';
@@ -13,9 +13,10 @@ import { Selector } from '@/components/ui/Selector';
 import { Spinner } from '@/components/ui/Spinner';
 import { TextArea } from '@/components/ui/Textarea';
 import { Title } from '@/components/ui/Titles';
+import { useAuthStore } from '@/store/auth.store';
 import { OrganizationSchema, type OrganizationType } from '@/types/form-types';
 
-const companyTypes = [
+const COMPANY_TYPES = [
   'Private Limited',
   'Public Limited',
   'Partnership',
@@ -24,49 +25,80 @@ const companyTypes = [
   'Non-Profit Organization',
   'Government Organization',
   'Other',
-];
+] as string[];
 
-const companySizes = [
+const COMPANY_SIZES = [
   '1-10 employees',
   '11-50 employees',
   '51-200 employees',
   '201-1000 employees',
   '1000+ employees',
-];
+] as string[];
 
 export function Organization({ onNext }: { onNext: () => void }): JSX.Element {
   const {
-    register,
     control,
+    register,
     handleSubmit,
     watch,
+    setValue,
     formState: { errors, isSubmitting, isValid },
-  } = useForm<OrganizationType>({ mode: 'all', resolver: zodResolver(OrganizationSchema) });
+  } = useForm<OrganizationType>({
+    mode: 'all',
+    resolver: zodResolver(OrganizationSchema),
+    defaultValues: {
+      themeColor: '#367df6',
+    },
+  });
+
+  const { setTheme } = useAuthStore();
+  const themeColor = watch('themeColor');
+
+  const companyTypes = useMemo(() => COMPANY_TYPES, []);
+  const companySizes = useMemo(() => COMPANY_SIZES, []);
+
+  const { field: logoField } = useController({
+    name: 'companyLogo',
+    control,
+    defaultValue: undefined as unknown as FileList | undefined,
+  });
+
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [modalOpen, setModalOpen] = useState(false);
+
+  useEffect(() => {
+    const fileList = logoField.value as FileList | undefined;
+    const file = fileList?.[0] ?? (logoField.value instanceof File ? logoField.value : undefined);
+
+    if (!file) {
+      setPreviewUrl(null);
+
+      return;
+    }
+    const url = URL.createObjectURL(file);
+
+    setPreviewUrl(url);
+
+    // eslint-disable-next-line consistent-return
+    return () => URL.revokeObjectURL(url);
+  }, [logoField.value]);
 
   const onSubmit = useCallback(
     (data: OrganizationType) => {
-      console.log(data);
+      //will be called for api latter or may be send to parent
+      console.log('submit', data);
       onNext();
     },
     [onNext]
   );
 
-  const image = watch('companyLogo');
-
-  console.log(!!(image instanceof File), 'image instanceof File');
-  const file = image instanceof File ? image : image?.[0];
-
-  console.log(file, 'file instanceof File');
-
-  const preview = file ? URL.createObjectURL(file) : null;
-
-  console.log(preview);
-
-  const [open, setOpen] = useState(false);
+  const handleColorChange = (color: string) => {
+    setValue('themeColor', color);
+    setTheme(color);
+  };
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col p-6 gap-6">
-      {/* Header */}
       <div className="flex flex-col gap-2">
         <Title className="text-start" variant="h3">
           Organization
@@ -74,7 +106,6 @@ export function Organization({ onNext }: { onNext: () => void }): JSX.Element {
         <Description className="text-start">Company details and information</Description>
       </div>
 
-      {/* Fields */}
       <div className="flex flex-col gap-6 w-full">
         <div className="flex gap-9 w-full">
           <InputComponent
@@ -105,17 +136,6 @@ export function Organization({ onNext }: { onNext: () => void }): JSX.Element {
           />
         </div>
 
-        <InputComponent
-          parentClassName="w-[75%]"
-          label="Brand Color Theme *"
-          id="themeColor"
-          type="color"
-          {...register('themeColor', {
-            onChange: e => e.target.value,
-          })}
-          icon="Palette"
-          error={errors?.themeColor}
-        />
         <div className="flex gap-9 w-full">
           <InputComponent
             parentClassName="w-1/2"
@@ -169,45 +189,82 @@ export function Organization({ onNext }: { onNext: () => void }): JSX.Element {
           />
         </div>
 
+        <TextArea
+          label="Company Address *"
+          placeholder="Enter company address"
+          id="companyAddress"
+          {...register('companyAddress')}
+          error={errors?.companyAddress}
+          icon="MapPin"
+        />
+
         <div className="flex gap-9 w-full items-center ">
-          <InputComponent
-            parentClassName="w-full flex "
-            label="Company Logo *"
-            accept="image/*"
-            id="logo"
-            type="file"
-            {...register('companyLogo', {
-              onChange: e => e.target.files?.[0],
-            })}
-            className=" flex  file:bg-primary file:py-2 file:mr-6 file:text-sm file:font-medium file:px-2 mb-2 file:border-none file:rounded-md file:text-white "
-            error={errors?.companyLogo as FieldError | undefined}
-          />
-          {preview && (
-            <Image
-              src={preview}
-              alt="Company Logo"
-              className="h-13 w-15 object-cover rounded-md mt-7"
-              layout="fixed"
-              width={128}
-              height={128}
-              unoptimized
-              onClick={() => setOpen(true)}
+          <div className="flex gap-9 w-1/2 justify-between items-start">
+            <input
+              id="companyLogo"
+              aria-label="Company Logo"
+              type="file"
+              accept="image/*"
+              onChange={e => {
+                logoField.onChange(e.target.files);
+              }}
+              className="file:bg-(--gradient-primary) file:py-2 file:mr-6 file:text-sm file:font-medium file:px-2 mb-2 file:border-none file:rounded-md file:text-white"
             />
-          )}
+            {previewUrl && (
+              <Image
+                src={previewUrl}
+                alt="Company Logo"
+                className="h-13 w-15 object-cover rounded-md  "
+                layout="fixed"
+                width={128}
+                height={128}
+                unoptimized
+                onClick={() => setModalOpen(true)}
+              />
+            )}
+          </div>
+
+          <div className="w-1/2 flex items-center justify-center  gap-4">
+            <Controller
+              control={control}
+              name="themeColor"
+              render={({ field }) => (
+                <InputComponent
+                  parentClassName="w-[70%]"
+                  label="Brand Color Theme *"
+                  id="themeColor"
+                  type="color"
+                  value={field.value}
+                  onChange={e => {
+                    field.onChange(e.target.value);
+                    handleColorChange(e.target.value);
+                  }}
+                  icon="Palette"
+                  iconMiddleClassName="justify-start"
+                  className="py-3.5 rounded-lg"
+                  error={errors?.themeColor}
+                />
+              )}
+            />
+
+            <div className="flex flex-col items-center justify-end border py-2 px-2 mt-[5%] w-[30%] rounded-md  gap-1">
+              <span className="text-xs font-bold text-gray-500">{themeColor}</span>
+            </div>
+          </div>
         </div>
 
-        {open && preview && (
-          <div className="fixed inset-0 bg-black/60 flex items-center justify-center top-[50%] translate-y-[-50%] z-[999] backdrop-blur-sm w-[50vw] h-[50vh]">
+        {modalOpen && previewUrl && (
+          <div className="fixed inset-0 bg-white/30 flex items-center justify-center z-999 backdrop-blur-sm">
             <Button
               size="md"
-              className="absolute z-[1000] right-3 top-3 bg-white text-black  w-2 "
-              onClick={() => setOpen(false)}
+              className="absolute z-1000 right-3 top-3 bg-black text-white"
+              onClick={() => setModalOpen(false)}
             >
               X
             </Button>
-            <div className="relative ">
+            <div className="relative">
               <Image
-                src={preview}
+                src={previewUrl}
                 alt="Large Company Logo"
                 width={500}
                 height={500}
@@ -219,15 +276,6 @@ export function Organization({ onNext }: { onNext: () => void }): JSX.Element {
         )}
 
         <TextArea
-          label="Company Address *"
-          placeholder="Enter company address"
-          id="companyAddress"
-          {...register('companyAddress')}
-          error={errors?.companyAddress}
-          icon="MapPin"
-        />
-
-        <TextArea
           label="Company Description"
           placeholder="Brief description about your company"
           id="companyDescription"
@@ -236,7 +284,6 @@ export function Organization({ onNext }: { onNext: () => void }): JSX.Element {
 
         <LineBreak />
 
-        {/* Button */}
         <div className="flex gap-4">
           <Button
             size="sm"
@@ -247,6 +294,7 @@ export function Organization({ onNext }: { onNext: () => void }): JSX.Element {
           >
             Skip This Step
           </Button>
+
           <Button
             size="sm"
             className="w-1/2 font-medium "
